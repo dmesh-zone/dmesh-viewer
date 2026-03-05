@@ -239,9 +239,23 @@ function Flow() {
     // Actually, multiselect usually implies "show what is selected".
     // If I select "Domain A", I only see Domain A.
     // Let's auto-select ALL domains on load so the view is populated.
-    // Auto-select all domains when registry loads/changes
+    // Auto-select domains when registry loads/changes
+    // If a domain is provided in the URL (e.g., ?domain=petstore), filter by that domain.
     React.useEffect(() => {
         if (availableDomains.length > 0) {
+            const params = new URLSearchParams(window.location.search);
+            const domainParam = params.get('domain');
+
+            if (domainParam) {
+                const urlDomains = domainParam.split(',').map(d => d.trim().toLowerCase());
+                const matchingDomains = availableDomains.filter(d =>
+                    urlDomains.includes(d.toLowerCase())
+                );
+                if (matchingDomains.length > 0) {
+                    setSelectedDomains(matchingDomains);
+                    return;
+                }
+            }
             setSelectedDomains(availableDomains);
         }
     }, [availableDomains]);
