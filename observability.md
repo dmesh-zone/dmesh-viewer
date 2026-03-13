@@ -158,10 +158,27 @@ Requirements are expressed as user stories following the standard format: As a [
 - The sub-menu is hidden when Observe Mode is deactivated.
 
 - If a drilldown panel is open, switching the dimension filter simultaneously updates both the graph shading and the drilldown panel content.
+### 2.3 Dimension Filter Configuration
 
-### 2.3 Edge Health Propagation
+#### US-05 · Dimension Filter Configuration
 
-#### US-05 · Animated Edge Health Colouring
+| **Field** | **Detail** |
+| --- | --- |
+| Role      | Platform operator, data product owner                                                                                                                                                                   |
+| Story     | I want a a configuration option that allows me to hide healthy nodes from the graph. |
+| Priority  | P0                                                                                                                                                                                                      |
+
+##### Acceptance Criteria
+
+- The configuration option is available as a cog icon in the dimension sub-menu.
+
+- By default, healthy nodes are visible in the graph.
+
+- Configuration option is applicable to all dimensions.
+
+### 2.4 Edge Health Propagation
+
+#### US-06 · Animated Edge Health Colouring
 
 | **Field** | **Detail** |
 | --- | --- |
@@ -183,9 +200,9 @@ Requirements are expressed as user stories following the standard format: As a [
 
 - Edge animation and colouring deactivates when Observe Mode is turned off.
 
-### 2.4 Node Drilldown Panel
+### 2.5 Node Drilldown Panel
 
-#### US-06 · Open Drilldown Panel
+#### US-07 · Open Drilldown Panel
 
 | **Field** | **Detail** |
 | --- | --- |
@@ -209,7 +226,7 @@ Requirements are expressed as user stories following the standard format: As a [
 
 - Clicking a node outside Observe Mode has no drilldown effect (standard React Flow node click behaviour applies).
 
-#### US-07 · Metrics Tab
+#### US-08 · Metrics Tab
 
 | **Field** | **Detail** |
 | --- | --- |
@@ -233,7 +250,7 @@ Requirements are expressed as user stories following the standard format: As a [
 
 - All metric values are sourced from the /observe/metrics response for the selected output port's contractId.
 
-#### US-08 · Events Tab
+#### US-09 · Events Tab
 
 | **Field** | **Detail** |
 | --- | --- |
@@ -259,7 +276,7 @@ Requirements are expressed as user stories following the standard format: As a [
 
 ### 2.5 API Integration
 
-#### US-09 · Fetch /observe/metrics on Observe Mode Activation
+#### US-10 · Fetch /observe/metrics on Observe Mode Activation
 
 | **Field** | **Detail** |
 | --- | --- |
@@ -280,7 +297,7 @@ Requirements are expressed as user stories following the standard format: As a [
 
 - Successful responses are cached for the duration of the Observe Mode session. A manual refresh button allows re-fetching all nodes.
 
-#### US-10 · /observe/metrics Schema Conformance
+#### US-11 · /observe/metrics Schema Conformance
 
 | **Field** | **Detail** |
 | --- | --- |
@@ -457,4 +474,5 @@ function deriveStatus(metrics, dimension) {
 
 7. Test Plan
 
-Create a DataMeshRegistryObservability.yaml that illustrates the various features of the observability feature. 
+Create a DataMeshRegistryObservability.yaml derived with the exact same Data Product and Data Contracts as DataMeshRegistryPetsExample.yaml that illustrates the various features of the observability feature.
+Ensure that DataMeshRegistryObservability.yaml is valid against all schemas in src/schemas.

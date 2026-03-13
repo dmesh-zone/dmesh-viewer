@@ -33,6 +33,7 @@ import DataProductVisual from './DataProductVisual';
 import DataContractVisual from './DataContractVisual';
 import DataUsageAgreementVisual from './DataUsageAgreementVisual';
 import RegistryModal from './RegistryModal';
+import ObservabilityDrilldown from './ObservabilityDrilldown';
 
 const nodeTypes = {
     selectorNode: DataProductNode,
@@ -142,6 +143,14 @@ function Flow() {
     const [sidePanelTab, setSidePanelTab] = React.useState('visual'); // 'visual' | 'yaml'
     const [sidePanelAnchor, setSidePanelAnchor] = React.useState(null); // Table anchor
 
+    // Observability State
+    const [observeMode, setObserveMode] = React.useState(false);
+    const [activeDimension, setActiveDimension] = React.useState(null); // null = 'worst'
+    const [metricsMap, setMetricsMap] = React.useState(new Map());
+    const [drillNodeId, setDrillNodeId] = React.useState(null);
+    const [hideHealthy, setHideHealthy] = React.useState(false);
+    const [showConfig, setShowConfig] = React.useState(false);
+
     // Reset tab to visual when opening new content
     React.useEffect(() => {
         if (sidePanelContent) {
@@ -169,16 +178,66 @@ function Flow() {
         if (!parsed) {
             console.warn("Parsed registry is empty");
             setDataMeshRegistry([]);
-        } else if (Array.isArray(parsed)) {
-            setDataMeshRegistry(parsed);
-        } else if (typeof parsed === 'object') {
-            // Handle single object (e.g. user pasted a single DataProduct)
-            console.log("Parsed registry is a single object, wrapping in array");
-            setDataMeshRegistry([parsed]);
         } else {
-            throw new Error(`Registry contains invalid data. Expected YAML array or object, got: ${typeof parsed}`);
+            const items = Array.isArray(parsed) ? parsed : [parsed];
+            setDataMeshRegistry(items);
+
+            // Extract Observability Metrics
+            const metrics = new Map();
+            items.forEach(item => {
+                if (item.kind === 'DataProductObservabilityMetrics') {
+                    metrics.set(item.productId, item);
+                }
+            });
+            setMetricsMap(metrics);
         }
     };
+
+    // Health Status Derivation Logic
+    const isDimCritical = (metrics, dim) => {
+        if (!metrics) return false;
+        switch (dim) {
+            case 'slo': return metrics.slo?.uptime?.met === false || metrics.slo?.freshness?.met === false || metrics.slo?.qualityScore?.met === false || metrics.slo?.responseTime?.met === false;
+            case 'freshness': return metrics.dynamic?.freshness?.lagMinutes > 2 * (metrics.dynamic?.freshness?.maxAllowedLagMinutes || 0);
+            case 'quality': return (metrics.dynamic?.quality?.rulesFailed || 0) > 1;
+            case 'pipeline': return metrics.physical?.pipeline?.status === 'failed';
+            default: return false;
+        }
+    };
+
+    const isDimDegraded = (metrics, dim) => {
+        if (!metrics) return false;
+        switch (dim) {
+            case 'slo': return metrics.slo && (metrics.slo.uptime?.met === false || metrics.slo.freshness?.met === false || metrics.slo.qualityScore?.met === false || metrics.slo.responseTime?.met === false);
+            case 'freshness': return metrics.dynamic?.freshness?.withinExpectation === false;
+            case 'quality': return metrics.dynamic?.quality?.rulesFailed === 1;
+            case 'pipeline': return metrics.physical?.pipeline?.status === 'running' && (metrics.physical?.pipeline?.durationSeconds > 2 * 3600); // Mock duration check
+            default: return false;
+        }
+    };
+
+    const deriveStatus = React.useCallback((productId, dimension) => {
+        const metrics = metricsMap.get(productId);
+        if (!metrics) return 'unknown';
+
+        const dims = dimension ? [dimension] : ['slo', 'freshness', 'quality', 'pipeline'];
+
+        for (const d of dims) {
+            if (isDimCritical(metrics, d)) return 'critical';
+        }
+        for (const d of dims) {
+            if (isDimDegraded(metrics, d)) return 'degraded';
+        }
+
+        // Check if all requested dims are healthy
+        const allHealthy = dims.every(d => {
+            const isCrit = isDimCritical(metrics, d);
+            const isDeg = isDimDegraded(metrics, d);
+            return !isCrit && !isDeg;
+        });
+
+        return allHealthy ? 'healthy' : 'unknown';
+    }, [metricsMap]);
 
     const handleLoadRegistryText = (text) => {
         setIsLoading(true);
@@ -319,6 +378,13 @@ function Flow() {
 
         const initialNodes = dataMeshNodes
             .filter(node => node.kind === 'DataProduct')
+            .filter(node => {
+                if (observeMode && hideHealthy) {
+                    const healthStatus = deriveStatus(node.id, activeDimension);
+                    return healthStatus !== 'healthy';
+                }
+                return true;
+            })
             .map(node => {
                 const tier = node.customProperties?.find(p => p.property === 'dataProductTier')?.value;
                 const technology = node.customProperties?.find(p => p.property === 'technology')?.value;
@@ -352,6 +418,16 @@ function Flow() {
                     columnY[columnNumber] += VERTICAL_STEP;
                 }
 
+                // Observability Data
+                const healthStatus = observeMode ? deriveStatus(node.id, activeDimension) : null;
+                const metrics = metricsMap.get(node.id);
+                const pips = observeMode ? {
+                    slo: deriveStatus(node.id, 'slo'),
+                    freshness: deriveStatus(node.id, 'freshness'),
+                    quality: deriveStatus(node.id, 'quality'),
+                    pipeline: deriveStatus(node.id, 'pipeline')
+                } : null;
+
                 return {
                     id: node.id,
                     type: 'selectorNode',
@@ -366,31 +442,56 @@ function Flow() {
                         icon: normalizePath(config.iconMap[technology] || (node.kind === 'DataContract' ? config.iconMap['table'] : config.iconMap['dataproduct'])),
                         hasOutputPorts: node.outputPorts && node.outputPorts.length > 0,
                         outputPortCount: node.outputPorts ? node.outputPorts.length : 0,
-                        originalData: node // Pass full source data for YAML view
+                        originalData: node, // Pass full source data for YAML view
+                        // Observability props
+                        observeMode,
+                        activeDimension,
+                        healthStatus,
+                        pips,
+                        isSelected: drillNodeId === node.id
                     },
                     position: { x, y }
                 };
             });
 
-        const initialEdges = dataMeshEdges.map(edge => ({
-            id: edge.id,
-            source: edge.provider.dataProductId,
-            target: edge.consumer.dataProductId,
-            animated: true,
-            type: 'default',
-            markerEnd: { type: 'arrowclosed' },
-            interactionWidth: 40,
-            style: {
-                strokeWidth: hoveredEdgeId === edge.id ? 3 : 2,
-                stroke: hoveredEdgeId === edge.id ? '#2563eb' : '#9ca3af',
-                zIndex: hoveredEdgeId === edge.id ? 10 : 0
-            }
-        }));
+        const activeNodeIds = new Set(initialNodes.map(n => n.id));
+        const initialEdges = dataMeshEdges
+            .filter(edge => activeNodeIds.has(edge.provider.dataProductId) && activeNodeIds.has(edge.consumer.dataProductId))
+            .map(edge => {
+            const sourceHealth = deriveStatus(edge.provider.dataProductId, activeDimension);
+            const targetHealth = deriveStatus(edge.consumer.dataProductId, activeDimension);
+
+            const getEdgeColor = (h1, h2) => {
+                if (!observeMode) return '#9ca3af';
+                if (h1 === 'critical' || h2 === 'critical') return '#EF444488';
+                if (h1 === 'degraded' || h2 === 'degraded') return '#F59E0B88';
+                if (h1 === 'healthy' && h2 === 'healthy') return '#22C55E88';
+                return '#33415566';
+            };
+
+            const edgeColor = getEdgeColor(sourceHealth, targetHealth);
+
+            return {
+                id: edge.id,
+                source: edge.provider.dataProductId,
+                target: edge.consumer.dataProductId,
+                animated: observeMode || true,
+                type: 'default',
+                markerEnd: { type: 'arrowclosed', color: observeMode ? edgeColor : undefined },
+                interactionWidth: 40,
+                style: {
+                    strokeWidth: hoveredEdgeId === edge.id ? 3 : 2,
+                    stroke: hoveredEdgeId === edge.id ? (observeMode ? edgeColor : '#2563eb') : (observeMode ? edgeColor : '#9ca3af'),
+                    zIndex: hoveredEdgeId === edge.id ? 10 : 0,
+                    transition: 'stroke 0.3s ease'
+                }
+            };
+        });
 
         setNodes(initialNodes);
         setEdges(initialEdges);
 
-    }, [dataMeshRegistry, setNodes, setEdges, hoveredEdgeId]);
+    }, [dataMeshRegistry, setNodes, setEdges, hoveredEdgeId, observeMode, activeDimension, metricsMap, drillNodeId, config, hideHealthy]);
 
 
     // Validation Logic
@@ -981,9 +1082,22 @@ function Flow() {
 
 
     const onNodeClick = React.useCallback((event, node) => {
-        // We now use custom events to handle pill clicks, so this can be simplified
-        // or used for other node-level selection logic if needed.
-    }, []);
+        if (observeMode && node.type === 'selectorNode') {
+            setDrillNodeId(node.id);
+            const metrics = metricsMap.get(node.id);
+            if (metrics) {
+                const customEvent = new CustomEvent('open-side-panel', {
+                    detail: {
+                        id: node.id,
+                        type: 'observability',
+                        content: metrics,
+                        width: 400
+                    }
+                });
+                window.dispatchEvent(customEvent);
+            }
+        }
+    }, [observeMode, metricsMap]);
 
     const onNodeDoubleClick = (event, node) => {
         console.log('Double click ignored');
@@ -1216,9 +1330,135 @@ function Flow() {
                 {/* Spacer */}
                 <div style={{ flex: 1 }}></div>
 
-                {/* Right Controls Group */}
-                <div style={{ display: 'flex', gap: '12px', pointerEvents: 'auto' }}>
-                    {/* Registry URL input removed - now accessible via floating icon */}
+                {/* Right Controls Group - Observability */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', pointerEvents: 'auto', alignItems: 'flex-end' }}>
+                    <button
+                        onClick={() => {
+                            setObserveMode(!observeMode);
+                            if (observeMode) {
+                                setActiveDimension(null);
+                                setDrillNodeId(null);
+                                setSidePanelContent(null);
+                            }
+                        }}
+                        style={{
+                            padding: '8px 20px',
+                            background: observeMode ? '#1e293b' : 'white',
+                            color: observeMode ? '#f8fafc' : '#1e293b',
+                            border: `2px solid ${observeMode ? '#3b82f6' : '#e2e8f0'}`,
+                            borderRadius: '24px',
+                            cursor: 'pointer',
+                            fontWeight: '700',
+                            fontSize: '13px',
+                            boxShadow: observeMode ? '0 0 15px rgba(59, 130, 246, 0.5)' : '0 2px 4px rgba(0,0,0,0.05)',
+                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            letterSpacing: '0.5px'
+                        }}
+                    >
+                        <div style={{
+                            width: '8px',
+                            height: '8px',
+                            borderRadius: '50%',
+                            background: observeMode ? '#3b82f6' : '#94a3b8',
+                            boxShadow: observeMode ? '0 0 10px #3b82f6' : 'none',
+                            animation: observeMode ? 'pulse 2s infinite' : 'none'
+                        }}></div>
+                        {observeMode ? 'OBSERVING' : 'OBSERVE'}
+                    </button>
+
+                    {observeMode && (
+                        <div style={{
+                            display: 'flex',
+                            background: 'white',
+                            padding: '4px',
+                            borderRadius: '20px',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                            border: '1px solid #e2e8f0',
+                            animation: 'slideDown 0.3s ease-out'
+                        }}>
+                            {['Worst', 'SLO', 'Freshness', 'Quality', 'Pipeline'].map(dim => {
+                                const dimKey = dim === 'Worst' ? null : dim.toLowerCase();
+                                const isActive = activeDimension === dimKey;
+                                return (
+                                    <button
+                                        key={dim}
+                                        onClick={() => setActiveDimension(dimKey)}
+                                        style={{
+                                            padding: '4px 12px',
+                                            fontSize: '11px',
+                                            fontWeight: '600',
+                                            background: isActive ? '#3b82f6' : 'transparent',
+                                            color: isActive ? 'white' : '#64748b',
+                                            border: 'none',
+                                            borderRadius: '16px',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s'
+                                        }}
+                                    >
+                                        {dim}
+                                    </button>
+                                );
+                            })}
+
+                            {/* US-05: Configuration Cog */}
+                            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginLeft: '4px', paddingLeft: '4px', borderLeft: '1px solid #e2e8f0' }}>
+                                <button
+                                    onClick={() => setShowConfig(!showConfig)}
+                                    style={{
+                                        background: 'transparent',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        color: showConfig ? '#3b82f6' : '#64748b',
+                                        padding: '4px'
+                                    }}
+                                    title="Observability Settings"
+                                >
+                                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </button>
+                                
+                                {showConfig && (
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '100%',
+                                        right: 0,
+                                        marginTop: '8px',
+                                        background: 'white',
+                                        borderRadius: '8px',
+                                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                                        border: '1px solid #e2e8f0',
+                                        padding: '12px',
+                                        minWidth: '180px',
+                                        zIndex: 1000
+                                    }}>
+                                        <div 
+                                            style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', whiteSpace: 'nowrap' }} 
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setHideHealthy(!hideHealthy);
+                                            }}
+                                        >
+                                            <input 
+                                                type="checkbox" 
+                                                checked={hideHealthy} 
+                                                readOnly
+                                                style={{ cursor: 'pointer' }}
+                                            />
+                                            <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Hide Healthy Nodes</span>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -1390,9 +1630,10 @@ function Flow() {
                                     <h3 style={{ margin: 0, color: '#1e293b' }}>
                                         {sidePanelType === 'examples' ? 'Examples' :
                                             sidePanelType === 'dq' ? 'Data Quality' :
-                                                sidePanelType === 'agreement-yaml' ? 'Data Usage Agreement' :
-                                                    sidePanelType === 'data-product-yaml' ? 'Data Product' :
-                                                        sidePanelType === 'data-contract-yaml' ? 'Data Contract' : 'YAML'}
+                                                sidePanelType === 'observability' ? 'Observability' :
+                                                    sidePanelType === 'agreement-yaml' ? 'Data Usage Agreement' :
+                                                        sidePanelType === 'data-product-yaml' ? 'Data Product' :
+                                                            sidePanelType === 'data-contract-yaml' ? 'Data Contract' : 'YAML'}
                                     </h3>
 
                                     {/* Standard Specification Pills */}
@@ -1600,6 +1841,8 @@ function Flow() {
                                 <ExampleTable schema={sidePanelContent} />
                             ) : sidePanelType === 'dq' ? (
                                 <QualityTable schema={sidePanelContent} />
+                            ) : sidePanelType === 'observability' ? (
+                                <ObservabilityDrilldown metrics={sidePanelContent} />
                             ) : sidePanelTab === 'visual' && sidePanelType === 'data-product-yaml' ? (
                                 <DataProductVisual data={sidePanelContent.originalData || sidePanelContent} />
                             ) : sidePanelTab === 'visual' && sidePanelType === 'data-contract-yaml' ? (

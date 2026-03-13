@@ -21,6 +21,7 @@ import YAML from 'yaml';
 import dataProductSchema from './schemas/odps-json-schema-v1.0.0.json';
 import dataContractSchema from './schemas/odcs-json-schema-v3.1.0.json';
 import duaSchema from './schemas/datausageagreement.schema-v0.0.1.json';
+import metricsSchema from './schemas/odps-observability-metrics-schema-v0.0.1.json';
 
 const ajv = new Ajv({ allErrors: true, strict: false });
 ajv.addMetaSchema(draft7MetaSchema);
@@ -29,6 +30,7 @@ addFormats(ajv);
 let validateDataProduct = () => true;
 let validateDataContract = () => true;
 let validateDUA = () => true;
+let validateMetrics = () => true;
 
 try {
     validateDataProduct = ajv.compile(dataProductSchema);
@@ -46,6 +48,12 @@ try {
     validateDUA = ajv.compile(duaSchema);
 } catch (e) {
     console.error("Failed to compile DUA schema", e);
+}
+
+try {
+    validateMetrics = ajv.compile(metricsSchema);
+} catch (e) {
+    console.error("Failed to compile Metrics schema", e);
 }
 
 export const validateRegistry = (registry, rawRegistry) => {
@@ -75,6 +83,9 @@ export const validateRegistry = (registry, rawRegistry) => {
         } else if (item.dataUsageAgreementSpecification) {
             type = 'DataUsageAgreement';
             validateFn = validateDUA;
+        } else if (item.kind === 'DataProductObservabilityMetrics') {
+            type = 'DataProductObservabilityMetrics';
+            validateFn = validateMetrics;
         } else {
             console.warn(`Skipping unknown item type at index ${index}`, item);
             return;

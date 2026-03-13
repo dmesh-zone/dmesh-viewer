@@ -30,7 +30,6 @@
         },
         "productId": {
             "type": "string",
-            "format": "uuid",
             "description": "UUID of the data product as declared in the ODPS",
             "examples": [
                 "fbe8d147-28db-4f1d-bedf-a3fe9f458427"
@@ -537,7 +536,6 @@
                     },
                     "contractId": {
                         "type": "string",
-                        "format": "uuid",
                         "description": "ODCS contract UUID as declared in ODPS YAML outputPorts[].contractId. The contract is the authoritative source of SLO objectives and quality rules for this port."
                     },
                     "status": {
@@ -585,7 +583,6 @@
                             },
                             "contractId": {
                                 "type": "string",
-                                "format": "uuid",
                                 "description": "ODCS contract UUID of the upstream output port this product consumes, as declared in ODPS inputPorts[].contractId."
                             },
                             "status": {
