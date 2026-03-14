@@ -476,5 +476,6 @@ function deriveStatus(metrics, dimension) {
 7. Visual Test Plan
 
 Create a DataMeshRegistryObservability.yaml derived with the exact same Data Product and Data Contracts as DataMeshRegistryPetsExample.yaml that illustrates the various features of the observability feature.
-Ensure that in DataMeshRegistryObservability.yaml Data Sources and Applications data products don't have observability data, so unknown status can be visually verified.
+When creating test data create a sample view that shows metrics for a 24 hour window in 1st of March 2026 (dates will become stale but will mitigate this with #test mode)
+Ensure that in DataMeshRegistryObservability.yaml Data Sources and Applications data products (dataSource and application data product tiers) don't have observability data, so unknown status can be visually verified.
 Ensure that DataMeshRegistryObservability.yaml is valid against all schemas in src/schemas.

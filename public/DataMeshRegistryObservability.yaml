@@ -2182,18 +2182,18 @@
 - kind: DataProductObservabilityMetrics
   schemaVersion: 0.0.1
   productId: urn:petstore-a:source-aligned:retail-data
-  asOf: 2026-03-13T17:00:00Z
+  asOf: 2026-03-02T06:00:00Z
   period: PT1H
   status: healthy
   physical:
     pipeline:
       status: success
-      lastRunAt: 2026-03-13T16:50:00Z
+      lastRunAt: 2026-03-02T05:50:00Z
       durationSeconds: 120
   dynamic:
     freshness:
       withinExpectation: true
-      lastUpdatedAt: 2026-03-13T16:50:00Z
+      lastUpdatedAt: 2026-03-02T05:50:00Z
       lagMinutes: 10
     quality:
       rulesTotal: 25
@@ -2210,13 +2210,13 @@
 - kind: DataProductObservabilityMetrics
   schemaVersion: 0.0.1
   productId: urn:petstore-b:source-aligned:retail-data
-  asOf: 2026-03-13T17:00:00Z
+  asOf: 2026-03-02T06:00:00Z
   period: PT1H
   status: degraded
   physical:
     pipeline:
       status: success
-      lastRunAt: 2026-03-13T16:30:00Z
+      lastRunAt: 2026-03-02T05:30:00Z
   dynamic:
     freshness:
       withinExpectation: true
@@ -2243,13 +2243,13 @@
 - kind: DataProductObservabilityMetrics
   schemaVersion: 0.0.1
   productId: urn:food-production:source-aligned:manufacturing-data
-  asOf: 2026-03-13T17:00:00Z
+  asOf: 2026-03-02T06:00:00Z
   period: PT1H
   status: critical
   physical:
     pipeline:
       status: failed
-      lastRunAt: 2026-03-13T15:00:00Z
+      lastRunAt: 2026-03-02T04:00:00Z
       errorMessage: "OOM error in Spark executor"
   dynamic:
     freshness:
@@ -2274,7 +2274,7 @@
 - kind: DataProductObservabilityMetrics
   schemaVersion: 0.0.1
   productId: urn:petstore:curated:unified-retail
-  asOf: 2026-03-13T17:00:00Z
+  asOf: 2026-03-02T06:00:00Z
   period: PT1H
   status: healthy
   physical:
@@ -2294,7 +2294,7 @@
 - kind: DataProductObservabilityMetrics
   schemaVersion: 0.0.1
   productId: urn:food-production:curated:production-analytics
-  asOf: 2026-03-13T17:00:00Z
+  asOf: 2026-03-02T06:00:00Z
   period: PT1H
   status: degraded
   physical:
@@ -2322,7 +2322,7 @@
 - kind: DataProductObservabilityMetrics
   schemaVersion: 0.0.1
   productId: urn:petstore:consumer-aligned:business-analytics
-  asOf: 2026-03-13T17:00:00Z
+  asOf: 2026-03-02T06:00:00Z
   period: PT1H
   status: healthy
   physical:
@@ -2342,7 +2342,7 @@
 - kind: DataProductObservabilityMetrics
   schemaVersion: 0.0.1
   productId: urn:food-production:consumer-aligned:operations-analytics
-  asOf: 2026-03-13T17:00:00Z
+  asOf: 2026-03-02T06:00:00Z
   period: PT1H
   status: healthy
   physical:
