@@ -423,35 +423,6 @@
                         }
                     }
                 },
-                "freshness": {
-                    "type": "object",
-                    "description": "Freshness SLO: maximum allowed lag between data production and availability, as declared in the ODCS contract.",
-                    "properties": {
-                        "objectiveMinutes": {
-                            "type": [
-                                "number",
-                                "null"
-                            ],
-                            "minimum": 0,
-                            "description": "Declared maximum acceptable lag in minutes."
-                        },
-                        "actualMinutes": {
-                            "type": [
-                                "number",
-                                "null"
-                            ],
-                            "minimum": 0,
-                            "description": "Current measured lag in minutes. Mirrors dynamic.freshness.lagMinutes."
-                        },
-                        "met": {
-                            "type": [
-                                "boolean",
-                                "null"
-                            ],
-                            "description": "True if actualMinutes <= objectiveMinutes."
-                        }
-                    }
-                },
                 "qualityScore": {
                     "type": "object",
                     "description": "Quality SLO: minimum fraction of quality rules that must pass.",
@@ -563,6 +534,36 @@
                     "quality": {
                         "$ref": "#/properties/dynamic/properties/quality",
                         "description": "Quality rule results scoped to this output port."
+                    },
+                    "usage": {
+                        "type": "object",
+                        "description": "Aggregate consumption signals scoped to this output port and its ODCS contract. Answers 'is this contract actively used?' at the port level — complement to the per-consumer breakdown in contractUsage[].",
+                        "properties": {
+                            "activeConsumers": {
+                                "type": [
+                                    "integer",
+                                    "null"
+                                ],
+                                "minimum": 0,
+                                "description": "Number of distinct consumers that accessed this output port during the observation period."
+                            },
+                            "queryCount": {
+                                "type": [
+                                    "integer",
+                                    "null"
+                                ],
+                                "minimum": 0,
+                                "description": "Total queries or API calls against this output port during the observation period."
+                            },
+                            "lastAccessedAt": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "format": "date-time",
+                                "description": "UTC timestamp of the most recent consumer access on this output port."
+                            }
+                        }
                     }
                 }
             }
@@ -618,7 +619,7 @@
         },
         "usage": {
             "type": "object",
-            "description": "Consumer usage signals over the observation period. From Implementing Data Mesh: usage metrics demonstrate the data product's value and inform governance decisions.",
+            "description": "Product-wide consumer usage signals aggregated across all output ports over the observation period. From Implementing Data Mesh: usage metrics demonstrate the data product's value and inform governance decisions. For per-contract and per-consumer breakdowns see outputPorts[].usage and contractUsage[].",
             "properties": {
                 "activeConsumers": {
                     "type": [
@@ -626,7 +627,7 @@
                         "null"
                     ],
                     "minimum": 0,
-                    "description": "Number of distinct consumers that accessed an output port during the observation period."
+                    "description": "Number of distinct consumers that accessed any output port during the observation period."
                 },
                 "queryCount": {
                     "type": [
@@ -634,7 +635,7 @@
                         "null"
                     ],
                     "minimum": 0,
-                    "description": "Total number of queries or API calls made against output ports during the observation period."
+                    "description": "Total number of queries or API calls made against all output ports during the observation period."
                 },
                 "lastAccessedAt": {
                     "type": [
@@ -643,6 +644,109 @@
                     ],
                     "format": "date-time",
                     "description": "UTC timestamp of the most recent consumer access across all output ports."
+                }
+            }
+        },
+        "contractUsage": {
+            "type": "array",
+            "description": "Per-consumer, per-contract usage breakdown over the observation period. Provides the finest-grained consumption view: which consumer is hitting which ODCS contract, how often, and whether they are experiencing the SLAs they were promised. Dehghani notes that consumer-reported SLO experience is the ground truth for data product fitness — this array captures that signal explicitly.",
+            "items": {
+                "type": "object",
+                "required": [
+                    "contractId",
+                    "consumerId"
+                ],
+                "properties": {
+                    "contractId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ODCS contract UUID identifying which output port contract this consumption record relates to. Matches outputPorts[].contractId."
+                    },
+                    "consumerId": {
+                        "type": "string",
+                        "description": "Identifier of the consuming entity — typically the consuming data product ID, service name, or platform identifier as registered in the mesh.",
+                        "examples": [
+                            "bi-platform",
+                            "ml-platform",
+                            "fbe8d147-28db-4f1d-bedf-a3fe9f458427"
+                        ]
+                    },
+                    "queryCount": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "minimum": 0,
+                        "description": "Number of queries or API calls this consumer made against the contract's output port during the observation period."
+                    },
+                    "lastAccessedAt": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time",
+                        "description": "UTC timestamp of this consumer's most recent access."
+                    },
+                    "avgResponseTimeMs": {
+                        "type": [
+                            "number",
+                            "null"
+                        ],
+                        "minimum": 0,
+                        "description": "Average query response time in milliseconds experienced by this consumer during the observation period. Consumer-side latency may differ from producer-side SLO measurements due to network or middleware."
+                    },
+                    "p95ResponseTimeMs": {
+                        "type": [
+                            "number",
+                            "null"
+                        ],
+                        "minimum": 0,
+                        "description": "95th percentile response time in milliseconds experienced by this consumer. Primary signal for response time SLO evaluation from the consumer perspective."
+                    },
+                    "sloBreachesReported": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "minimum": 0,
+                        "description": "Number of SLO breaches reported by this consumer against this contract during the observation period. A non-zero value here when the producer's own slo.* shows met=true indicates a perception gap that warrants investigation."
+                    },
+                    "sloBreachDetails": {
+                        "type": "array",
+                        "description": "Optional detail on each consumer-reported SLO breach. Useful for reconciling producer-observed vs. consumer-experienced fitness.",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "dimension",
+                                "reportedAt"
+                            ],
+                            "properties": {
+                                "dimension": {
+                                    "type": "string",
+                                    "enum": [
+                                        "freshness",
+                                        "quality",
+                                        "responseTime",
+                                        "uptime"
+                                    ],
+                                    "description": "The SLO dimension the consumer observed as breached."
+                                },
+                                "reportedAt": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "description": "UTC timestamp when the breach was reported or detected."
+                                },
+                                "detail": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ],
+                                    "description": "Human-readable description of the breach as experienced by the consumer.",
+                                    "maxLength": 512
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },
@@ -691,6 +795,7 @@
                     "lastRunAt": "2026-03-13T08:45:00Z",
                     "durationSeconds": null,
                     "status": "failed",
+                    "recordsProcessed": null,
                     "computeCreditsUsed": null,
                     "errorMessage": "Source system unavailable: connection timeout after 30s"
                 },
@@ -798,6 +903,11 @@
                         "rulesPassed": 9,
                         "rulesFailed": 3,
                         "checks": []
+                    },
+                    "usage": {
+                        "activeConsumers": 2,
+                        "queryCount": 94,
+                        "lastAccessedAt": "2026-03-13T08:58:00Z"
                     }
                 }
             ],
@@ -816,6 +926,34 @@
                 "queryCount": 187,
                 "lastAccessedAt": "2026-03-13T08:58:00Z"
             },
+            "contractUsage": [
+                {
+                    "contractId": "c2798941-1b7e-4b03-9e0d-955b1a872b33",
+                    "consumerId": "bi-platform",
+                    "queryCount": 134,
+                    "lastAccessedAt": "2026-03-13T08:58:00Z",
+                    "avgResponseTimeMs": 143,
+                    "p95ResponseTimeMs": 289,
+                    "sloBreachesReported": 0,
+                    "sloBreachDetails": []
+                },
+                {
+                    "contractId": "c2798941-1b7e-4b03-9e0d-955b1a872b33",
+                    "consumerId": "ml-platform",
+                    "queryCount": 53,
+                    "lastAccessedAt": "2026-03-13T07:12:00Z",
+                    "avgResponseTimeMs": 310,
+                    "p95ResponseTimeMs": 612,
+                    "sloBreachesReported": 1,
+                    "sloBreachDetails": [
+                        {
+                            "dimension": "freshness",
+                            "reportedAt": "2026-03-13T08:10:00Z",
+                            "detail": "Data not updated after 75 min — pipeline failure not reflected in producer SLO status at time of access"
+                        }
+                    ]
+                }
+            ],
             "customProperties": [
                 {
                     "property": "com.myplatform.databricks.clusterName",

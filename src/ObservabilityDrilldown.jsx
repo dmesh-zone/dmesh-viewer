@@ -49,9 +49,18 @@ const MetricCard = ({ title, status, value, unit, detail, icon }) => {
                 </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', marginBottom: '4px' }}>
-                <span style={{ fontSize: '24px', fontWeight: '700', color: 'var(--m3-on-surface)' }}>{value}</span>
-                <span style={{ fontSize: '12px', color: 'var(--m3-on-surface-variant)' }}>{unit}</span>
+            <div style={{ display: 'flex', gap: '24px', marginBottom: '4px' }}>
+                {Array.isArray(value) ? value.map((v, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
+                        <span style={{ fontSize: '24px', fontWeight: '700', color: 'var(--m3-on-surface)' }}>{v}</span>
+                        <span style={{ fontSize: '12px', color: 'var(--m3-on-surface-variant)' }}>{unit[i]}</span>
+                    </div>
+                )) : (
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
+                        <span style={{ fontSize: '24px', fontWeight: '700', color: 'var(--m3-on-surface)' }}>{value}</span>
+                        <span style={{ fontSize: '12px', color: 'var(--m3-on-surface-variant)' }}>{unit}</span>
+                    </div>
+                )}
             </div>
 
             <div style={{ fontSize: '12px', color: 'var(--m3-on-surface-variant)', lineHeight: '1.4' }}>
@@ -61,28 +70,55 @@ const MetricCard = ({ title, status, value, unit, detail, icon }) => {
     );
 };
 
+const formatDuration = (seconds) => {
+    if (seconds == null) return null;
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    return `${hrs}h ${mins}m`;
+};
+
+const formatRecords = (count) => {
+    if (count == null) return null;
+    if (count < 1000) return count.toString();
+    if (count < 1000000) return (count / 1000).toFixed(1) + 'k';
+    if (count < 1000000000) return (count / 1000000).toFixed(1) + 'M';
+    return (count / 1000000000).toFixed(1) + 'B';
+};
+
 const ObservabilityDrilldown = ({ metrics, filterText, activeTab }) => {
+
     if (!metrics) return <div style={{ padding: '20px', color: 'var(--m3-on-surface-variant)' }}>No observability data available.</div>;
 
     // Helper to determine status for cards
     const getCardStatus = (dim) => {
         if (dim === 'SLO') {
-            if (metrics.slo?.uptime?.met === false || metrics.slo?.qualityScore?.met === false) return 'critical';
+            if (metrics.slo?.responseTime?.met == null && metrics.slo?.uptime?.met == null) return 'unknown';
+
+            if (metrics.slo?.responseTime?.met === false || metrics.slo?.uptime?.met === false) {
+                const responseTimeCrit = metrics.slo.responseTime?.actualP95Ms > 2 * metrics.slo.responseTime?.objectiveMs;
+                const uptimeCrit = metrics.slo.uptime?.actualPct < (metrics.slo.uptime?.objectivePct - 20);
+                if (responseTimeCrit || uptimeCrit) return 'critical';
+                return 'degraded';
+            }
+
             return 'healthy';
         }
         if (dim === 'Freshness') {
-            if (metrics.dynamic?.freshness?.lagMinutes > 120) return 'critical';
+            const lag = metrics.dynamic?.freshness?.lagMinutes;
+            const max = metrics.dynamic?.freshness?.maxAllowedLagMinutes;
+            if (lag != null && max != null && lag > 2 * max) return 'critical';
             if (metrics.dynamic?.freshness?.withinExpectation === false) return 'degraded';
             return 'healthy';
         }
         if (dim === 'Quality') {
-            if (metrics.dynamic?.quality?.rulesFailed > 0) return 'critical';
+            const failed = metrics.dynamic?.quality?.rulesFailed || 0;
+            if (failed > 1) return 'critical';
+            if (failed === 1) return 'degraded';
             return 'healthy';
         }
         if (dim === 'Pipeline') {
             if (metrics.physical?.pipeline?.status === 'failed') return 'critical';
-            if (metrics.physical?.pipeline?.status === 'running') return 'healthy';
-            return 'unknown';
+            return 'healthy';
         }
         return 'unknown';
     };
@@ -93,11 +129,37 @@ const ObservabilityDrilldown = ({ metrics, filterText, activeTab }) => {
                 {activeTab === 'metrics' ? (
                     <div>
                         <MetricCard 
+                            title="Pipeline Status" 
+                            status={getCardStatus('Pipeline')}
+                            value={metrics.physical?.pipeline?.status?.toUpperCase() || 'UNKNOWN'}
+                            unit=""
+                            detail={(() => {
+                                let details = [];
+                                if (getCardStatus('Pipeline') === 'critical') {
+                                    if (metrics.physical?.pipeline?.errorMessage) {
+                                        details.push(`Failure reason: ${metrics.physical.pipeline.errorMessage}`);
+                                    }
+                                } else if (getCardStatus('Pipeline') === 'healthy') {
+                                    const durationStr = formatDuration(metrics.physical?.pipeline?.durationInSeconds);
+                                    const recordsStr = formatRecords(metrics.physical?.pipeline?.recordsProcessed);
+                                    if (durationStr) details.push(`Duration: ${durationStr}`);
+                                    if (recordsStr) details.push(`Records processed: ${recordsStr}`);
+                                }
+                                if (details.length > 0) return details.join(' | ');
+                                return `Last run: ${new Date(metrics.asOf).toLocaleString()}. Next: ${metrics.physical?.pipeline?.nextRun || 'N/A'}.`;
+                            })()}
+
+                            icon="▸"
+                        />
+                        <MetricCard 
                             title="Service Level Objectives" 
                             status={getCardStatus('SLO')}
-                            value={metrics.slo?.uptime?.value || 'N/A'}
-                            unit="%"
-                            detail={`Target: ${metrics.slo?.uptime?.target}%. Freshness: ${metrics.slo?.freshness?.met ? 'Met' : 'Missed'}.`}
+                            value={[
+                                metrics.slo?.uptime?.actualPct || 'N/A', 
+                                metrics.slo?.responseTime?.actualP95Ms || 'N/A'
+                            ]}
+                            unit={['% Uptime', 'ms Response time']}
+                            detail={`Target uptime: ${metrics.slo?.uptime?.objectivePct || '?'}% and Target response time: ${metrics.slo?.responseTime?.objectiveMs || '?'} ms`}
                             icon="◈"
                         />
                         <MetricCard 
@@ -105,7 +167,11 @@ const ObservabilityDrilldown = ({ metrics, filterText, activeTab }) => {
                             status={getCardStatus('Freshness')}
                             value={metrics.dynamic?.freshness?.lagMinutes || 0}
                             unit="min lag"
-                            detail={`Max Allowed: ${metrics.dynamic?.freshness?.maxAllowedLagMinutes}m. ${metrics.dynamic?.freshness?.withinExpectation ? 'Within expectations.' : 'Outside expectations.'}`}
+                            detail={
+                                metrics.dynamic?.freshness?.maxAllowedLagMinutes != null
+                                ? `Max Allowed: ${metrics.dynamic.freshness.maxAllowedLagMinutes}m. ${metrics.dynamic.freshness.withinExpectation ? 'Within expectations.' : 'Outside expectations.'}`
+                                : 'Max Allowed: unknown'
+                            }
                             icon="⧗"
                         />
                         <MetricCard 
@@ -115,14 +181,6 @@ const ObservabilityDrilldown = ({ metrics, filterText, activeTab }) => {
                             unit={`/ ${ (metrics.dynamic?.quality?.rulesPassed || 0) + (metrics.dynamic?.quality?.rulesFailed || 0) } tests`}
                             detail={`Score: ${metrics.dynamic?.quality?.score}%. Failed: ${metrics.dynamic?.quality?.rulesFailed}.`}
                             icon="✦"
-                        />
-                        <MetricCard 
-                            title="Pipeline Status" 
-                            status={getCardStatus('Pipeline')}
-                            value={metrics.physical?.pipeline?.status?.toUpperCase() || 'UNKNOWN'}
-                            unit=""
-                            detail={`Last run: ${new Date(metrics.asOf).toLocaleString()}. Next scheduled: ${metrics.physical?.pipeline?.nextRun || 'N/A'}.`}
-                            icon="▸"
                         />
                     </div>
                 ) : activeTab === 'events' ? (

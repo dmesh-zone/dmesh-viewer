@@ -82,7 +82,7 @@ export default memo(({ data, isConnectable }) => {
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                     {observeMode && pips && (
                         <div style={{ display: 'flex', gap: '4px', marginRight: '8px' }}>
-                            {['slo', 'freshness', 'quality', 'pipeline'].map((dim) => (
+                            {['pipeline', 'slo', 'freshness', 'quality'].map((dim) => (
                                 <div
                                     key={dim}
                                     title={dim.toUpperCase()}

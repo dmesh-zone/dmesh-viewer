@@ -44,7 +44,7 @@ In scope for this specification:
 
 - Observe Mode toggle and two-level health shading on the mesh graph
 
-- Dimension filter sub-menu (Any / SLO / Freshness / Quality / Pipeline)
+- Dimension filter sub-menu (Any / Pipeline / SLOs / Freshness / Quality)
 
 - Animated edge health propagation
 
@@ -101,7 +101,7 @@ Requirements are expressed as user stories following the standard format: As a [
 
 ##### Acceptance Criteria
 
-- When Observe Mode is active, each data product node is shaded according to its worst-case health status derived from all four dimensions (SLO, Freshness, Quality, Pipeline).
+- When Observe Mode is active, each data product node is shaded according to its worst-case health status derived from all four dimensions (Pipeline, SLOs, Freshness, Quality).
 
 - Shading follows this priority: **critical (red) > degraded (amber) > healthy (green) > unknown (dark gray)**
 
@@ -123,7 +123,7 @@ Requirements are expressed as user stories following the standard format: As a [
 
 ##### Acceptance Criteria
 
-- When Observe Mode is active, each data product node displays four small pip icons representing SLO (◈), Freshness (⧗), Quality (✦), and Pipeline (▸).
+- When Observe Mode is active, each data product node displays four small pip icons representing Pipeline (▸), SLOs (◈), Freshness (⧗), and Quality (✦).
 
 - Each pip is independently coloured green, amber, or red based on that dimension's status.
 
@@ -138,14 +138,14 @@ Requirements are expressed as user stories following the standard format: As a [
 | **Field** | **Detail** |
 | --- | --- |
 | Role      | Platform operator, data product owner                                                                                                                                                                   |
-| Story     | I want a second-level sub-menu that lets me filter node shading to a single dimension so that I can isolate which specific health concern (SLO, Freshness, Quality, or Pipeline) is affecting the mesh. |
+| Story     | I want a second-level sub-menu that lets me filter node shading to a single dimension so that I can isolate which specific health concern (Pipeline, SLOs, Freshness, or Quality) is affecting the mesh. |
 | Priority  | P0                                                                                                                                                                                                      |
 
 ##### Acceptance Criteria
 
 - The dimension sub-menu appears below the OBSERVE button immediately when Observe Mode is activated.
 
-- The sub-menu offers five options: Any (default), SLO, Freshness, Quality, Pipeline.
+- The sub-menu offers five options: Any (default), Pipeline, SLOs, Freshness, Quality.
 
 - Selecting a dimension re-shades all nodes to reflect that dimension's health only, within 200ms.
 
@@ -231,14 +231,14 @@ Requirements are expressed as user stories following the standard format: As a [
 | **Field** | **Detail** |
 | --- | --- |
 | Role      | Data product owner, platform operator                                                                                                                                                                           |
-| Story     | I want a Metrics tab in the drilldown panel that shows the current SLO, Freshness, Quality, and Pipeline health for the selected data product so that I can understand the current operational state in detail. |
+| Story     | I want a Metrics tab in the drilldown panel that shows the current Pipeline, SLOs, Freshness, and Quality health for the selected data product so that I can understand the current operational state in detail. |
 | Priority  | P0                                                                                                                                                                                                              |
 
 ##### Acceptance Criteria
 
 - The Metrics tab is the default active tab when the panel opens.
 
-- When no dimension filter is active, all four dimension cards are displayed: SLO, Freshness, Quality, Pipeline.
+- When no dimension filter is active, all four dimension cards are displayed: Pipeline, SLOs, Freshness, Quality.
 
 - When a dimension filter is active, only the card for that dimension is displayed.
 
@@ -246,9 +246,25 @@ Requirements are expressed as user stories following the standard format: As a [
 
 - Cards reveal with a staggered animation (100ms delay between cards) when the panel opens.
 
-- Card border colour matches the dimension's health status (green / amber / red).
-
 - All metric values are sourced from the /observe/metrics response for the selected output port's contractId.
+
+- **Pipeline Metric Card Specifics:**
+  - If `physical.pipeline.status` equals failed, pipeline status should be CRITICAL. "Failure reason: <errorMessage>" will be shown in the card using the value from `physical.pipeline.errorMessage`.
+  - If `physical.pipeline.status` is healthy (i.e. not "failed"), and `physical.pipeline.durationInSeconds` and `physical.pipeline.recordsProcessed` are available, they should be shown in the card's detail section.
+  - Duration is formatted as `Nh Nm` (e.g., 1h 30m, 0h 45m).
+  - "Records processed: " should prefix the formatted number of records. Records are formatted concisely: 
+    - `< 1000`: `nnn` 
+    - `< 1,000,000`: `Nk.N` (e.g., 1.5k)
+    - `< 1,000,000,000`: `NM.N` (e.g., 1.5M)
+    - `≥ 1,000,000,000`: `NB.N` (e.g., 1.5B)
+    
+- **SLOs Metric Card Specifics:**
+  - Instead of a single primary value and unit, the SLO card should display two distinct primary values:
+    - `{slo.uptime.actualPct}%` labelled with "Uptime"
+    - `{slo.responseTime.actualP95Ms} ms` labelled with "Response time"
+  - The detail reference text below the values should display: `Target uptime: {slo.uptime.objectivePct}% and Target response time: {slo.responseTime.objectiveMs} ms`
+
+
 
 #### US-09 · Events Tab
 
@@ -389,10 +405,10 @@ The following state machine governs the Observe Mode lifecycle:
 
 | **Dimension** | **Icon** | **Scope** | **Source in /observe/metrics** |
 | --- | --- | --- | --- |
-| SLO           | ◈        | Overall service level objective evaluation      | slo.uptime, slo.freshness, slo.qualityScore, slo.responseTime |
+| Pipeline      | ▸        | Most recent pipeline run status and duration    | physical.pipeline.status                                      |
+| SLOs          | ◈        | Overall service level objective evaluation      | slo.uptime, slo.qualityScore, slo.responseTime |
 | Freshness     | ⧗        | Data lag vs. max allowed lag from ODCS contract | dynamic.freshness.lagMinutes vs maxAllowedLagMinutes          |
 | Quality       | ✦        | Quality rule pass rate from ODCS contract rules | dynamic.quality.rulesPassed / rulesTotal                      |
-| Pipeline      | ▸        | Most recent pipeline run status and duration    | physical.pipeline.status                                      |
 
 ### 3.5 Drilldown Panel Layout
 
@@ -443,7 +459,7 @@ The composite status field on each node is not taken directly from the API respo
 
 ```javascript
 function deriveStatus(metrics, dimension) {
-  const dims = dimension ? [dimension] : ['slo', 'freshness', 'quality', 'pipeline'];
+  const dims = dimension ? [dimension] : ['pipeline', 'slo', 'freshness', 'quality'];
   for (const d of dims) {
     if (isDimCritical(metrics, d)) return 'critical';
   }
@@ -458,10 +474,12 @@ function deriveStatus(metrics, dimension) {
 
 | **Dimension** | **Critical condition** | **Degraded condition** | **Healthy condition** |
 |---|---|---|---|
-| SLO           | slo.uptime.met === false                                | Any slo.\*.met === false                                      | All slo.\*.met === true    |
+| Pipeline      | physical.pipeline.status === "failed"                   | N/A                                                          | physical.pipeline.status !== "failed"      |
+| SLOs          | (responseTime.met=F OR uptime.met=F) AND (actualP95>2×obj OR actualPct<obj-20) | (responseTime.met=F OR uptime.met=F) AND NOT Critical          | responseTime.met=T AND uptime.met=T        |
 | Freshness     | dynamic.freshness.lagMinutes > 2× maxAllowedLagMinutes | dynamic.freshness.withinExpectation === false                 | withinExpectation === true |
 | Quality       | dynamic.quality.rulesFailed > 1                        | dynamic.quality.rulesFailed === 1                             | rulesFailed === 0          |
-| Pipeline      | physical.pipeline.status === "failed"                   | physical.pipeline.status === "running" and duration > 2× p95 | status === "success"       |
+
+*Note on Unknown states: A dimension evaluates to `unknown` if there is insufficient metric data available. For SLOs specifically, the dimension is `unknown` if both `slo.responseTime.met` and `slo.uptime.met` are null or unavailable.*
 
 ## 6. Implementation Notes
 
@@ -480,7 +498,7 @@ function deriveStatus(metrics, dimension) {
 | **State key**   | **Type**                                   | **Description**                                                                            |
 |-----------------|--------------------------------------------|--------------------------------------------------------------------------------------------|
 | observeMode     | boolean                                    | Whether Observe Mode is currently active                                                   |
-| activeDimension | string \| null                             | Active dimension filter: "slo" \| "freshness" \| "quality" \| "pipeline" \| null (= worst) |
+| activeDimension | string \| null                             | Active dimension filter: "pipeline" \| "slo" \| "freshness" \| "quality" \| null (= worst) |
 | metricsCache    | Map\<productId, MetricsResponse\>          | Cached /observe/metrics responses for the session                                          |
 | fetchStatus     | Map\<productId, "pending"\|"ok"\|"error"\> | Per-node fetch state for loading indicators                                                |
 | drillNodeId     | string \| null                             | Currently selected node's productId, or null                                               |

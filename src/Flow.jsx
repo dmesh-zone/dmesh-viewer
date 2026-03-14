@@ -164,13 +164,6 @@ function Flow() {
         return () => window.removeEventListener('hashchange', handleHashChange);
     }, []);
 
-    // Reset tab to visual when opening new content
-    React.useEffect(() => {
-        if (sidePanelContent) {
-            setSidePanelTab('visual');
-            setSidePanelFilter('');
-        }
-    }, [sidePanelContent]);
     const [isResizing, setIsResizing] = React.useState(false);
 
     const processRegistryText = (text) => {
@@ -232,7 +225,6 @@ function Flow() {
                     const clonedItem = JSON.parse(JSON.stringify(item));
                     if (clonedItem.asOf) clonedItem.asOf = shiftTimeIso(clonedItem.asOf);
                     if (clonedItem.slo?.uptime?.lastRunAt) clonedItem.slo.uptime.lastRunAt = shiftTimeIso(clonedItem.slo.uptime.lastRunAt);
-                    if (clonedItem.slo?.freshness?.lastRunAt) clonedItem.slo.freshness.lastRunAt = shiftTimeIso(clonedItem.slo.freshness.lastRunAt);
                     if (clonedItem.slo?.qualityScore?.lastRunAt) clonedItem.slo.qualityScore.lastRunAt = shiftTimeIso(clonedItem.slo.qualityScore.lastRunAt);
                     if (clonedItem.slo?.responseTime?.lastRunAt) clonedItem.slo.responseTime.lastRunAt = shiftTimeIso(clonedItem.slo.responseTime.lastRunAt);
                     if (clonedItem.dynamic?.freshness?.lastUpdatedAt) clonedItem.dynamic.freshness.lastUpdatedAt = shiftTimeIso(clonedItem.dynamic.freshness.lastUpdatedAt);
@@ -255,11 +247,30 @@ function Flow() {
     }, [dataMeshRegistry, adjustMetricsTime, isTestMode]);
 
     // Health Status Derivation Logic
+    const isDimUnknown = (metrics, dim) => {
+        if (!metrics) return true;
+        if (dim === 'slo') {
+            return metrics.slo?.responseTime?.met == null && metrics.slo?.uptime?.met == null;
+        }
+        return false;
+    };
+
     const isDimCritical = (metrics, dim) => {
         if (!metrics) return false;
         switch (dim) {
-            case 'slo': return metrics.slo?.uptime?.met === false || metrics.slo?.freshness?.met === false || metrics.slo?.qualityScore?.met === false || metrics.slo?.responseTime?.met === false;
-            case 'freshness': return metrics.dynamic?.freshness?.lagMinutes > 2 * (metrics.dynamic?.freshness?.maxAllowedLagMinutes || 0);
+            case 'slo': {
+                if (metrics.slo?.responseTime?.met === false || metrics.slo?.uptime?.met === false) {
+                    const responseTimeCrit = metrics.slo.responseTime?.actualP95Ms > 2 * metrics.slo.responseTime?.objectiveMs;
+                    const uptimeCrit = metrics.slo.uptime?.actualPct < (metrics.slo.uptime?.objectivePct - 20);
+                    return responseTimeCrit || uptimeCrit;
+                }
+                return false;
+            }
+            case 'freshness': {
+                const lag = metrics.dynamic?.freshness?.lagMinutes;
+                const max = metrics.dynamic?.freshness?.maxAllowedLagMinutes;
+                return lag != null && max != null && lag > 2 * max;
+            }
             case 'quality': return (metrics.dynamic?.quality?.rulesFailed || 0) > 1;
             case 'pipeline': return metrics.physical?.pipeline?.status === 'failed';
             default: return false;
@@ -269,10 +280,14 @@ function Flow() {
     const isDimDegraded = (metrics, dim) => {
         if (!metrics) return false;
         switch (dim) {
-            case 'slo': return metrics.slo && (metrics.slo.uptime?.met === false || metrics.slo.freshness?.met === false || metrics.slo.qualityScore?.met === false || metrics.slo.responseTime?.met === false);
+            case 'slo': {
+                if (isDimCritical(metrics, 'slo')) return false;
+                return metrics.slo?.responseTime?.met === false || metrics.slo?.uptime?.met === false;
+            }
             case 'freshness': return metrics.dynamic?.freshness?.withinExpectation === false;
             case 'quality': return metrics.dynamic?.quality?.rulesFailed === 1;
-            case 'pipeline': return metrics.physical?.pipeline?.status === 'running' && (metrics.physical?.pipeline?.durationSeconds > 2 * 3600); // Mock duration check
+            case 'pipeline': return false; // Pipeline only has critical or healthy states
+
             default: return false;
         }
     };
@@ -281,13 +296,17 @@ function Flow() {
         const metrics = metricsMap.get(productId);
         if (!metrics) return 'unknown';
 
-        const dims = dimension ? [dimension] : ['slo', 'freshness', 'quality', 'pipeline'];
+        const dims = dimension ? [dimension] : ['pipeline', 'slo', 'freshness', 'quality'];
 
         for (const d of dims) {
             if (isDimCritical(metrics, d)) return 'critical';
         }
         for (const d of dims) {
             if (isDimDegraded(metrics, d)) return 'degraded';
+        }
+
+        for (const d of dims) {
+            if (isDimUnknown(metrics, d)) return 'unknown';
         }
 
         // Check if all requested dims are healthy
@@ -1075,6 +1094,8 @@ function Flow() {
                 setSidePanelTab('metrics');
             } else if (['data-product-yaml', 'data-contract-yaml', 'agreement-yaml'].includes(type)) {
                 setSidePanelTab('visual');
+            } else {
+                setSidePanelTab('yaml');
             }
 
 
@@ -1448,8 +1469,8 @@ function Flow() {
                             border: '1px solid #e2e8f0',
                             animation: 'slideDown 0.3s ease-out'
                         }}>
-                            {['Any', 'SLO', 'Freshness', 'Quality', 'Pipeline'].map(dim => {
-                                const dimKey = dim === 'Any' ? null : dim.toLowerCase();
+                            {['Any', 'Pipeline', 'SLOs', 'Freshness', 'Quality'].map(dim => {
+                                const dimKey = dim === 'Any' ? null : (dim === 'SLOs' ? 'slo' : dim.toLowerCase());
                                 const isActive = activeDimension === dimKey;
                                 return (
                                     <button

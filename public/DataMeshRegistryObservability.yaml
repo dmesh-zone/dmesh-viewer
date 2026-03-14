@@ -2170,26 +2170,18 @@
   consumer:
     teamId: petstore-analytics-team
     dataProductId: urn:petstore:curated:unified-retail
-
-
-
-
-
-
-
-
-
 - kind: DataProductObservabilityMetrics
   schemaVersion: 0.0.1
   productId: urn:petstore-a:source-aligned:retail-data
   asOf: 2026-03-02T06:00:00Z
-  period: PT1H
+  period: P1D
   status: healthy
   physical:
     pipeline:
       status: success
       lastRunAt: 2026-03-02T05:50:00Z
       durationSeconds: 120
+      recordsProcessed: 1500
   dynamic:
     freshness:
       withinExpectation: true
@@ -2202,21 +2194,29 @@
   slo:
     uptime:
       met: true
+      actualPct: 99.8
+      objectivePct: 99.5
     freshness:
       met: true
     qualityScore:
       met: true
+    responseTime:
+      met: true
+      actualP95Ms: 120
+      objectiveMs: 200
 
 - kind: DataProductObservabilityMetrics
   schemaVersion: 0.0.1
   productId: urn:petstore-b:source-aligned:retail-data
   asOf: 2026-03-02T06:00:00Z
-  period: PT1H
+  period: P1D
   status: degraded
   physical:
     pipeline:
       status: success
       lastRunAt: 2026-03-02T05:30:00Z
+      durationSeconds: 3600
+      recordsProcessed: 4500000
   dynamic:
     freshness:
       withinExpectation: true
@@ -2233,8 +2233,6 @@
   slo:
     uptime:
       met: true
-    freshness:
-      met: true
     qualityScore:
       met: false
       actualPassRate: 0.88
@@ -2244,7 +2242,7 @@
   schemaVersion: 0.0.1
   productId: urn:food-production:source-aligned:manufacturing-data
   asOf: 2026-03-02T06:00:00Z
-  period: PT1H
+  period: P1D
   status: critical
   physical:
     pipeline:
@@ -2263,11 +2261,8 @@
   slo:
     uptime:
       met: false
-      actualPct: 92.0
-    freshness:
-      met: false
-      actualMinutes: 120
-      objectiveMinutes: 60
+      objectivePct: 95.0
+      actualPct: 50.0
     qualityScore:
       met: false
 
@@ -2275,11 +2270,13 @@
   schemaVersion: 0.0.1
   productId: urn:petstore:curated:unified-retail
   asOf: 2026-03-02T06:00:00Z
-  period: PT1H
+  period: P1D
   status: healthy
   physical:
     pipeline:
       status: success
+      durationSeconds: 90
+      recordsProcessed: 455
   dynamic:
     freshness:
       withinExpectation: true
@@ -2290,16 +2287,17 @@
   slo:
     uptime:
       met: true
-
 - kind: DataProductObservabilityMetrics
   schemaVersion: 0.0.1
   productId: urn:food-production:curated:production-analytics
   asOf: 2026-03-02T06:00:00Z
-  period: PT1H
+  period: P1D
   status: degraded
   physical:
     pipeline:
       status: success
+      durationSeconds: 7200
+      recordsProcessed: 2500000000
   dynamic:
     freshness:
       withinExpectation: false
@@ -2312,10 +2310,6 @@
   slo:
     uptime:
       met: true
-    freshness:
-      met: false
-      actualMinutes: 45
-      objectiveMinutes: 30
     qualityScore:
       met: true
 
@@ -2323,7 +2317,7 @@
   schemaVersion: 0.0.1
   productId: urn:petstore:consumer-aligned:business-analytics
   asOf: 2026-03-02T06:00:00Z
-  period: PT1H
+  period: P1D
   status: healthy
   physical:
     pipeline:
@@ -2338,24 +2332,37 @@
   slo:
     uptime:
       met: true
-
 - kind: DataProductObservabilityMetrics
   schemaVersion: 0.0.1
   productId: urn:food-production:consumer-aligned:operations-analytics
   asOf: 2026-03-02T06:00:00Z
-  period: PT1H
+  period: P1D
   status: healthy
   physical:
     pipeline:
+      lastRunAt: 2026-03-02T05:50:00Z
+      durationSeconds: 310
       status: success
+      recordsProcessed: 1500
+  usage:
+    activeConsumers: 1
+    queryCount: 210
+    lastAccessedAt: 2026-03-02T05:58:00Z
+  slo:
+    responseTime:
+      objectiveMs: 10000
+      actualP95Ms: 7734
+      met: true
+    uptime:
+      objectivePct: 95.0
+      actualPct: 99.0
+      met: true
   dynamic:
     freshness:
+      lagMinutes: 10
+      maxAllowedLagMinutes: 60
       withinExpectation: true
     quality:
       rulesTotal: 20
       rulesPassed: 20
       rulesFailed: 0
-
-
-
-
