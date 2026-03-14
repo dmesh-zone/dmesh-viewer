@@ -145,7 +145,7 @@ function Flow() {
 
     // Observability State
     const [observeMode, setObserveMode] = React.useState(false);
-    const [activeDimension, setActiveDimension] = React.useState(null); // null = 'worst'
+    const [activeDimension, setActiveDimension] = React.useState(null); // null = 'any'
     const [metricsMap, setMetricsMap] = React.useState(new Map());
     const [drillNodeId, setDrillNodeId] = React.useState(null);
     const [hideHealthy, setHideHealthy] = React.useState(false);
@@ -1379,8 +1379,8 @@ function Flow() {
                             border: '1px solid #e2e8f0',
                             animation: 'slideDown 0.3s ease-out'
                         }}>
-                            {['Worst', 'SLO', 'Freshness', 'Quality', 'Pipeline'].map(dim => {
-                                const dimKey = dim === 'Worst' ? null : dim.toLowerCase();
+                            {['Any', 'SLO', 'Freshness', 'Quality', 'Pipeline'].map(dim => {
+                                const dimKey = dim === 'Any' ? null : dim.toLowerCase();
                                 const isActive = activeDimension === dimKey;
                                 return (
                                     <button

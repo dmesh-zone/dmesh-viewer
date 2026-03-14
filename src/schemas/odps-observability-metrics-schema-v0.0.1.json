@@ -52,7 +52,7 @@
         },
         "status": {
             "type": "string",
-            "description": "Composite worst-case health status derived across all dimensions and output ports. Maps directly to the node shading colour in the mesh visualisation.",
+            "description": "Composite any-case health status derived across all dimensions and output ports. Maps directly to the node shading colour in the mesh visualisation.",
             "enum": [
                 "healthy",
                 "degraded",
@@ -546,7 +546,7 @@
                             "critical",
                             "unknown"
                         ],
-                        "description": "Worst-case composite health for this specific output port."
+                        "description": "Any-case composite health for this specific output port."
                     },
                     "freshness": {
                         "$ref": "#/properties/dynamic/properties/freshness",

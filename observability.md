@@ -44,7 +44,7 @@ In scope for this specification:
 
 - Observe Mode toggle and two-level health shading on the mesh graph
 
-- Dimension filter sub-menu (Worst / SLO / Freshness / Quality / Pipeline)
+- Dimension filter sub-menu (Any / SLO / Freshness / Quality / Pipeline)
 
 - Animated edge health propagation
 
@@ -91,7 +91,7 @@ Requirements are expressed as user stories following the standard format: As a [
 
 - A keyboard shortcut (⌘ + Shift + O / Ctrl + Shift + O) triggers the same toggle.
 
-#### US-02 · Composite Worst-Case Health Shading
+#### US-02 · Composite Any-Case Health Shading
 
 | **Field** | **Detail** |
 | --- | --- |
@@ -145,7 +145,7 @@ Requirements are expressed as user stories following the standard format: As a [
 
 - The dimension sub-menu appears below the OBSERVE button immediately when Observe Mode is activated.
 
-- The sub-menu offers five options: Worst (default), SLO, Freshness, Quality, Pipeline.
+- The sub-menu offers five options: Any (default), SLO, Freshness, Quality, Pipeline.
 
 - Selecting a dimension re-shades all nodes to reflect that dimension's health only, within 200ms.
 
@@ -153,7 +153,7 @@ Requirements are expressed as user stories following the standard format: As a [
 
 - Switching dimensions is instantaneous with no loading state required.
 
-- Selecting "Worst" (default) returns to composite worst-case shading.
+- Selecting "Any" (default) returns to composite worst-case shading.
 
 - The sub-menu is hidden when Observe Mode is deactivated.
 
@@ -334,7 +334,7 @@ The following state machine governs the Observe Mode lifecycle:
 | --- | --- | --- |
 | Idle                 | Default / Observe Mode off                 | No shading. Edges static. No legend. No pips.                                                                              |
 | Fetching             | Observe Mode activated, requests in flight | Nodes shimmer grey. Spinner on OBSERVE button.                                                                             |
-| Observing (Worst)    | All fetches complete, no dimension filter  | Full RAG shading. Animated edges. Pips visible. Legend shown.                                                              |
+| Observing (Any)    | All fetches complete, no dimension filter  | Full RAG shading. Animated edges. Pips visible. Legend shown.                                                              |
 | Observing (Filtered) | Dimension selected in sub-menu             | RAG shading re-computed for active dimension only. Sub-menu highlights active item. Pips de-emphasise inactive dimensions. |
 | Drilldown open       | Node clicked in any Observing state        | Panel slides in. Node receives selection ring. Panel respects active dimension filter.                                     |
 | Error                | Fetch failure for one or more nodes        | Affected nodes shaded grey with ! indicator. Tooltip on hover explains the error.                                          |
