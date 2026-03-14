@@ -1,0 +1,2368 @@
+- kind: DataProduct
+  id: urn:petstore-a:source:operational-db
+  name: Petstore A
+  domain: petstore
+  status: active
+  apiVersion: v1.0.0
+  description:
+    purpose: Operational Oracle database for Petstore A retail operations
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: rdsoracle
+  outputPorts: []
+- kind: DataProduct
+  id: urn:petstore-b:source:operational-db
+  name: Petstore B
+  domain: petstore
+  status: active
+  apiVersion: v1.0.0
+  description:
+    purpose: Operational Oracle database for Petstore B retail operations
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: rdsoracle
+  outputPorts: []
+- kind: DataProduct
+  id: urn:food-production:source:operational-db
+  name: Food Production
+  domain: food_production
+  status: active
+  apiVersion: v1.0.0
+  description:
+    purpose: Operational Oracle database for Pet food manufacturing
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: rdsoracle
+  outputPorts: []
+- kind: DataProduct
+  id: urn:petstore-a:source-aligned:retail-data
+  name: Petstore A
+  domain: petstore
+  status: active
+  apiVersion: v1.0.0
+  description:
+    purpose: Source-aligned data from Petstore A operational database
+  customProperties:
+    - property: dataProductTier
+      value: sourceAligned
+    - property: technology
+      value: databricks
+  outputPorts:
+    - name: customers
+      version: "1"
+      contractId: urn:petstore-a:contract:retail-data
+    - name: orders
+      version: "1"
+      contractId: urn:petstore-a:contract:retail-data
+    - name: order_items
+      version: "1"
+      contractId: urn:petstore-a:contract:retail-data
+    - name: products
+      version: "1"
+      contractId: urn:petstore-a:contract:retail-data
+    - name: inventory
+      version: "1"
+      contractId: urn:petstore-a:contract:retail-data
+- kind: DataContract
+  id: urn:petstore-a:contract:retail-data
+  status: active
+  version: "1"
+  apiVersion: v3.0.1
+  servers:
+    - server: "Petstore workspace"
+      type: databricks
+      environment: dev
+      host: https://github.com/joaovicente/data-mesh-viewer/blob/main/README.md
+      catalog: petstore
+      schema: retail_data
+    - server: "Petstore workspace"
+      type: databricks
+      environment: qa
+      host: https://github.com/joaovicente/data-mesh-viewer/blob/main/README.md
+      catalog: petstore
+      schema: retail_data
+    - server: "Petstore workspace"
+      type: databricks
+      environment: prod
+      host: https://github.com/joaovicente/data-mesh-viewer/blob/main/README.md
+      catalog: petstore
+      schema: retail_data
+  roles:
+    - role: dataAnalyst
+      access: read
+    - role: dataEngineer
+      access: write
+  schema:
+    - name: customers
+      physicalType: table
+      description: Petstore A operational data for customers
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: customer_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - PSTA-C-001
+          quality:
+            - dimension: completeness
+              type: library
+              metric: nullValues
+              mustBe: 0
+        - name: first_name
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - John
+          quality:
+            - dimension: completeness
+              type: library
+              metric: nullValues
+              mustBe: 0
+        - name: last_name
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - Smith
+        - name: email
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - john.smith@email.com
+          quality:
+            - dimension: conformity
+              type: library
+              metric: invalidValues
+              mustBe: 0
+        - name: phone
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - +1-555-0101
+        - name: registration_date
+          logicalType: date
+          physicalType: DATE
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 2024-01-15
+    - name: orders
+      physicalType: table
+      description: Petstore A operational data for orders
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: order_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - PSTA-ORD-001
+          quality:
+            - dimension: uniqueness
+              type: library
+              metric: duplicateValues
+              mustBe: 0
+        - name: customer_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - PSTA-C-001
+          quality:
+            - dimension: completeness
+              type: library
+              metric: nullValues
+              mustBe: 0
+          relationships:
+            - to: customers.customer_id
+              type: foreignKey
+        - name: order_date
+          logicalType: timestamp
+          physicalType: TIMESTAMP
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 2024-06-01T10:30:00Z
+          quality:
+            - dimension: timeliness
+              type: sql
+              mustBe: 0
+              query: order_date <= CURRENT_TIMESTAMP()
+        - name: total_amount
+          logicalType: number
+          physicalType: DECIMAL(10,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 125.5
+          quality:
+            - dimension: conformity
+              type: sql
+              mustBe: 0
+              query: total_amount >= 0
+        - name: status
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - completed
+          quality:
+            - dimension: conformity
+              type: sql
+              mustBe: 0
+              query: status IN ('pending', 'completed', 'cancelled')
+    - name: order_items
+      physicalType: table
+      description: Petstore A operational data for order_items
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: order_item_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - PSTA-OI-001
+        - name: order_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - PSTA-ORD-001
+          relationships:
+            - to: orders.order_id
+              type: foreignKey
+        - name: product_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - PSTA-PRD-001
+          relationships:
+            - to: products.product_id
+              type: foreignKey
+        - name: quantity
+          logicalType: integer
+          physicalType: INT
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 2
+          quality:
+            - dimension: conformity
+              type: sql
+              mustBe: 0
+              query: quantity > 0
+        - name: unit_price
+          logicalType: number
+          physicalType: DECIMAL(10,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 29.99
+    - name: products
+      physicalType: table
+      description: Petstore A operational data for products
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: product_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - PSTA-PRD-001
+        - name: product_name
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - Premium Dog Food
+          quality:
+            - dimension: completeness
+              type: library
+              metric: nullValues
+              mustBe: 0
+        - name: category
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - dog_food
+        - name: price
+          logicalType: number
+          physicalType: DECIMAL(10,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 29.99
+          quality:
+            - dimension: conformity
+              type: sql
+              mustBe: 0
+              query: price > 0
+        - name: supplier_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - SUP-001
+    - name: inventory
+      physicalType: table
+      description: Petstore A operational data for inventory
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: inventory_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - PSTA-INV-001
+        - name: product_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - PSTA-PRD-001
+          relationships:
+            - to: products.product_id
+              type: foreignKey
+        - name: quantity_on_hand
+          logicalType: integer
+          physicalType: INT
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 150
+          quality:
+            - dimension: conformity
+              type: sql
+              mustBe: 0
+              query: quantity_on_hand >= 0
+        - name: reorder_point
+          logicalType: integer
+          physicalType: INT
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 50
+        - name: last_updated
+          logicalType: timestamp
+          physicalType: TIMESTAMP
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 2024-06-01T08:00:00Z
+- kind: DataProduct
+  id: urn:petstore-b:source-aligned:retail-data
+  name: Petstore B
+  domain: petstore
+  status: active
+  apiVersion: v1.0.0
+  description:
+    purpose: Source-aligned data from Petstore B operational database
+  customProperties:
+    - property: dataProductTier
+      value: sourceAligned
+    - property: technology
+      value: databricks
+  outputPorts:
+    - name: customers
+      version: "1"
+      contractId: urn:petstore-b:contract:retail-data
+    - name: orders
+      version: "1"
+      contractId: urn:petstore-b:contract:retail-data
+    - name: order_items
+      version: "1"
+      contractId: urn:petstore-b:contract:retail-data
+    - name: products
+      version: "1"
+      contractId: urn:petstore-b:contract:retail-data
+    - name: inventory
+      version: "1"
+      contractId: urn:petstore-b:contract:retail-data
+- kind: DataContract
+  id: urn:petstore-b:contract:retail-data
+  status: active
+  version: "1"
+  apiVersion: v3.0.1
+  schema:
+    - name: customers
+      physicalType: table
+      description: Petstore B operational data for customers
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: customer_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - PSTB-C-001
+          quality:
+            - dimension: completeness
+              type: library
+              metric: nullValues
+              mustBe: 0
+        - name: first_name
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - John
+          quality:
+            - dimension: completeness
+              type: library
+              metric: nullValues
+              mustBe: 0
+        - name: last_name
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - Smith
+        - name: email
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - john.smith@email.com
+          quality:
+            - dimension: conformity
+              type: library
+              metric: invalidValues
+              mustBe: 0
+        - name: phone
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - +1-555-0101
+        - name: registration_date
+          logicalType: date
+          physicalType: DATE
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 2024-01-15
+    - name: orders
+      physicalType: table
+      description: Petstore B operational data for orders
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: order_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - PSTB-ORD-001
+          quality:
+            - dimension: uniqueness
+              type: library
+              metric: duplicateValues
+              mustBe: 0
+        - name: customer_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - PSTB-C-001
+          quality:
+            - dimension: completeness
+              type: library
+              metric: nullValues
+              mustBe: 0
+          relationships:
+            - to: customers.customer_id
+              type: foreignKey
+        - name: order_date
+          logicalType: timestamp
+          physicalType: TIMESTAMP
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 2024-06-01T10:30:00Z
+          quality:
+            - dimension: timeliness
+              type: sql
+              mustBe: 0
+              query: order_date <= CURRENT_TIMESTAMP()
+        - name: total_amount
+          logicalType: number
+          physicalType: DECIMAL(10,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 125.5
+          quality:
+            - dimension: conformity
+              type: sql
+              mustBe: 0
+              query: total_amount >= 0
+        - name: status
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - completed
+          quality:
+            - dimension: conformity
+              type: sql
+              mustBe: 0
+              query: status IN ('pending', 'completed', 'cancelled')
+    - name: order_items
+      physicalType: table
+      description: Petstore B operational data for order_items
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: order_item_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - PSTB-OI-001
+        - name: order_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - PSTB-ORD-001
+          relationships:
+            - to: orders.order_id
+              type: foreignKey
+        - name: product_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - PSTB-PRD-001
+          relationships:
+            - to: products.product_id
+              type: foreignKey
+        - name: quantity
+          logicalType: integer
+          physicalType: INT
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 2
+          quality:
+            - dimension: conformity
+              type: sql
+              mustBe: 0
+              query: quantity > 0
+        - name: unit_price
+          logicalType: number
+          physicalType: DECIMAL(10,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 29.99
+    - name: products
+      physicalType: table
+      description: Petstore B operational data for products
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: product_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - PSTB-PRD-001
+        - name: product_name
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - Premium Dog Food
+          quality:
+            - dimension: completeness
+              type: library
+              metric: nullValues
+              mustBe: 0
+        - name: category
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - dog_food
+        - name: price
+          logicalType: number
+          physicalType: DECIMAL(10,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 29.99
+          quality:
+            - dimension: conformity
+              type: sql
+              mustBe: 0
+              query: price > 0
+        - name: supplier_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - SUP-001
+    - name: inventory
+      physicalType: table
+      description: Petstore B operational data for inventory
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: inventory_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - PSTB-INV-001
+        - name: product_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - PSTB-PRD-001
+          relationships:
+            - to: products.product_id
+              type: foreignKey
+        - name: quantity_on_hand
+          logicalType: integer
+          physicalType: INT
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 150
+          quality:
+            - dimension: conformity
+              type: sql
+              mustBe: 0
+              query: quantity_on_hand >= 0
+        - name: reorder_point
+          logicalType: integer
+          physicalType: INT
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 50
+        - name: last_updated
+          logicalType: timestamp
+          physicalType: TIMESTAMP
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 2024-06-01T08:00:00Z
+- kind: DataProduct
+  id: urn:food-production:source-aligned:manufacturing-data
+  name: Food Production
+  domain: food_production
+  status: active
+  apiVersion: v1.0.0
+  description:
+    purpose: Source-aligned data from food production operational database
+  customProperties:
+    - property: dataProductTier
+      value: sourceAligned
+    - property: technology
+      value: databricks
+  outputPorts:
+    - name: food_products
+      version: "1"
+      contractId: urn:food-production:contract:manufacturing-data
+    - name: recipes
+      version: "1"
+      contractId: urn:food-production:contract:manufacturing-data
+    - name: production_batches
+      version: "1"
+      contractId: urn:food-production:contract:manufacturing-data
+    - name: raw_materials
+      version: "1"
+      contractId: urn:food-production:contract:manufacturing-data
+    - name: suppliers
+      version: "1"
+      contractId: urn:food-production:contract:manufacturing-data
+- kind: DataContract
+  id: urn:food-production:contract:manufacturing-data
+  status: active
+  version: "1"
+  apiVersion: v3.0.1
+  schema:
+    - name: food_products
+      physicalType: table
+      description: Food production data for food_products
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: product_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - FP-001
+        - name: product_name
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - Premium Dog Food - Chicken
+        - name: category
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - dog_food
+        - name: weight_kg
+          logicalType: number
+          physicalType: DECIMAL(8,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 5
+        - name: protein_percentage
+          logicalType: number
+          physicalType: DECIMAL(5,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 28.5
+          quality:
+            - dimension: conformity
+              type: sql
+              mustBe: 0
+              query: protein_percentage BETWEEN 0 AND 100
+    - name: recipes
+      physicalType: table
+      description: Food production data for recipes
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: recipe_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - RCP-001
+        - name: product_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - FP-001
+          relationships:
+            - to: food_products.product_id
+              type: foreignKey
+        - name: material_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - MAT-001
+          relationships:
+            - to: raw_materials.material_id
+              type: foreignKey
+        - name: quantity_required
+          logicalType: number
+          physicalType: DECIMAL(10,3)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 2.5
+          quality:
+            - dimension: conformity
+              type: sql
+              mustBe: 0
+              query: quantity_required > 0
+    - name: production_batches
+      physicalType: table
+      description: Food production data for production_batches
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: batch_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - BATCH-2024-001
+        - name: product_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - FP-001
+          relationships:
+            - to: food_products.product_id
+              type: foreignKey
+        - name: batch_date
+          logicalType: date
+          physicalType: DATE
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 2024-06-01
+        - name: quantity_produced
+          logicalType: integer
+          physicalType: INT
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 1000
+          quality:
+            - dimension: conformity
+              type: sql
+              mustBe: 0
+              query: quantity_produced > 0
+        - name: quality_score
+          logicalType: number
+          physicalType: DECIMAL(5,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 98.5
+          quality:
+            - dimension: conformity
+              type: sql
+              mustBe: 0
+              query: quality_score BETWEEN 0 AND 100
+    - name: raw_materials
+      physicalType: table
+      description: Food production data for raw_materials
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: material_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - MAT-001
+        - name: material_name
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - Chicken Meal
+        - name: supplier_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - SUP-001
+          relationships:
+            - to: suppliers.supplier_id
+              type: foreignKey
+        - name: unit_cost
+          logicalType: number
+          physicalType: DECIMAL(10,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 5.5
+          quality:
+            - dimension: conformity
+              type: sql
+              mustBe: 0
+              query: unit_cost > 0
+    - name: suppliers
+      physicalType: table
+      description: Food production data for suppliers
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: supplier_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - SUP-001
+        - name: supplier_name
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - Premium Ingredients Inc
+        - name: contact_email
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - contact@supplier.com
+          quality:
+            - dimension: conformity
+              type: library
+              metric: invalidValues
+              mustBe: 0
+        - name: rating
+          logicalType: number
+          physicalType: DECIMAL(3,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 4.5
+          quality:
+            - dimension: conformity
+              type: sql
+              mustBe: 0
+              query: rating BETWEEN 0 AND 5
+- kind: DataProduct
+  id: urn:petstore:curated:unified-retail
+  name: Unified Petstore Retail Data
+  domain: petstore
+  status: active
+  apiVersion: v1.0.0
+  description:
+    purpose: Harmonized and integrated retail data from both petstores
+  customProperties:
+    - property: dataProductTier
+      value: curated
+    - property: technology
+      value: databricks
+  outputPorts:
+    - name: unified_customers
+      version: "1"
+      contractId: urn:petstore:contract:unified-retail
+    - name: unified_orders
+      version: "1"
+      contractId: urn:petstore:contract:unified-retail
+    - name: unified_products
+      version: "1"
+      contractId: urn:petstore:contract:unified-retail
+    - name: unified_inventory
+      version: "1"
+      contractId: urn:petstore:contract:unified-retail
+    - name: sales_facts
+      version: "1"
+      contractId: urn:petstore:contract:unified-retail
+    - name: customer_segments
+      version: "1"
+      contractId: urn:petstore:contract:unified-retail
+    - name: product_categories
+      version: "1"
+      contractId: urn:petstore:contract:unified-retail
+- kind: DataContract
+  id: urn:petstore:contract:unified-retail
+  status: active
+  version: "1"
+  apiVersion: v3.0.1
+  schema:
+    - name: unified_customers
+      physicalType: table
+      description:
+        Unified view of customers, orders, products, inventory, sales,
+        customer segments, and product categories data for unified_customers
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: unified_customer_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - UC-001
+        - name: source_system
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - petstore_a
+        - name: first_name
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - John
+        - name: email
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - john@email.com
+          quality:
+            - dimension: conformity
+              type: library
+              metric: invalidValues
+              mustBe: 0
+    - name: unified_orders
+      physicalType: table
+      description:
+        Unified view of customers, orders, products, inventory, sales,
+        customer segments, and product categories data for unified_orders
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: unified_order_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - UO-001
+        - name: unified_customer_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - UC-001
+          relationships:
+            - to: unified_customers.unified_customer_id
+              type: foreignKey
+        - name: order_date
+          logicalType: timestamp
+          physicalType: TIMESTAMP
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 2024-06-01T10:00:00Z
+        - name: total_amount
+          logicalType: number
+          physicalType: DECIMAL(10,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 150
+    - name: unified_products
+      physicalType: table
+      description:
+        Unified view of customers, orders, products, inventory, sales,
+        customer segments, and product categories data for unified_products
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: unified_product_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - UP-001
+        - name: product_name
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - Premium Dog Food
+        - name: category_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - CAT-001
+          relationships:
+            - to: product_categories.category_id
+              type: foreignKey
+    - name: unified_inventory
+      physicalType: table
+      description:
+        Unified view of customers, orders, products, inventory, sales,
+        customer segments, and product categories data for unified_inventory
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: inventory_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - UI-001
+        - name: unified_product_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - UP-001
+          relationships:
+            - to: unified_products.unified_product_id
+              type: foreignKey
+        - name: total_quantity
+          logicalType: integer
+          physicalType: INT
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 500
+    - name: sales_facts
+      physicalType: table
+      description:
+        Unified view of customers, orders, products, inventory, sales,
+        customer segments, and product categories data for sales_facts
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: sale_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - SALE-001
+        - name: unified_customer_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - UC-001
+          relationships:
+            - to: unified_customers.unified_customer_id
+              type: foreignKey
+        - name: unified_product_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - UP-001
+          relationships:
+            - to: unified_products.unified_product_id
+              type: foreignKey
+        - name: sale_amount
+          logicalType: number
+          physicalType: DECIMAL(10,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 75
+    - name: customer_segments
+      physicalType: table
+      description:
+        Unified view of customers, orders, products, inventory, sales,
+        customer segments, and product categories data for customer_segments
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: segment_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - SEG-001
+        - name: segment_name
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - Premium Customers
+        - name: min_lifetime_value
+          logicalType: number
+          physicalType: DECIMAL(10,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 1000
+    - name: product_categories
+      physicalType: table
+      description:
+        Unified view of customers, orders, products, inventory, sales,
+        customer segments, and product categories data for product_categories
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: category_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - CAT-001
+        - name: category_name
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - Dog Food
+        - name: parent_category_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - CAT-000
+- kind: DataProduct
+  id: urn:food-production:curated:production-analytics
+  name: Food Production Analytics Data
+  domain: food_production
+  status: active
+  apiVersion: v1.0.0
+  description:
+    purpose: Curated food production data with quality metrics and performance
+      indicators
+  customProperties:
+    - property: dataProductTier
+      value: curated
+    - property: technology
+      value: databricks
+  outputPorts:
+    - name: product_quality
+      version: "1"
+      contractId: urn:food-production:contract:production-analytics
+    - name: batch_performance
+      version: "1"
+      contractId: urn:food-production:contract:production-analytics
+    - name: material_inventory
+      version: "1"
+      contractId: urn:food-production:contract:production-analytics
+    - name: cost_analysis
+      version: "1"
+      contractId: urn:food-production:contract:production-analytics
+    - name: supplier_performance
+      version: "1"
+      contractId: urn:food-production:contract:production-analytics
+    - name: production_schedule
+      version: "1"
+      contractId: urn:food-production:contract:production-analytics
+- kind: DataContract
+  id: urn:food-production:contract:production-analytics
+  status: active
+  version: "1"
+  apiVersion: v3.0.1
+  schema:
+    - name: product_quality
+      physicalType: table
+      description:
+        Production data with quality metrics, batch performance, inventory
+        levels, cost analysis, supplier ratings, and production schedules data
+        for product_quality
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: quality_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - QA-001
+        - name: product_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - FP-001
+        - name: avg_quality_score
+          logicalType: number
+          physicalType: DECIMAL(5,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 97.5
+    - name: batch_performance
+      physicalType: table
+      description:
+        Production data with quality metrics, batch performance, inventory
+        levels, cost analysis, supplier ratings, and production schedules data
+        for batch_performance
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: performance_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - BP-001
+        - name: batch_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - BATCH-2024-001
+        - name: efficiency_score
+          logicalType: number
+          physicalType: DECIMAL(5,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 95
+    - name: material_inventory
+      physicalType: table
+      description:
+        Production data with quality metrics, batch performance, inventory
+        levels, cost analysis, supplier ratings, and production schedules data
+        for material_inventory
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: inventory_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - MI-001
+        - name: material_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - MAT-001
+        - name: quantity_on_hand
+          logicalType: number
+          physicalType: DECIMAL(10,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 5000
+    - name: cost_analysis
+      physicalType: table
+      description:
+        Production data with quality metrics, batch performance, inventory
+        levels, cost analysis, supplier ratings, and production schedules data
+        for cost_analysis
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: analysis_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - CA-001
+        - name: product_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - FP-001
+        - name: total_cost
+          logicalType: number
+          physicalType: DECIMAL(10,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 8.5
+    - name: supplier_performance
+      physicalType: table
+      description:
+        Production data with quality metrics, batch performance, inventory
+        levels, cost analysis, supplier ratings, and production schedules data
+        for supplier_performance
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: performance_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - SP-001
+        - name: supplier_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - SUP-001
+        - name: on_time_delivery_rate
+          logicalType: number
+          physicalType: DECIMAL(5,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 98.5
+    - name: production_schedule
+      physicalType: table
+      description:
+        Production data with quality metrics, batch performance, inventory
+        levels, cost analysis, supplier ratings, and production schedules data
+        for production_schedule
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: schedule_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - SCH-001
+        - name: product_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - FP-001
+        - name: planned_quantity
+          logicalType: integer
+          physicalType: INT
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 2000
+- kind: DataProduct
+  id: urn:petstore:consumer-aligned:business-analytics
+  name: Petstore Business Analytics
+  domain: petstore
+  status: active
+  apiVersion: v1.0.0
+  description:
+    purpose: Pre-aggregated analytics for business intelligence and dashboards
+  customProperties:
+    - property: dataProductTier
+      value: consumerAligned
+    - property: technology
+      value: databricks
+  outputPorts:
+    - name: sales_metrics
+      version: "1"
+      contractId: urn:petstore:contract:business-analytics
+    - name: customer_metrics
+      version: "1"
+      contractId: urn:petstore:contract:business-analytics
+    - name: inventory_metrics
+      version: "1"
+      contractId: urn:petstore:contract:business-analytics
+    - name: product_performance_metrics
+      version: "1"
+      contractId: urn:petstore:contract:business-analytics
+- kind: DataContract
+  id: urn:petstore:contract:business-analytics
+  status: active
+  version: "1"
+  apiVersion: v3.0.1
+  schema:
+    - name: sales_metrics
+      physicalType: table
+      description: Aggregated metrics data for sales_metrics
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: metric_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - SM-001
+        - name: metric_date
+          logicalType: date
+          physicalType: DATE
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 2024-06-01
+        - name: total_sales
+          logicalType: number
+          physicalType: DECIMAL(12,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 15000
+        - name: order_count
+          logicalType: integer
+          physicalType: INT
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 125
+    - name: customer_metrics
+      physicalType: table
+      description: Aggregated metrics data for customer_metrics
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: metric_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - CM-001
+        - name: segment_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - SEG-001
+        - name: customer_count
+          logicalType: integer
+          physicalType: INT
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 500
+        - name: avg_lifetime_value
+          logicalType: number
+          physicalType: DECIMAL(10,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 1250
+    - name: inventory_metrics
+      physicalType: table
+      description: Aggregated metrics data for inventory_metrics
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: metric_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - IM-001
+        - name: category_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - CAT-001
+        - name: total_value
+          logicalType: number
+          physicalType: DECIMAL(12,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 50000
+        - name: turnover_rate
+          logicalType: number
+          physicalType: DECIMAL(5,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 4.5
+    - name: product_performance_metrics
+      physicalType: table
+      description: Aggregated metrics data for product_performance_metrics
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: metric_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - PPM-001
+        - name: unified_product_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - UP-001
+        - name: units_sold
+          logicalType: integer
+          physicalType: INT
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 250
+        - name: revenue
+          logicalType: number
+          physicalType: DECIMAL(10,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 7500
+- kind: DataProduct
+  id: urn:food-production:consumer-aligned:operations-analytics
+  name: Food Production Operations Analytics
+  domain: food_production
+  status: active
+  apiVersion: v1.0.0
+  description:
+    purpose: Pre-aggregated operations metrics for production dashboards
+  customProperties:
+    - property: dataProductTier
+      value: consumerAligned
+    - property: technology
+      value: databricks
+  outputPorts:
+    - name: production_efficiency
+      version: "1"
+      contractId: urn:food-production:contract:operations-analytics
+    - name: quality_trends
+      version: "1"
+      contractId: urn:food-production:contract:operations-analytics
+    - name: supply_chain_metrics
+      version: "1"
+      contractId: urn:food-production:contract:operations-analytics
+- kind: DataContract
+  id: urn:food-production:contract:operations-analytics
+  status: active
+  version: "1"
+  apiVersion: v3.0.1
+  schema:
+    - name: production_efficiency
+      physicalType: table
+      description: Aggregated metrics data for production_efficiency
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: metric_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - PE-001
+        - name: metric_date
+          logicalType: date
+          physicalType: DATE
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 2024-06-01
+        - name: production_volume
+          logicalType: integer
+          physicalType: INT
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 5000
+        - name: efficiency_percentage
+          logicalType: number
+          physicalType: DECIMAL(5,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 94.5
+    - name: quality_trends
+      physicalType: table
+      description: Aggregated metrics data for quality_trends
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: trend_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - QT-001
+        - name: product_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - FP-001
+        - name: avg_quality_score
+          logicalType: number
+          physicalType: DECIMAL(5,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 97
+        - name: trend_direction
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - improving
+    - name: supply_chain_metrics
+      physicalType: table
+      description: Aggregated metrics data for supply_chain_metrics
+      customProperties:
+        - property: technology
+          value: deltalake
+      properties:
+        - name: metric_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          primaryKey: true
+          examples:
+            - SCM-001
+        - name: supplier_id
+          logicalType: string
+          physicalType: STRING
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - SUP-001
+        - name: delivery_performance
+          logicalType: number
+          physicalType: DECIMAL(5,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 98
+        - name: cost_efficiency
+          logicalType: number
+          physicalType: DECIMAL(5,2)
+          customProperties:
+            - property: technology
+              value: deltalake
+          examples:
+            - 92.5
+- kind: DataProduct
+  id: urn:petstore:application:analytics-powerbi
+  name: Petstore Analytics Dashboard Data
+  domain: petstore
+  status: active
+  apiVersion: v1.0.0
+  description:
+    purpose: Power BI dashboards for petstore business intelligence
+  customProperties:
+    - property: dataProductTier
+      value: application
+    - property: technology
+      value: powerbi
+  outputPorts: []
+- kind: DataProduct
+  id: urn:food-production:application:analytics-powerbi
+  name: Food Production Analytics Dashboard Data
+  domain: food_production
+  status: active
+  apiVersion: v1.0.0
+  description:
+    purpose: Power BI dashboards for food production analytics
+  customProperties:
+    - property: dataProductTier
+      value: application
+    - property: technology
+      value: powerbi
+  outputPorts: []
+- dataUsageAgreementSpecification: 0.0.1
+  id: urn:dua:petstore-a-source-to-aligned
+  info:
+    active: true
+    purpose: Extract operational data from Petstore A database
+    status: approved
+    startDate: 2026-02-10
+  provider:
+    teamId: petstore-a-team
+    outputPortId: "*"
+    dataProductId: urn:petstore-a:source:operational-db
+  consumer:
+    teamId: petstore-central-team
+    dataProductId: urn:petstore-a:source-aligned:retail-data
+- dataUsageAgreementSpecification: 0.0.1
+  id: urn:dua:petstore-b-source-to-aligned
+  info:
+    active: true
+    purpose: Extract operational data from Petstore B database
+    status: approved
+    startDate: 2026-02-10
+  provider:
+    teamId: petstore-b-team
+    outputPortId: "*"
+    dataProductId: urn:petstore-b:source:operational-db
+  consumer:
+    teamId: petstore-central-team
+    dataProductId: urn:petstore-b:source-aligned:retail-data
+- dataUsageAgreementSpecification: 0.0.1
+  id: urn:dua:food-source-to-aligned
+  info:
+    active: true
+    purpose: Extract operational data from Food Production database
+    status: approved
+    startDate: 2026-02-10
+  provider:
+    teamId: food-production-team
+    outputPortId: "*"
+    dataProductId: urn:food-production:source:operational-db
+  consumer:
+    teamId: food-production-team
+    dataProductId: urn:food-production:source-aligned:manufacturing-data
+- dataUsageAgreementSpecification: 0.0.1
+  id: urn:dua:petstore-a-aligned-to-curated
+  info:
+    active: true
+    purpose: Integrate Petstore A data into unified retail view
+    status: approved
+    startDate: 2026-02-10
+  provider:
+    teamId: petstore-central-team
+    outputPortId: "*"
+    dataProductId: urn:petstore-a:source-aligned:retail-data
+  consumer:
+    teamId: petstore-analytics-team
+    dataProductId: urn:petstore:curated:unified-retail
+- dataUsageAgreementSpecification: 0.0.1
+  id: urn:dua:petstore-b-aligned-to-curated
+  info:
+    active: true
+    purpose: Integrate Petstore B data into unified retail view
+    status: approved
+    startDate: 2026-02-10
+  provider:
+    teamId: petstore-central-team
+    outputPortId: "*"
+    dataProductId: urn:petstore-b:source-aligned:retail-data
+  consumer:
+    teamId: petstore-analytics-team
+    dataProductId: urn:petstore:curated:unified-retail
+- dataUsageAgreementSpecification: 0.0.1
+  id: urn:dua:food-aligned-to-curated
+  info:
+    active: true
+    purpose: Enrich food production data with analytics
+    status: approved
+    startDate: 2026-02-10
+  provider:
+    teamId: food-production-team
+    outputPortId: "*"
+    dataProductId: urn:food-production:source-aligned:manufacturing-data
+  consumer:
+    teamId: food-analytics-team
+    dataProductId: urn:food-production:curated:production-analytics
+- dataUsageAgreementSpecification: 0.0.1
+  id: urn:dua:petstore-curated-to-consumer
+  info:
+    active: true
+    purpose: Aggregate unified retail data for business analytics
+    status: approved
+    startDate: 2026-02-10
+  provider:
+    teamId: petstore-analytics-team
+    outputPortId: "*"
+    dataProductId: urn:petstore:curated:unified-retail
+  consumer:
+    teamId: business-intelligence-team
+    dataProductId: urn:petstore:consumer-aligned:business-analytics
+- dataUsageAgreementSpecification: 0.0.1
+  id: urn:dua:food-curated-to-consumer
+  info:
+    active: true
+    purpose: Aggregate production data for operations analytics
+    status: approved
+    startDate: 2026-02-10
+  provider:
+    teamId: food-analytics-team
+    outputPortId: "*"
+    dataProductId: urn:food-production:curated:production-analytics
+  consumer:
+    teamId: operations-team
+    dataProductId: urn:food-production:consumer-aligned:operations-analytics
+- dataUsageAgreementSpecification: 0.0.1
+  id: urn:dua:petstore-consumer-to-app
+  info:
+    active: true
+    purpose: Power BI visualization of petstore business metrics
+    status: approved
+    startDate: 2026-02-10
+  provider:
+    teamId: business-intelligence-team
+    outputPortId: "*"
+    dataProductId: urn:petstore:consumer-aligned:business-analytics
+  consumer:
+    teamId: app-dev-team
+    dataProductId: urn:petstore:application:analytics-powerbi
+  custom:
+    consumerApplicationClientId: "6779ef20e75817b79602"
+- dataUsageAgreementSpecification: 0.0.1
+  id: urn:dua:food-consumer-to-app
+  info:
+    active: true
+    purpose: Power BI visualization of food production metrics
+    status: approved
+    startDate: 2026-02-10
+  provider:
+    teamId: operations-team
+    outputPortId: "*"
+    dataProductId: urn:food-production:consumer-aligned:operations-analytics
+  consumer:
+    teamId: app-dev-team
+    dataProductId: urn:food-production:application:analytics-powerbi
+- dataUsageAgreementSpecification: 0.0.1
+  id: urn:dua:food-to-unified-retail
+  info:
+    active: true
+    purpose: Consume manufacturing data from Food Production to enrich Unified
+      Petstore Retail Data
+    status: approved
+    startDate: 2026-02-14
+  provider:
+    teamId: food-production-team
+    outputPortId: "*"
+    dataProductId: urn:food-production:source-aligned:manufacturing-data
+  consumer:
+    teamId: petstore-analytics-team
+    dataProductId: urn:petstore:curated:unified-retail
+- kind: DataProductObservabilityMetrics
+  schemaVersion: 0.0.1
+  productId: urn:petstore-a:source-aligned:retail-data
+  asOf: 2026-03-02T06:00:00Z
+  period: P1D
+  status: healthy
+  physical:
+    pipeline:
+      status: success
+      lastRunAt: 2026-03-02T05:50:00Z
+      durationSeconds: 120
+      recordsProcessed: 1500
+  dynamic:
+    freshness:
+      withinExpectation: true
+      lastUpdatedAt: 2026-03-02T05:50:00Z
+      lagMinutes: 10
+    quality:
+      rulesTotal: 25
+      rulesPassed: 25
+      rulesFailed: 0
+  slo:
+    uptime:
+      met: true
+      actualPct: 99.8
+      objectivePct: 99.5
+    freshness:
+      met: true
+    qualityScore:
+      met: true
+    responseTime:
+      met: true
+      actualP95Ms: 120
+      objectiveMs: 200
+
+- kind: DataProductObservabilityMetrics
+  schemaVersion: 0.0.1
+  productId: urn:petstore-b:source-aligned:retail-data
+  asOf: 2026-03-02T06:00:00Z
+  period: P1D
+  status: degraded
+  physical:
+    pipeline:
+      status: success
+      lastRunAt: 2026-03-02T05:30:00Z
+      durationSeconds: 3600
+      recordsProcessed: 4500000
+  dynamic:
+    freshness:
+      withinExpectation: true
+    quality:
+      rulesTotal: 25
+      rulesPassed: 22
+      rulesFailed: 3
+      checks:
+        - rule: order_amount_positive
+          column: total_amount
+          status: failed
+          failRate: 0.01
+          message: 1% of orders have zero or negative total_amount
+  slo:
+    uptime:
+      met: true
+    qualityScore:
+      met: false
+      actualPassRate: 0.88
+      objectivePassRate: 1.0
+
+- kind: DataProductObservabilityMetrics
+  schemaVersion: 0.0.1
+  productId: urn:food-production:source-aligned:manufacturing-data
+  asOf: 2026-03-02T06:00:00Z
+  period: P1D
+  status: critical
+  physical:
+    pipeline:
+      status: failed
+      lastRunAt: 2026-03-02T04:00:00Z
+      errorMessage: "OOM error in Spark executor"
+  dynamic:
+    freshness:
+      withinExpectation: false
+      lagMinutes: 120
+      maxAllowedLagMinutes: 60
+    quality:
+      rulesTotal: 15
+      rulesPassed: 10
+      rulesFailed: 5
+  slo:
+    uptime:
+      met: false
+      objectivePct: 95.0
+      actualPct: 50.0
+    qualityScore:
+      met: false
+
+- kind: DataProductObservabilityMetrics
+  schemaVersion: 0.0.1
+  productId: urn:petstore:curated:unified-retail
+  asOf: 2026-03-02T06:00:00Z
+  period: P1D
+  status: healthy
+  physical:
+    pipeline:
+      status: success
+      durationSeconds: 90
+      recordsProcessed: 455
+  dynamic:
+    freshness:
+      withinExpectation: true
+    quality:
+      rulesTotal: 50
+      rulesPassed: 50
+      rulesFailed: 0
+  slo:
+    uptime:
+      met: true
+- kind: DataProductObservabilityMetrics
+  schemaVersion: 0.0.1
+  productId: urn:food-production:curated:production-analytics
+  asOf: 2026-03-02T06:00:00Z
+  period: P1D
+  status: degraded
+  physical:
+    pipeline:
+      status: success
+      durationSeconds: 7200
+      recordsProcessed: 2500000000
+  dynamic:
+    freshness:
+      withinExpectation: false
+      lagMinutes: 45
+      maxAllowedLagMinutes: 30
+    quality:
+      rulesTotal: 30
+      rulesPassed: 30
+      rulesFailed: 0
+  slo:
+    uptime:
+      met: true
+    qualityScore:
+      met: true
+
+- kind: DataProductObservabilityMetrics
+  schemaVersion: 0.0.1
+  productId: urn:petstore:consumer-aligned:business-analytics
+  asOf: 2026-03-02T06:00:00Z
+  period: P1D
+  status: healthy
+  physical:
+    pipeline:
+      status: success
+  dynamic:
+    freshness:
+      withinExpectation: true
+    quality:
+      rulesTotal: 40
+      rulesPassed: 40
+      rulesFailed: 0
+  slo:
+    uptime:
+      met: true
+- kind: DataProductObservabilityMetrics
+  schemaVersion: 0.0.1
+  productId: urn:food-production:consumer-aligned:operations-analytics
+  asOf: 2026-03-02T06:00:00Z
+  period: P1D
+  status: healthy
+  physical:
+    pipeline:
+      lastRunAt: 2026-03-02T05:50:00Z
+      durationSeconds: 310
+      status: success
+      recordsProcessed: 1500
+  usage:
+    activeConsumers: 1
+    queryCount: 210
+    lastAccessedAt: 2026-03-02T05:58:00Z
+  slo:
+    responseTime:
+      objectiveMs: 10000
+      actualP95Ms: 7734
+      met: true
+    uptime:
+      objectivePct: 99.0
+      actualPct: 99.5
+      met: true
+  dynamic:
+    freshness:
+      lagMinutes: 10
+      maxAllowedLagMinutes: 60
+      withinExpectation: true
+    quality:
+      rulesTotal: 20
+      rulesPassed: 20
+      rulesFailed: 0

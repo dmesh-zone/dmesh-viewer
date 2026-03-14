@@ -30,7 +30,7 @@ const MetricCard = ({ title, status, value, unit, detail, icon }) => {
                 width: '4px',
                 background: getStatusColor(status)
             }} />
-            
+
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span style={{ fontSize: '18px' }}>{icon}</span>
@@ -128,8 +128,8 @@ const ObservabilityDrilldown = ({ metrics, filterText, activeTab }) => {
             <div style={{ flex: 1, overflow: 'auto', padding: activeTab === 'yaml' ? '0' : '16px' }}>
                 {activeTab === 'metrics' ? (
                     <div>
-                        <MetricCard 
-                            title="Pipeline Status" 
+                        <MetricCard
+                            title="Pipeline Status"
                             status={getCardStatus('Pipeline')}
                             value={metrics.physical?.pipeline?.status?.toUpperCase() || 'UNKNOWN'}
                             unit=""
@@ -151,34 +151,43 @@ const ObservabilityDrilldown = ({ metrics, filterText, activeTab }) => {
 
                             icon="▸"
                         />
-                        <MetricCard 
-                            title="Service Level Objectives" 
+                        <MetricCard
+                            title="Service Level Objectives"
                             status={getCardStatus('SLO')}
                             value={[
-                                metrics.slo?.uptime?.actualPct || 'N/A', 
+                                metrics.slo?.uptime?.actualPct || 'N/A',
                                 metrics.slo?.responseTime?.actualP95Ms || 'N/A'
                             ]}
-                            unit={['% Uptime', 'ms Response time']}
-                            detail={`Target uptime: ${metrics.slo?.uptime?.objectivePct || '?'}% and Target response time: ${metrics.slo?.responseTime?.objectiveMs || '?'} ms`}
+                            unit={['% Uptime', 'ms Response time (p95)']}
+                            detail={(
+                                <>
+                                    <div>Target uptime: {metrics.slo?.uptime?.objectivePct || '?'}% and Target response time: {metrics.slo?.responseTime?.objectiveMs || '?'} ms</div>
+                                    {metrics.usage && (
+                                        <div>
+                                            Active consumers: {metrics.usage.activeConsumers || 0}, Query count: {metrics.usage.queryCount || 0}
+                                        </div>
+                                    )}
+                                </>
+                            )}
                             icon="◈"
                         />
-                        <MetricCard 
-                            title="Data Freshness" 
+                        <MetricCard
+                            title="Data Freshness"
                             status={getCardStatus('Freshness')}
                             value={metrics.dynamic?.freshness?.lagMinutes || 0}
                             unit="min lag"
                             detail={
                                 metrics.dynamic?.freshness?.maxAllowedLagMinutes != null
-                                ? `Max Allowed: ${metrics.dynamic.freshness.maxAllowedLagMinutes}m. ${metrics.dynamic.freshness.withinExpectation ? 'Within expectations.' : 'Outside expectations.'}`
-                                : 'Max Allowed: unknown'
+                                    ? `Max Allowed: ${metrics.dynamic.freshness.maxAllowedLagMinutes}m. ${metrics.dynamic.freshness.withinExpectation ? 'Within expectations.' : 'Outside expectations.'}`
+                                    : 'Max Allowed: unknown'
                             }
                             icon="⧗"
                         />
-                        <MetricCard 
-                            title="Data Quality" 
+                        <MetricCard
+                            title="Data Quality"
                             status={getCardStatus('Quality')}
                             value={metrics.dynamic?.quality?.rulesPassed || 0}
-                            unit={`/ ${ (metrics.dynamic?.quality?.rulesPassed || 0) + (metrics.dynamic?.quality?.rulesFailed || 0) } tests`}
+                            unit={`/ ${(metrics.dynamic?.quality?.rulesPassed || 0) + (metrics.dynamic?.quality?.rulesFailed || 0)} tests`}
                             detail={`Score: ${metrics.dynamic?.quality?.score}%. Failed: ${metrics.dynamic?.quality?.rulesFailed}.`}
                             icon="✦"
                         />

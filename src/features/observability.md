@@ -262,7 +262,9 @@ Requirements are expressed as user stories following the standard format: As a [
   - Instead of a single primary value and unit, the SLO card should display two distinct primary values:
     - `{slo.uptime.actualPct}%` labelled with "Uptime"
     - `{slo.responseTime.actualP95Ms} ms` labelled with "Response time"
-  - The detail reference text below the values should display: `Target uptime: {slo.uptime.objectivePct}% and Target response time: {slo.responseTime.objectiveMs} ms`
+  - The detail reference text below the values should display: 
+    - `Target uptime: {slo.uptime.objectivePct}% and Target response time: {slo.responseTime.objectiveMs} ms`
+    - If usage data is available: `Active consumers: {usage.activeConsumers}, Query count: {usage.queryCount}` (separated by a border or distinct line)
 
 
 

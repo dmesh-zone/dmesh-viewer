@@ -1,4 +1,4 @@
-defaultDataMeshRegistryUrl: /DataMeshRegistryObservability.yaml
+defaultDataMeshRegistryUrl: /DataMeshRegistryObservabilityLight.yaml
 
 sampleDataMeshRegistryUrls:
   - /DataMeshRegistryPetsExample.yaml
