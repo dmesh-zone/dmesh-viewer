@@ -1,6 +1,6 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://your-platform/schemas/observe-metrics/v1.0.0",
+    "$id": "https://github.com/joaovicente/data-mesh-viewer/blob/main/src/schemas/odps-observability-metrics-json-schema-v1.0.0.json",
     "title": "DataProductObservabilityMetrics",
     "description": "Runtime observability metrics for a Bitol ODPS data product, surfaced via the managementPort. SLO fields mirror objectives declared in the linked ODCS output port contracts.",
     "type": "object",
@@ -99,14 +99,6 @@
                             ],
                             "description": "Terminal or current status of the last pipeline execution."
                         },
-                        "computeCreditsUsed": {
-                            "type": [
-                                "number",
-                                "null"
-                            ],
-                            "minimum": 0,
-                            "description": "Platform-specific compute units consumed (e.g. Databricks DBUs). Null if not applicable or unavailable."
-                        },
                         "errorMessage": {
                             "type": [
                                 "string",
@@ -114,6 +106,22 @@
                             ],
                             "description": "Human-readable error message if status=failed.",
                             "maxLength": 1024
+                        },
+                        "recordsProcessed": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 0,
+                            "description": "Number of records processed end-to-end by the pipeline in the last run — i.e. records that completed the full source-to-output transformation. Distinct from dynamic.volume.rowCount, which reflects the resulting stored state of the output port. Null if the run failed before completion or if the pipeline does not emit this metric. Aligns with Petrella's physical-space instrumentation of pipeline throughput."
+                        },
+                        "computeCreditsUsed": {
+                            "type": [
+                                "number",
+                                "null"
+                            ],
+                            "minimum": 0,
+                            "description": "Platform-specific compute units consumed (e.g. Databricks DBUs). Null if not applicable or unavailable."
                         }
                     }
                 },
