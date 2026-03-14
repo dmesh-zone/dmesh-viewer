@@ -466,7 +466,7 @@ function Flow() {
                 if (h1 === 'critical' || h2 === 'critical') return '#EF444488';
                 if (h1 === 'degraded' || h2 === 'degraded') return '#F59E0B88';
                 if (h1 === 'healthy' && h2 === 'healthy') return '#22C55E88';
-                return '#33415566';
+                return '#9ca3af66';
             };
 
             const edgeColor = getEdgeColor(sourceHealth, targetHealth);

@@ -103,7 +103,7 @@ Requirements are expressed as user stories following the standard format: As a [
 
 - When Observe Mode is active, each data product node is shaded according to its worst-case health status derived from all four dimensions (SLO, Freshness, Quality, Pipeline).
 
-- Shading follows this priority: **critical (red) > degraded (amber) > healthy (green) > unknown (grey)**
+- Shading follows this priority: **critical (red) > degraded (amber) > healthy (green) > unknown (dark gray)**
 
 - The colour change includes a background tint, a glowing border, and the node dot indicator.
 
@@ -333,11 +333,11 @@ The following state machine governs the Observe Mode lifecycle:
 | **State** | **Trigger** | **Visual change** |
 | --- | --- | --- |
 | Idle                 | Default / Observe Mode off                 | No shading. Edges static. No legend. No pips.                                                                              |
-| Fetching             | Observe Mode activated, requests in flight | Nodes shimmer grey. Spinner on OBSERVE button.                                                                             |
+| Fetching             | Observe Mode activated, requests in flight | Nodes shimmer dark gray. Spinner on OBSERVE button.                                                                             |
 | Observing (Any)    | All fetches complete, no dimension filter  | Full RAG shading. Animated edges. Pips visible. Legend shown.                                                              |
 | Observing (Filtered) | Dimension selected in sub-menu             | RAG shading re-computed for active dimension only. Sub-menu highlights active item. Pips de-emphasise inactive dimensions. |
 | Drilldown open       | Node clicked in any Observing state        | Panel slides in. Node receives selection ring. Panel respects active dimension filter.                                     |
-| Error                | Fetch failure for one or more nodes        | Affected nodes shaded grey with ! indicator. Tooltip on hover explains the error.                                          |
+| Error                | Fetch failure for one or more nodes        | Affected nodes shaded dark gray with ! indicator. Tooltip on hover explains the error.                                          |
 
 ### 3.3 Health Status Colour Palette
 
@@ -346,7 +346,7 @@ The following state machine governs the Observe Mode lifecycle:
 | Healthy    | healthy        | \#22C55E        | \#0D2B1A            | \#22C55E88      | All SLOs met, no quality failures, pipeline healthy             |
 | Degraded   | degraded       | \#F59E0B        | \#2B1D05            | \#F59E0B88      | 1+ SLOs near breach, elevated lag, minor quality issues         |
 | Critical   | critical       | \#EF4444        | \#2B0A0A            | \#EF444488      | SLO breached, pipeline failed, or critical quality rule failing |
-| Unknown    | unknown        | \#334155        | \#0F172A            | \#33415566      | No /observe data available, fetch failed, or schema mismatch    |
+| Unknown    | unknown        | \#9CA3AF        | \#4B5563            | \#9CA3AF66      | No /observe data available, fetch failed, or schema mismatch    |
 
 ### 3.4 Dimension Icons and Labels
 

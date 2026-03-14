@@ -2173,68 +2173,11 @@
 
 
 
-- kind: DataProductObservabilityMetrics
-  schemaVersion: 0.0.1
-  productId: urn:petstore-a:source:operational-db
-  asOf: 2026-03-13T17:00:00Z
-  period: PT1H
-  status: healthy
-  physical:
-    pipeline:
-      status: success
-      lastRunAt: 2026-03-13T16:45:00Z
-  dynamic:
-    freshness:
-      withinExpectation: true
-      lastUpdatedAt: 2026-03-13T16:45:00Z
-    quality:
-      rulesTotal: 10
-      rulesPassed: 10
-      rulesFailed: 0
-  slo:
-    uptime:
-      met: true
-    freshness:
-      met: true
-    qualityScore:
-      met: true
 
-- kind: DataProductObservabilityMetrics
-  schemaVersion: 0.0.1
-  productId: urn:petstore-b:source:operational-db
-  asOf: 2026-03-13T17:00:00Z
-  period: PT1H
-  status: healthy
-  physical:
-    pipeline:
-      status: success
-  dynamic:
-    freshness:
-      withinExpectation: true
-    quality:
-      rulesTotal: 5
-      rulesPassed: 5
-      rulesFailed: 0
-  slo:
-    uptime:
-      met: true
 
-- kind: DataProductObservabilityMetrics
-  schemaVersion: 0.0.1
-  productId: urn:food-production:source:operational-db
-  asOf: 2026-03-13T17:00:00Z
-  period: PT1H
-  status: healthy
-  physical:
-    pipeline:
-      status: success
-  dynamic:
-    freshness:
-      withinExpectation: true
-    quality:
-      rulesTotal: 8
-      rulesPassed: 8
-      rulesFailed: 0
+
+
+
 
 - kind: DataProductObservabilityMetrics
   schemaVersion: 0.0.1
@@ -2413,28 +2356,6 @@
       rulesPassed: 20
       rulesFailed: 0
 
-- kind: DataProductObservabilityMetrics
-  schemaVersion: 0.0.1
-  productId: urn:petstore:application:analytics-powerbi
-  asOf: 2026-03-13T17:00:00Z
-  period: PT1H
-  status: healthy
-  physical:
-    pipeline:
-      status: success
-  slo:
-    uptime:
-      met: true
 
-- kind: DataProductObservabilityMetrics
-  schemaVersion: 0.0.1
-  productId: urn:food-production:application:analytics-powerbi
-  asOf: 2026-03-13T17:00:00Z
-  period: PT1H
-  status: healthy
-  physical:
-    pipeline:
-      status: success
-  slo:
-    uptime:
-      met: true
+
+

@@ -35,8 +35,8 @@
   --health-degraded-bg: #2B1D05;
   --health-critical: #EF4444;
   --health-critical-bg: #2B0A0A;
-  --health-unknown: #334155;
-  --health-unknown-bg: #0F172A;
+  --health-unknown: #9CA3AF;
+  --health-unknown-bg: #4B5563;
 }
 
 @keyframes pulse {
