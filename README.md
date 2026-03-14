@@ -134,6 +134,34 @@ The production build will be created in the `dist/` directory.
 npm run preview
 ```
 
+## Observability Simulation
+
+A standalone simulation module is available to generate realistic observability metrics for testing.
+
+### Runtime Simulation
+
+When running the application in test mode (append `#test` to the URL), you can enable real-time metric simulation from the **Observability Settings (cog icon)** sub-menu. This will generate metrics for:
+- Pipeline Status
+- SLOs
+- Freshness
+- Quality
+
+Simulated health follows a distribution of 70% Healthy, 20% Degraded, and 10% Critical.
+
+### CLI Simulation
+
+You can use the simulation module to generate metrics for a registry file from the command line:
+
+```bash
+# Generate simulated metrics for all dimensions
+node src/ObsSimulation.js public/MyRegistry.yaml
+
+# Generate specific dimensions
+node src/ObsSimulation.js public/MyRegistry.yaml Pipeline,SLOs
+```
+
+This will create a new file `public/MyRegistry-with-sim-metrics.yaml` containing the original data plus the simulated observability metrics.
+
 ## Troubleshooting
 
 ### Configuration Errors

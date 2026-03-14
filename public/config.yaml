@@ -1,4 +1,4 @@
-defaultDataMeshRegistryUrl: /DataMeshRegistryObservabilityLight.yaml
+defaultDataMeshRegistryUrl: /DataMeshRegistryPetsExample.yaml
 
 sampleDataMeshRegistryUrls:
   - /DataMeshRegistryPetsExample.yaml
@@ -9,6 +9,7 @@ sampleDataMeshRegistryUrls:
   - /DataMeshRegistryDqExample.yaml
   - /DataMeshRegistryPortAdapterExample.yaml
   - /DataMeshRegistryObservability.yaml
+  - /DataMeshRegistryObservabilityLight.yaml
 
 iconMap:
   dataproduct: /icons/dataproduct.svg

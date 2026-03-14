@@ -26,6 +26,7 @@ import QualityTable from './QualityTable';
 import RelationshipEdge from './RelationshipEdge';
 import { validateRegistry } from './ValidationService';
 import YAML from 'yaml';
+import * as ObsSim from './ObsSimulation';
 
 import DomainSelector from './DomainSelector';
 import GlobalFilter from './GlobalFilter';
@@ -150,10 +151,12 @@ function Flow() {
     const [drillNodeId, setDrillNodeId] = React.useState(null);
     const [hideHealthy, setHideHealthy] = React.useState(false);
     const [showConfig, setShowConfig] = React.useState(false);
+    const [showEventsTab, setShowEventsTab] = React.useState(false);
 
     // Testability State
     const [isTestMode, setIsTestMode] = React.useState(() => window.location.hash.includes('#test'));
     const [adjustMetricsTime, setAdjustMetricsTime] = React.useState(false);
+    const [simulatedDims, setSimulatedDims] = React.useState(new Set());
 
     // Listen for hash changes to update isTestMode dynamically
     React.useEffect(() => {
@@ -243,8 +246,29 @@ function Flow() {
                 }
             }
         });
+
+        // Add simulated metrics for designated dimensions
+        if (isTestMode && simulatedDims.size > 0) {
+            const simulatedMetrics = ObsSim.simulateRegistryMetrics(dataMeshRegistry, Array.from(simulatedDims));
+            simulatedMetrics.forEach(metric => {
+                const existing = metrics.get(metric.productId) || { productId: metric.productId };
+                // Merge simulated data into existing metrics
+                const merged = { ...existing };
+                if (metric.physical) merged.physical = { ...merged.physical, ...metric.physical };
+                if (metric.slo) merged.slo = metric.slo;
+                if (metric.usage) merged.usage = metric.usage;
+                if (metric.dynamic) {
+                    merged.dynamic = { ...merged.dynamic, ...metric.dynamic };
+                }
+                if (metric.status) merged.status = metric.status;
+                if (metric.asOf) merged.asOf = metric.asOf;
+                
+                metrics.set(metric.productId, merged);
+            });
+        }
+
         setMetricsMap(metrics);
-    }, [dataMeshRegistry, adjustMetricsTime, isTestMode]);
+    }, [dataMeshRegistry, adjustMetricsTime, isTestMode, simulatedDims]);
 
     const availableDimensions = React.useMemo(() => {
         const dims = new Set();
@@ -1577,6 +1601,49 @@ function Flow() {
                                                 <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Adjust metrics time</span>
                                             </div>
                                         )}
+                                        {isTestMode && (
+                                            <div style={{ borderTop: '1px solid #e2e8f0', marginTop: '12px', paddingTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                                <div style={{ fontSize: '10px', fontWeight: '700', color: '#64748b', textTransform: 'uppercase' }}>Simulation</div>
+                                                {['Pipeline', 'SLOs', 'Freshness', 'Quality'].map(dim => {
+                                                    const isSimulated = simulatedDims.has(dim);
+                                                    return (
+                                                        <div 
+                                                            key={dim}
+                                                            style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                const newSims = new Set(simulatedDims);
+                                                                if (isSimulated) newSims.delete(dim);
+                                                                else newSims.add(dim);
+                                                                setSimulatedDims(newSims);
+                                                            }}
+                                                        >
+                                                            <input type="checkbox" checked={isSimulated} readOnly style={{ cursor: 'pointer' }} />
+                                                            <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Simulate {dim}</span>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                        {isTestMode && (
+                                            <div style={{ borderTop: '1px solid #e2e8f0', marginTop: '12px', paddingTop: '12px' }}>
+                                                <div 
+                                                    style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', whiteSpace: 'nowrap' }} 
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setShowEventsTab(!showEventsTab);
+                                                    }}
+                                                >
+                                                    <input 
+                                                        type="checkbox" 
+                                                        checked={showEventsTab} 
+                                                        readOnly
+                                                        style={{ cursor: 'pointer' }}
+                                                    />
+                                                    <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Show Events tab</span>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>
@@ -1847,7 +1914,9 @@ function Flow() {
                                         width: 'fit-content'
                                     }}>
                                         {sidePanelType === 'observability' ? (
-                                            ['metrics', 'events', 'yaml'].map(tab => (
+                                            ['metrics', 'events', 'yaml']
+                                                .filter(tab => tab !== 'events' || showEventsTab)
+                                                .map(tab => (
                                                 <button
                                                     key={tab}
                                                     onClick={() => setSidePanelTab(tab)}
@@ -1993,11 +2062,12 @@ function Flow() {
                             ) : sidePanelType === 'dq' ? (
                                 <QualityTable schema={sidePanelContent} />
                             ) : sidePanelType === 'observability' ? (
-                                <ObservabilityDrilldown 
-                                    metrics={sidePanelContent} 
+                                <ObservabilityDrilldown
+                                    metrics={sidePanelContent}
                                     filterText={sidePanelFilter}
                                     activeTab={sidePanelTab}
                                     availableDimensions={availableDimensions}
+                                    showEventsTab={showEventsTab}
                                 />
                             ) : sidePanelTab === 'visual' && sidePanelType === 'data-product-yaml' ? (
                                 <DataProductVisual data={sidePanelContent.originalData || sidePanelContent} />

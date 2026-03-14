@@ -85,7 +85,7 @@ const formatRecords = (count) => {
     return (count / 1000000000).toFixed(1) + 'B';
 };
 
-const ObservabilityDrilldown = ({ metrics, filterText, activeTab, availableDimensions = ['Pipeline', 'SLOs', 'Freshness', 'Quality'] }) => {
+const ObservabilityDrilldown = ({ metrics, filterText, activeTab, availableDimensions = ['Pipeline', 'SLOs', 'Freshness', 'Quality'], showEventsTab = false }) => {
 
     if (!metrics) return <div style={{ padding: '20px', color: 'var(--m3-on-surface-variant)' }}>No observability data available.</div>;
 
