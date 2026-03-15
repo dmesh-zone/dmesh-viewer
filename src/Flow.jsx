@@ -144,6 +144,14 @@ function Flow() {
     const [sidePanelTab, setSidePanelTab] = React.useState('visual'); // 'visual' | 'yaml'
     const [sidePanelAnchor, setSidePanelAnchor] = React.useState(null); // Table anchor
 
+    // Mobile Responsiveness
+    const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768 || window.innerHeight <= 500);
+    React.useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768 || window.innerHeight <= 500);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     // Observability State
     const [observeMode, setObserveMode] = React.useState(false);
     const [activeDimension, setActiveDimension] = React.useState(null); // null = 'any'
@@ -1381,6 +1389,19 @@ function Flow() {
         return { dataSources, dataProducts, outputPorts, recordsIngested, recordsProcessed };
     }, [visibleNodes, observeMode, selection.id, metricsMap]);
 
+    const renderKpiCards = () => {
+        if (!observeMode || selection.id || !kpiStats) return null;
+        return (
+            <React.Fragment>
+                <KpiCard title="Data sources" value={formatKpiNumber(kpiStats.dataSources)} bgColor="#831843" />
+                <KpiCard title="Data Products" value={formatKpiNumber(kpiStats.dataProducts)} bgColor="#1e3a8a" />
+                <KpiCard title="Output ports" value={formatKpiNumber(kpiStats.outputPorts)} bgColor="#4c1d95" />
+                <KpiCard title="Records Ingested" value={formatKpiNumber(kpiStats.recordsIngested)} bgColor="#064e3b" />
+                <KpiCard title="Records Processed" value={formatKpiNumber(kpiStats.recordsProcessed)} bgColor="#9a3412" />
+            </React.Fragment>
+        );
+    };
+
     return (
         <div style={{ height: '100%', position: 'relative', overflow: 'hidden' }}>
 
@@ -1495,13 +1516,14 @@ function Flow() {
             }}>
 
                 {/* Left Controls Group */}
-                <div style={{ display: 'flex', gap: '12px', pointerEvents: 'auto' }}>
-                    {/* Domain Selector */}
-                    {!selection.id && (
-                        <DomainSelector
-                                domains={availableDomains}
-                                selectedDomains={selectedDomains}
-                                onChange={setSelectedDomains}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', pointerEvents: 'auto', flexShrink: 0 }}>
+                    <div style={{ display: 'flex', gap: '12px' }}>
+                        {/* Domain Selector */}
+                        {!selection.id && (
+                            <DomainSelector
+                                    domains={availableDomains}
+                                    selectedDomains={selectedDomains}
+                                    onChange={setSelectedDomains}
                             />
                         )}
 
@@ -1552,26 +1574,54 @@ function Flow() {
                                 {backButtonLabel}
                             </button>
                         )}
+                    </div>
+                    
+                    {/* Mobile KPIs */}
+                    {isMobile && observeMode && !selection.id && kpiStats && (
+                        <div style={{ 
+                            display: 'flex', 
+                            flexDirection: 'column', 
+                            gap: '8px', 
+                            animation: 'slideDown 0.3s ease-out', 
+                            paddingBottom: '4px',
+                            maxHeight: 'calc(100vh - 120px)',
+                            overflowY: 'auto',
+                            scrollbarWidth: 'none',
+                            msOverflowStyle: 'none'
+                        }}>
+                            {renderKpiCards()}
+                        </div>
+                    )}
                 </div>
 
                 {/* Spacer */}
                 <div style={{ flex: 1 }}></div>
 
                 {/* Right Controls Group - Observability */}
-                <div style={{ display: 'flex', gap: '16px', pointerEvents: 'auto', alignItems: 'flex-start' }}>
+                <div style={{ display: 'flex', gap: '16px', pointerEvents: 'auto', alignItems: 'flex-start', flexShrink: 1, minWidth: 0 }}>
 
-                    {/* KPIs */}
-                    {observeMode && !selection.id && kpiStats && (
-                        <div style={{ display: 'flex', gap: '8px', animation: 'slideDown 0.3s ease-out', marginTop: '48px' }}>
-                            <KpiCard title="Data sources" value={formatKpiNumber(kpiStats.dataSources)} bgColor="#831843" />
-                            <KpiCard title="Data Products" value={formatKpiNumber(kpiStats.dataProducts)} bgColor="#1e3a8a" />
-                            <KpiCard title="Output ports" value={formatKpiNumber(kpiStats.outputPorts)} bgColor="#4c1d95" />
-                            <KpiCard title="Records Ingested" value={formatKpiNumber(kpiStats.recordsIngested)} bgColor="#064e3b" />
-                            <KpiCard title="Records Processed" value={formatKpiNumber(kpiStats.recordsProcessed)} bgColor="#9a3412" />
+                    {/* Desktop KPIs */}
+                    {!isMobile && observeMode && !selection.id && kpiStats && (
+                        <div 
+                            style={{ 
+                                display: 'flex', 
+                                flexWrap: 'nowrap',
+                                gap: '8px', 
+                                animation: 'slideDown 0.3s ease-out', 
+                                marginTop: '48px', 
+                                flexShrink: 1, 
+                                minWidth: 0,
+                                overflowX: 'auto',
+                                scrollbarWidth: 'none',
+                                msOverflowStyle: 'none',
+                                paddingBottom: '4px'
+                            }}
+                        >
+                            {renderKpiCards()}
                         </div>
                     )}
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end', flexShrink: 1, minWidth: 0, maxWidth: '100%' }}>
                         <button
                         onClick={() => {
                             setObserveMode(!observeMode);
@@ -1617,34 +1667,43 @@ function Flow() {
                             borderRadius: '20px',
                             boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                             border: '1px solid #e2e8f0',
-                            animation: 'slideDown 0.3s ease-out'
+                            animation: 'slideDown 0.3s ease-out',
+                            maxWidth: '100%'
                         }}>
-                            {availableDimensions.map(dim => {
-                                const dimKey = dim === 'Any' ? null : (dim === 'Consumption' ? 'consumption' : dim.toLowerCase());
-                                const isActive = activeDimension === dimKey;
-                                return (
-                                    <button
-                                        key={dim}
-                                        onClick={() => setActiveDimension(dimKey)}
-                                        style={{
-                                            padding: '4px 12px',
-                                            fontSize: '11px',
-                                            fontWeight: '600',
-                                            background: isActive ? '#3b82f6' : 'transparent',
-                                            color: isActive ? 'white' : '#64748b',
-                                            border: 'none',
-                                            borderRadius: '16px',
-                                            cursor: 'pointer',
-                                            transition: 'all 0.2s'
-                                        }}
-                                    >
-                                        {dim}
-                                    </button>
-                                );
-                            })}
+                            <div style={{
+                                display: 'flex',
+                                overflowX: 'auto',
+                                scrollbarWidth: 'none',
+                                msOverflowStyle: 'none'
+                            }}>
+                                {availableDimensions.map(dim => {
+                                    const dimKey = dim === 'Any' ? null : (dim === 'Consumption' ? 'consumption' : dim.toLowerCase());
+                                    const isActive = activeDimension === dimKey;
+                                    return (
+                                        <button
+                                            key={dim}
+                                            onClick={() => setActiveDimension(dimKey)}
+                                            style={{
+                                                padding: '4px 12px',
+                                                fontSize: '11px',
+                                                fontWeight: '600',
+                                                background: isActive ? '#3b82f6' : 'transparent',
+                                                color: isActive ? 'white' : '#64748b',
+                                                border: 'none',
+                                                borderRadius: '16px',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.2s',
+                                                whiteSpace: 'nowrap'
+                                            }}
+                                        >
+                                            {dim}
+                                        </button>
+                                    );
+                                })}
+                            </div>
 
                             {/* US-05: Configuration Cog */}
-                            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginLeft: '4px', paddingLeft: '4px', borderLeft: '1px solid #e2e8f0' }}>
+                            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginLeft: '4px', paddingLeft: '4px', borderLeft: '1px solid #e2e8f0', flexShrink: 0 }}>
                                 <button
                                     onClick={() => setShowConfig(!showConfig)}
                                     style={{
