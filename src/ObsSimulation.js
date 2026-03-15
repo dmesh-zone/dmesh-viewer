@@ -60,25 +60,23 @@ export const generatePipelineMetrics = (statusOverride) => {
     return metrics;
 };
 
-export const generateConsumptionMetrics = (statusOverride) => {
-    const status = statusOverride || getRandomStatus();
-    const isCritical = status === 'critical';
-    const isDegraded = status === 'degraded';
+export const generateConsumptionMetrics = () => {
+    const objectiveMs = 10000;
     
-    const responseTarget = 200;
+    // On average 4 out of 10 do not meet the objective
+    const met = Math.random() >= 0.4;
     
-    let responseActual = responseTarget - getRandomInt(10, 50);
-    
-    if (isCritical) {
-        responseActual = responseTarget * 3;
-    } else if (isDegraded) {
-        responseActual = responseTarget * 1.5;
+    let actualP95Ms;
+    if (met) {
+        actualP95Ms = getRandomInt(2000, 10000);
+    } else {
+        actualP95Ms = getRandomInt(10001, 20000);
     }
     
     return {
-        objectiveMs: responseTarget,
-        actualP95Ms: Math.round(responseActual),
-        met: !isCritical && !isDegraded
+        objectiveMs,
+        actualP95Ms,
+        met
     };
 };
 

@@ -209,25 +209,6 @@ export default memo(({ data, isConnectable }) => {
                                 {data.subtitle}
                             </div>
                         )}
-                        {observeMode && data.metrics?.physical?.pipeline && data.metrics.physical.pipeline.status !== 'failed' && (
-                            <div style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: '2px',
-                                marginTop: '4px'
-                            }}>
-                                {data.metrics.physical.pipeline.durationSeconds != null && (
-                                    <div style={{ fontSize: '10px', color: nodeSubtitleColor }}>
-                                        Duration: {data.metrics.physical.pipeline.durationSeconds}s
-                                    </div>
-                                )}
-                                {data.metrics.physical.pipeline.recordsProcessed != null && (
-                                    <div style={{ fontSize: '10px', color: nodeSubtitleColor }}>
-                                        Records processed: {data.metrics.physical.pipeline.recordsProcessed.toLocaleString()}
-                                    </div>
-                                )}
-                            </div>
-                        )}
                         {!observeMode && data.hasOutputPorts && (
                             <div
                                 className="nodrag output-ports-pill"

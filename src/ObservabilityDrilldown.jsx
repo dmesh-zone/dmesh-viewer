@@ -163,25 +163,39 @@ const ObservabilityDrilldown = ({ metrics, filterText, activeTab, availableDimen
                                 icon="▸"
                             />
                         )}
-                        {availableDimensions.includes('Consumption') && (
-                            <MetricCard
-                                title="Consumption"
-                                status={getCardStatus('Consumption')}
-                                value={metrics.dynamic?.responseTime?.actualP95Ms || 'N/A'}
-                                unit="ms Response time (p95)"
-                                detail={(
-                                    <>
-                                        <div>Target response time: {metrics.dynamic?.responseTime?.objectiveMs || '?'} ms</div>
-                                        {metrics.usage && (
-                                            <div>
-                                                Active consumers: {metrics.usage.activeConsumers || 0}, Query count: {metrics.usage.queryCount || 0}
-                                            </div>
-                                        )}
-                                    </>
-                                )}
-                                icon="◈"
-                            />
-                        )}
+                        {availableDimensions.includes('Consumption') && (() => {
+                            const actualMs = metrics.dynamic?.responseTime?.actualP95Ms;
+                            const objMs = metrics.dynamic?.responseTime?.objectiveMs;
+                            const isSec = objMs != null && objMs > 1000;
+                            
+                            const displayValue = actualMs != null 
+                                ? (isSec ? Number((actualMs / 1000).toFixed(1)) : actualMs)
+                                : 'N/A';
+                            const displayUnit = isSec ? "s Response time (p95)" : "ms Response time (p95)";
+                            const targetStr = objMs != null 
+                                ? (isSec ? `${Number((objMs / 1000).toFixed(1))} s` : `${objMs} ms`)
+                                : '? ms';
+
+                            return (
+                                <MetricCard
+                                    title="Consumption"
+                                    status={getCardStatus('Consumption')}
+                                    value={displayValue}
+                                    unit={displayUnit}
+                                    detail={(
+                                        <>
+                                            <div>Target response time: {targetStr}</div>
+                                            {metrics.usage && (
+                                                <div>
+                                                    Active consumers: {metrics.usage.activeConsumers || 0}, Query count: {metrics.usage.queryCount || 0}
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
+                                    icon="◈"
+                                />
+                            );
+                        })()}
                         {availableDimensions.includes('Freshness') && (
                             <MetricCard
                                 title="Data Freshness"

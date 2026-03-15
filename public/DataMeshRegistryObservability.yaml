@@ -2193,8 +2193,8 @@
       rulesFailed: 0
     responseTime:
       met: true
-      actualP95Ms: 120
-      objectiveMs: 200
+      actualP95Ms: 2500
+      objectiveMs: 10000
 
 - kind: DataProductObservabilityMetrics
   schemaVersion: 0.0.1
@@ -2294,6 +2294,10 @@
   dynamic:
     freshness:
       withinExpectation: true
+    responseTime:
+      objectiveMs: 300
+      actualP95Ms: 350
+      met: false
     quality:
       rulesTotal: 40
       rulesPassed: 40
@@ -2317,8 +2321,8 @@
   dynamic:
     responseTime:
       objectiveMs: 10000
-      actualP95Ms: 7734
-      met: true
+      actualP95Ms: 15300
+      met: false
     freshness:
       lagMinutes: 10
       maxAllowedLagMinutes: 60

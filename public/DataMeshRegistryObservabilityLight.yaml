@@ -75,19 +75,19 @@
   version: "1"
   apiVersion: v3.0.1
   servers:
-    - server: "Petstore workspace"
+    - server: Petstore workspace
       type: databricks
       environment: dev
       host: https://github.com/joaovicente/data-mesh-viewer/blob/main/README.md
       catalog: petstore
       schema: retail_data
-    - server: "Petstore workspace"
+    - server: Petstore workspace
       type: databricks
       environment: qa
       host: https://github.com/joaovicente/data-mesh-viewer/blob/main/README.md
       catalog: petstore
       schema: retail_data
-    - server: "Petstore workspace"
+    - server: Petstore workspace
       type: databricks
       environment: prod
       host: https://github.com/joaovicente/data-mesh-viewer/blob/main/README.md
@@ -2140,7 +2140,7 @@
     teamId: app-dev-team
     dataProductId: urn:petstore:application:analytics-powerbi
   custom:
-    consumerApplicationClientId: "6779ef20e75817b79602"
+    consumerApplicationClientId: 6779ef20e75817b79602
 - dataUsageAgreementSpecification: 0.0.1
   id: urn:dua:food-consumer-to-app
   info:
@@ -2182,7 +2182,6 @@
       lastRunAt: 2026-03-02T05:50:00Z
       durationSeconds: 120
       recordsProcessed: 1500
-
 - kind: DataProductObservabilityMetrics
   schemaVersion: 0.0.1
   productId: urn:petstore-b:source-aligned:retail-data
@@ -2195,7 +2194,6 @@
       lastRunAt: 2026-03-02T05:30:00Z
       durationSeconds: 3600
       recordsProcessed: 4500000
-
 - kind: DataProductObservabilityMetrics
   schemaVersion: 0.0.1
   productId: urn:food-production:source-aligned:manufacturing-data
@@ -2206,8 +2204,7 @@
     pipeline:
       status: failed
       lastRunAt: 2026-03-02T04:00:00Z
-      errorMessage: "OOM error in Spark executor"
-
+      errorMessage: OOM error in Spark executor
 - kind: DataProductObservabilityMetrics
   schemaVersion: 0.0.1
   productId: urn:petstore:curated:unified-retail
@@ -2230,7 +2227,6 @@
       status: success
       durationSeconds: 7200
       recordsProcessed: 2500000000
-
 - kind: DataProductObservabilityMetrics
   schemaVersion: 0.0.1
   productId: urn:petstore:consumer-aligned:business-analytics
