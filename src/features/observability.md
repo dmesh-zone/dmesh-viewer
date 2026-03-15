@@ -201,6 +201,8 @@ Requirements are expressed as user stories following the standard format: As a [
 
 - When the filter is active, both nodes with a "healthy" status and nodes with an "unknown" status (insufficient data) are hidden from the graph.
 
+- There is also an option to "Hide KPIs", which is unchecked by default. Checking it hides all Observe mode KPI cards.
+
 - Configuration option is applicable to all dimensions.
 
 ### 2.4 Edge Health Propagation

@@ -158,6 +158,7 @@ function Flow() {
     const [metricsMap, setMetricsMap] = React.useState(new Map());
     const [drillNodeId, setDrillNodeId] = React.useState(null);
     const [hideHealthy, setHideHealthy] = React.useState(false);
+    const [hideKpis, setHideKpis] = React.useState(false);
     const [showConfig, setShowConfig] = React.useState(false);
     const [showEventsTab, setShowEventsTab] = React.useState(false);
 
@@ -1577,7 +1578,7 @@ function Flow() {
                     </div>
                     
                     {/* Mobile KPIs */}
-                    {isMobile && observeMode && !selection.id && kpiStats && (
+                    {isMobile && observeMode && !selection.id && !hideKpis && kpiStats && (
                         <div style={{ 
                             display: 'flex', 
                             flexDirection: 'column', 
@@ -1601,7 +1602,7 @@ function Flow() {
                 <div style={{ display: 'flex', gap: '16px', pointerEvents: 'auto', alignItems: 'flex-start', flexShrink: 1, minWidth: 0 }}>
 
                     {/* Desktop KPIs */}
-                    {!isMobile && observeMode && !selection.id && kpiStats && (
+                    {!isMobile && observeMode && !selection.id && !hideKpis && kpiStats && (
                         <div 
                             style={{ 
                                 display: 'flex', 
@@ -1752,6 +1753,21 @@ function Flow() {
                                                 style={{ cursor: 'pointer' }}
                                             />
                                             <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Hide Healthy Nodes</span>
+                                        </div>
+                                        <div 
+                                            style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', whiteSpace: 'nowrap', marginTop: '8px' }} 
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setHideKpis(!hideKpis);
+                                            }}
+                                        >
+                                            <input 
+                                                type="checkbox" 
+                                                checked={hideKpis} 
+                                                readOnly
+                                                style={{ cursor: 'pointer' }}
+                                            />
+                                            <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Hide KPIs</span>
                                         </div>
                                         {isTestMode && (
                                             <div 
