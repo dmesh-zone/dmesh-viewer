@@ -264,6 +264,8 @@ Requirements are expressed as user stories following the standard format: As a [
     - `< 1,000,000`: `Nk.N` (e.g., 1.5k)
     - `< 1,000,000,000`: `NM.N` (e.g., 1.5M)
     - `≥ 1,000,000,000`: `NB.N` (e.g., 1.5B)
+  - `MTBF (Mean Time Between Failures): x days` (value color: x < 7 Red, 7 < x < 14 Amber, x > 14 Green)
+  - `MTTR (Mean Time To Recover): x minutes/hours` (value color: x < 120 Green, 120 < x < 360 Amber, x > 360 Red) showing minutes if number less than 60 and hours otherwise
     
 - **SLOs Metric Card Specifics:**
   - Instead of a single primary value and unit, the SLO card should display two distinct primary values:
