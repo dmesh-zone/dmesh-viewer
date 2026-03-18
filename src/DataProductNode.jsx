@@ -209,35 +209,6 @@ export default memo(({ data, isConnectable }) => {
                                 {data.subtitle}
                             </div>
                         )}
-                        {observeMode && data.metrics?.physical?.pipeline && (
-                            <div style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: '2px',
-                                marginTop: '4px'
-                            }}>
-                                {data.metrics.physical.pipeline.status !== 'failed' && data.metrics.physical.pipeline.durationSeconds != null && (
-                                    <div style={{ fontSize: '10px', color: nodeSubtitleColor }}>
-                                        Duration: {data.metrics.physical.pipeline.durationSeconds}s
-                                    </div>
-                                )}
-                                {data.metrics.physical.pipeline.status !== 'failed' && data.metrics.physical.pipeline.recordsProcessed != null && (
-                                    <div style={{ fontSize: '10px', color: nodeSubtitleColor }}>
-                                        Records processed: {data.metrics.physical.pipeline.recordsProcessed.toLocaleString()}
-                                    </div>
-                                )}
-                                {data.metrics.physical.pipeline.meanTimeBetweenFailuresDays != null && (
-                                    <div style={{ fontSize: '10px', color: nodeSubtitleColor }}>
-                                        MTBF: <span style={{ color: data.metrics.physical.pipeline.meanTimeBetweenFailuresDays < 7 ? '#ef4444' : data.metrics.physical.pipeline.meanTimeBetweenFailuresDays <= 14 ? '#f59e0b' : '#22c55e', fontWeight: 'bold' }}>{data.metrics.physical.pipeline.meanTimeBetweenFailuresDays} days</span>
-                                    </div>
-                                )}
-                                {data.metrics.physical.pipeline.meanTimeToRecoveryMinutes != null && (
-                                    <div style={{ fontSize: '10px', color: nodeSubtitleColor }}>
-                                        MTTR: <span style={{ color: data.metrics.physical.pipeline.meanTimeToRecoveryMinutes < 120 ? '#22c55e' : data.metrics.physical.pipeline.meanTimeToRecoveryMinutes <= 360 ? '#f59e0b' : '#ef4444', fontWeight: 'bold' }}>{data.metrics.physical.pipeline.meanTimeToRecoveryMinutes < 60 ? `${Math.round(data.metrics.physical.pipeline.meanTimeToRecoveryMinutes)} minutes` : `${Math.round(data.metrics.physical.pipeline.meanTimeToRecoveryMinutes / 60)} hours`}</span>
-                                    </div>
-                                )}
-                            </div>
-                        )}
                         {!observeMode && data.hasOutputPorts && (
                             <div
                                 className="nodrag output-ports-pill"
