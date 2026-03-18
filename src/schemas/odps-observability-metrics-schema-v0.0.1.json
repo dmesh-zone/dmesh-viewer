@@ -122,6 +122,22 @@
                             ],
                             "minimum": 0,
                             "description": "Platform-specific compute units consumed (e.g. Databricks DBUs). Null if not applicable or unavailable."
+                        },
+                        "meanTimeBetweenFailuresDays": {
+                            "type": [
+                                "number",
+                                "null"
+                            ],
+                            "minimum": 0,
+                            "description": "MTBF is the average time between repairable failures of a pipeline. Computed from physical.pipeline events: time between status=failed and next status=success."
+                        },
+                        "meanTimeToRecoveryMinutes": {
+                            "type": [
+                                "number",
+                                "null"
+                            ],
+                            "minimum": 0,
+                            "description": "MTTR Mean time to recovery is the average time it takes to recover from an incident. Computed from physical.pipeline events: time between status=failed and next status=success."
                         }
                     }
                 },

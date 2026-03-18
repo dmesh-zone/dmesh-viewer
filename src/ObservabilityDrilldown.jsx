@@ -134,11 +134,41 @@ const ObservabilityDrilldown = ({ metrics, filterText, activeTab, availableDimen
                                 unit=""
                                 detail={(() => {
                                     const lastRunStr = `Last run: ${new Date(metrics.asOf).toLocaleString()}`;
+                                    const mtbf = metrics.physical?.pipeline?.meanTimeBetweenFailuresDays;
+                                    const mttr = metrics.physical?.pipeline?.meanTimeToRecoveryMinutes;
+                                    const mtMetrics = (
+                                        <>
+                                            {mtbf != null && (
+                                                <div style={{ marginTop: '4px' }}>
+                                                    MTBF (Mean Time Between Failures):{' '}
+                                                    <span style={{ 
+                                                        color: mtbf < 7 ? 'var(--health-critical)' : 
+                                                               mtbf <= 14 ? 'var(--health-degraded)' : 
+                                                               'var(--health-healthy)',
+                                                        fontWeight: 'bold'
+                                                    }}>{mtbf} days</span>
+                                                </div>
+                                            )}
+                                            {mttr != null && (
+                                                <div style={{ marginTop: '2px' }}>
+                                                    MTTR (Mean Time To Recover):{' '}
+                                                    <span style={{ 
+                                                        color: mttr < 120 ? 'var(--health-healthy)' : 
+                                                               mttr <= 360 ? 'var(--health-degraded)' : 
+                                                               'var(--health-critical)',
+                                                        fontWeight: 'bold'
+                                                    }}>{mttr < 60 ? `${Math.round(mttr)} minutes` : `${Math.round(mttr / 60)} hours`}</span>
+                                                </div>
+                                            )}
+                                        </>
+                                    );
+
                                     if (getCardStatus('Pipeline') === 'critical') {
                                         return (
                                             <>
                                                 <div>{lastRunStr}</div>
                                                 {metrics.physical?.pipeline?.errorMessage && <div style={{ color: 'var(--health-critical)', marginTop: '4px' }}>Failure reason: {metrics.physical.pipeline.errorMessage}</div>}
+                                                {mtMetrics}
                                             </>
                                         );
                                     } else if (getCardStatus('Pipeline') === 'healthy') {
@@ -149,6 +179,7 @@ const ObservabilityDrilldown = ({ metrics, filterText, activeTab, availableDimen
                                                 <div>{lastRunStr}</div>
                                                 {durationStr && <div>Duration: {durationStr}</div>}
                                                 {recordsStr && <div>Records processed: {recordsStr}</div>}
+                                                {mtMetrics}
                                             </>
                                         );
                                     }
@@ -156,6 +187,7 @@ const ObservabilityDrilldown = ({ metrics, filterText, activeTab, availableDimen
                                         <>
                                             <div>{lastRunStr}</div>
                                             {metrics.physical?.pipeline?.nextRun && <div>Next: {metrics.physical.pipeline.nextRun}</div>}
+                                            {mtMetrics}
                                         </>
                                     );
                                 })()}

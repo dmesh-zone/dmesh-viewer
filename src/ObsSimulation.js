@@ -45,12 +45,26 @@ const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) +
 export const generatePipelineMetrics = (statusOverride) => {
     const status = statusOverride || getRandomStatus();
     const isCritical = status === 'critical';
+    const isDegraded = status === 'degraded';
     
+    let mtbf = getRandomInt(15, 30);
+    let mttr = Math.random() * 90; // Green (x < 120)
+
+    if (isCritical) {
+        mtbf = getRandomInt(1, 6);
+        mttr = getRandomInt(361, 720); // Red (x > 360)
+    } else if (isDegraded) {
+        mtbf = getRandomInt(7, 14);
+        mttr = getRandomInt(121, 360); // Amber (120 < x <= 360)
+    }
+
     const metrics = {
         status: isCritical ? 'failed' : 'success',
         lastRunAt: new Date().toISOString(),
         durationSeconds: isCritical ? null : getRandomInt(60, 3600),
-        recordsProcessed: isCritical ? null : getRandomInt(100, 10000000)
+        recordsProcessed: isCritical ? null : getRandomInt(100, 10000000),
+        meanTimeBetweenFailuresDays: mtbf,
+        meanTimeToRecoveryMinutes: parseFloat(mttr.toFixed(1))
     };
 
     if (isCritical) {
