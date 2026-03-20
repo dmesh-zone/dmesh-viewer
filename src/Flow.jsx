@@ -74,55 +74,78 @@ function Flow() {
 
     // Load Config
     React.useEffect(() => {
-        fetch(normalizePath('/config.yaml'))
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error(`Failed to load config.yaml (${res.status} ${res.statusText}). Make sure the file exists in the public directory.`);
-                }
-                return res.text();
-            })
-            .then(text => {
-                if (!text || text.trim() === '') {
-                    throw new Error('config.yaml is empty. Please add configuration settings to the file.');
-                }
+        Promise.all([
+            fetch(normalizePath('/config.yaml'))
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error(`Failed to load config.yaml (${res.status} ${res.statusText}). Make sure the file exists in the public directory.`);
+                    }
+                    return res.text();
+                }),
+            fetch(normalizePath('/customConfig.yaml'))
+                .then(res => res.ok ? res.text() : null)
+                .catch(() => null)
+        ])
+        .then(([configText, customConfigText]) => {
+            if (!configText || configText.trim() === '') {
+                throw new Error('config.yaml is empty. Please add configuration settings to the file.');
+            }
 
-                let data;
+            let data;
+            try {
+                data = YAML.parse(configText);
+            } catch (yamlErr) {
+                throw new Error(`config.yaml contains invalid YAML syntax: ${yamlErr.message}. Please check the file format.`);
+            }
+
+            if (!data || typeof data !== 'object') {
+                throw new Error('config.yaml must contain a valid YAML document with configuration settings.');
+            }
+
+            if (customConfigText && customConfigText.trim() !== '') {
                 try {
-                    data = YAML.parse(text);
+                    const customData = YAML.parse(customConfigText);
+                    if (customData && typeof customData === 'object') {
+                        Object.keys(customData).forEach(key => {
+                            if (customData[key] !== null && typeof customData[key] === 'object' && !Array.isArray(customData[key]) &&
+                                data[key] !== null && typeof data[key] === 'object' && !Array.isArray(data[key])) {
+                                data[key] = { ...data[key], ...customData[key] };
+                            } else {
+                                data[key] = customData[key];
+                            }
+                        });
+                    }
                 } catch (yamlErr) {
-                    throw new Error(`config.yaml contains invalid YAML syntax: ${yamlErr.message}. Please check the file format.`);
+                    console.warn(`customConfig.yaml contains invalid YAML syntax: ${yamlErr.message}. Ignoring custom config.`);
                 }
+            }
 
-                if (!data || typeof data !== 'object') {
-                    throw new Error('config.yaml must contain a valid YAML document with configuration settings.');
-                }
+            // Validate required fields
+            if (!data.defaultDataMeshRegistryUrl) {
+                setConfigError('config.yaml is missing required field "defaultDataMeshRegistryUrl". Please add this field with the path to your registry YAML file.');
+                return;
+            }
 
-                // Validate required fields
-                if (!data.defaultDataMeshRegistryUrl) {
-                    setConfigError('config.yaml is missing required field "defaultDataMeshRegistryUrl". Please add this field with the path to your registry YAML file.');
-                    return;
-                }
-
-                const loadedConfig = {
-                    iconMap: data.iconMap || {},
-                    tiers: data.tiers || {},
-                    domainPalette: data.domainPalette || ['#fee2e2', '#f3e8ff', '#fef3c7', '#ffedd5', '#e0e7ff', '#dbeafe', '#dcfce7'],
-                    defaultDataMeshRegistryUrl: normalizePath(data.defaultDataMeshRegistryUrl),
-                    registries: (data.sampleDataMeshRegistryUrls || []).map(reg => ({
-                        original: reg,
-                        normalized: normalizePath(reg)
-                    }))
-                };
-                setConfig(loadedConfig);
-                setConfigError(null);
-                // Set initial registry URL from config
-                setRegistryUrl(loadedConfig.defaultDataMeshRegistryUrl);
-                setWorkingUrl(loadedConfig.defaultDataMeshRegistryUrl);
-            })
-            .catch(err => {
-                console.error("Failed to load config.yaml", err);
-                setConfigError(err.message);
-            });
+            const loadedConfig = {
+                iconMap: data.iconMap || {},
+                tiers: data.tiers || {},
+                domainPalette: data.domainPalette || ['#fee2e2', '#f3e8ff', '#fef3c7', '#ffedd5', '#e0e7ff', '#dbeafe', '#dcfce7'],
+                defaultDataMeshRegistryUrl: normalizePath(data.defaultDataMeshRegistryUrl),
+                registries: (data.sampleDataMeshRegistryUrls || []).map(reg => ({
+                    original: reg,
+                    normalized: normalizePath(reg)
+                }))
+            };
+            setConfig(loadedConfig);
+            setConfigError(null);
+            // Set initial registry URL from config
+            setRegistryUrl(loadedConfig.defaultDataMeshRegistryUrl);
+            setWorkingUrl(loadedConfig.defaultDataMeshRegistryUrl);
+        })
+        .catch(err => {
+            console.error("Failed to load config.yaml", err);
+            setConfigError(err.message);
+        });
     }, []);
 
     // React Flow State

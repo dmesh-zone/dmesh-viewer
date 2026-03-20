@@ -15,6 +15,7 @@ Live demo: https://joaovicente.github.io/data-mesh-viewer
 ## Configuration
 
 The application is configured through `./public/config.yaml`. This file controls the default registry URL, visual appearance, and data product tiers.
+Additionally, you can create a `./public/customConfig.yaml` file to override any settings in `config.yaml` without modifying the core configuration file.
 
 ### Configuration File Structure
 
