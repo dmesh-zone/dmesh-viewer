@@ -1289,7 +1289,7 @@ function Flow() {
                         id: node.id,
                         type: 'observability',
                         content: metrics,
-                        width: 400
+                        width: 550
                     }
                 });
                 window.dispatchEvent(customEvent);
@@ -2094,6 +2094,26 @@ function Flow() {
                                             }}
                                         >
                                             Data Usage Agreement Specification v0.0.1
+                                        </a>
+                                    )}
+                                    {sidePanelType === 'observability' && (
+                                        <a
+                                            href="https://joaovicente.github.io/open-data-product-observability-standard/v0.0.1/"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{
+                                                fontSize: '11px',
+                                                padding: '2px 8px',
+                                                background: '#f3e8ff',
+                                                color: '#6b21a8',
+                                                border: '1px solid #d8b4fe',
+                                                borderRadius: '12px',
+                                                textDecoration: 'none',
+                                                fontWeight: '500',
+                                                whiteSpace: 'nowrap'
+                                            }}
+                                        >
+                                            Open Data Product Observability Standard v0.0.1
                                         </a>
                                     )}
                                 </div>
