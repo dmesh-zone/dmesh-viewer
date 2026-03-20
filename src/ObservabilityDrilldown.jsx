@@ -167,7 +167,7 @@ const ObservabilityDrilldown = ({ metrics, filterText, activeTab, availableDimen
                                         return (
                                             <>
                                                 <div>{lastRunStr}</div>
-                                                {metrics.physical?.pipeline?.errorMessage && <div style={{ color: 'var(--health-critical)', marginTop: '4px' }}>Failure reason: {metrics.physical.pipeline.errorMessage}</div>}
+                                                {metrics.physical?.pipeline?.failureReason && <div style={{ color: 'var(--health-critical)', marginTop: '4px' }}>Failure reason: {metrics.physical.pipeline.failureReason}</div>}
                                                 {mtMetrics}
                                             </>
                                         );

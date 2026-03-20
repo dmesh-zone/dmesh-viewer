@@ -278,7 +278,7 @@ Requirements are expressed as user stories following the standard format: As a [
 - All metric values are sourced from the /observe/metrics response for the selected output port's contractId.
 
 - **Pipeline Metric Card Specifics:**
-  - If `physical.pipeline.status` equals failed, pipeline status should be CRITICAL. "Failure reason: <errorMessage>" will be shown in the card using the value from `physical.pipeline.errorMessage`.
+  - If `physical.pipeline.status` equals failed, pipeline status should be CRITICAL. "Failure reason: <failureReason>" will be shown in the card using the value from `physical.pipeline.failureReason`.
   - In Pipeline Status card show "Last run: <asOf>" as the first line below status
   - If `physical.pipeline.status` is healthy (i.e. not "failed"), and `physical.pipeline.durationInSeconds` and `physical.pipeline.recordsProcessed` are available, they should be shown in the card's detail section, as "Duration: <duration>" and "Records processed: <records>", one in each line
   - Duration is formatted as `Nh Nm` (e.g., 1h 30m, 0h 45m).

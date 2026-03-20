@@ -99,7 +99,7 @@
                             ],
                             "description": "Terminal or current status of the last pipeline execution."
                         },
-                        "errorMessage": {
+                        "failureReason": {
                             "type": [
                                 "string",
                                 "null"
@@ -740,7 +740,7 @@
                     "status": "failed",
                     "recordsProcessed": null,
                     "computeCreditsUsed": null,
-                    "errorMessage": "Source system unavailable: connection timeout after 30s"
+                    "failureReason": "Source system unavailable: connection timeout after 30s"
                 },
                 "storage": {
                     "sizeBytes": 2147483648,

@@ -2232,7 +2232,7 @@
     pipeline:
       status: failed
       lastRunAt: 2026-03-02T04:00:00Z
-      errorMessage: "OOM error in Spark executor"
+      failureReason: "OOM error in Spark executor"
   dynamic:
     freshness:
       withinExpectation: false

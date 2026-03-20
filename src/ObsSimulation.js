@@ -68,7 +68,7 @@ export const generatePipelineMetrics = (statusOverride) => {
     };
 
     if (isCritical) {
-        metrics.errorMessage = 'Upstream source connection timed out.';
+        metrics.failureReason = 'Upstream source connection timed out.';
     }
 
     return metrics;
