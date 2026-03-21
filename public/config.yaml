@@ -153,9 +153,9 @@ observability:
         - metric: "pipelineRecordsProcessed"
           name: "Records processed"
         - metric: "pipelineMeanTimeBetweenFailuresCheck"
-          name: "MTBF"
+          name: "MTBF (Mean Time Between Failure)"
         - metric: "pipelineMeanTimeToRecoveryCheck"
-          name: "MTTR"
+          name: "MTTR (Mean Time To Recovery)"
     Consumption:
       icon: "◈"
       healthCheck: "productOutputPortsResponseTimeCheck"

@@ -2034,7 +2034,7 @@ function Flow() {
                                     )}
                                     {sidePanelType === 'observability' && (
                                         <a
-                                            href="https://joaovicente.github.io/open-data-product-observability-standard/v0.0.1/"
+                                            href="https://joaovicente.github.io/open-data-product-observability-standard/v0.1.0/"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             style={{
@@ -2049,7 +2049,7 @@ function Flow() {
                                                 whiteSpace: 'nowrap'
                                             }}
                                         >
-                                            Open Data Product Observability Standard v0.0.1
+                                            Open Data Product Observability Standard v0.1.0
                                         </a>
                                     )}
                                 </div>

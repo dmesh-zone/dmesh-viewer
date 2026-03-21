@@ -147,7 +147,7 @@ const ObservabilityDrilldown = ({ metrics, filterText, activeTab, availableDimen
 
         // secondaryMetrics mapping
         const details = (
-            <>
+            <div style={{ display: 'flex', flexWrap: 'wrap', columnGap: '16px', rowGap: '4px', marginTop: '4px' }}>
                 {dimConfig.secondaryMetrics?.map((sm, i) => {
                     const smMetric = results.find(r => r.name === sm.metric);
                     if (!smMetric || !smMetric.measure || smMetric.measure.value == null) return null;
@@ -170,12 +170,12 @@ const ObservabilityDrilldown = ({ metrics, filterText, activeTab, availableDimen
                     }
 
                     return (
-                        <div key={i} style={{ marginTop: '4px' }}>
-                            {sm.name}: <span style={{ fontWeight: 'bold' }}>{val} {unit}</span>
+                        <div key={i} style={{ display: 'flex', alignItems: 'baseline', gap: '4px', whiteSpace: 'nowrap' }}>
+                            <span>{sm.name}:</span> <span style={{ fontWeight: 'bold' }}>{val} {unit}</span>
                         </div>
                     );
                 })}
-            </>
+            </div>
         );
 
         return (
