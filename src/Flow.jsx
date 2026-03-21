@@ -1308,7 +1308,7 @@ function Flow() {
     );
 
     const kpiStats = React.useMemo(() => {
-        if (selection.id || !config?.observability?.kpis) return null;
+        if (!observeMode || selection.id || !config?.observability?.kpis) return null;
         
         const kpisConfig = config.observability.kpis;
         const results = Object.keys(kpisConfig).map(k => ({ id: k, value: 0, config: kpisConfig[k] }));
@@ -1353,7 +1353,7 @@ function Flow() {
     }, [visibleNodes, observeMode, selection.id, metricsMap, config]);
 
     const renderKpiCards = () => {
-        if (selection.id || !kpiStats) return null;
+        if (!observeMode || selection.id || !kpiStats) return null;
         return (
             <React.Fragment>
                 {kpiStats.filter(k => k.config.visible).map(kpi => (
