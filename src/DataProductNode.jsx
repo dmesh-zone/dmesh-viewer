@@ -82,11 +82,7 @@ export default memo(({ data, isConnectable }) => {
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                     {observeMode && pips && (
                         <div style={{ display: 'flex', gap: '4px', marginRight: '8px' }}>
-                            {['pipeline', 'consumption', 'freshness', 'quality'].filter(dim => {
-                                if (!availableDimensions) return true;
-                                const label = dim === 'consumption' ? 'Consumption' : (dim.charAt(0).toUpperCase() + dim.slice(1));
-                                return availableDimensions.includes(label);
-                            }).map((dim) => (
+                            {Object.keys(pips).map((dim) => (
                                 <div
                                     key={dim}
                                     title={dim.toUpperCase()}

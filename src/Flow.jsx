@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { memo } from 'react';
+import React from 'react';
 import { ReactFlow, Controls, Background, useNodesState, useEdgesState } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import DataProductNode from './DataProductNode';
@@ -63,7 +63,7 @@ export default Flow;
 function Flow() {
     // Registry State - URL will be loaded from config.json
     const [registryUrl, setRegistryUrl] = React.useState('');
-    const [workingUrl, setWorkingUrl] = React.useState('');
+
     const [dataMeshRegistry, setDataMeshRegistry] = React.useState([]);
     const [dataMeshRegistryRaw, setDataMeshRegistryRaw] = React.useState('');
     const [isLoading, setIsLoading] = React.useState(true);
@@ -130,6 +130,7 @@ function Flow() {
                 iconMap: data.iconMap || {},
                 tiers: data.tiers || {},
                 domainPalette: data.domainPalette || ['#fee2e2', '#f3e8ff', '#fef3c7', '#ffedd5', '#e0e7ff', '#dbeafe', '#dcfce7'],
+                observability: data.observability || {},
                 defaultDataMeshRegistryUrl: normalizePath(data.defaultDataMeshRegistryUrl),
                 registries: (data.sampleDataMeshRegistryUrls || []).map(reg => ({
                     original: reg,
@@ -140,7 +141,6 @@ function Flow() {
             setConfigError(null);
             // Set initial registry URL from config
             setRegistryUrl(loadedConfig.defaultDataMeshRegistryUrl);
-            setWorkingUrl(loadedConfig.defaultDataMeshRegistryUrl);
         })
         .catch(err => {
             console.error("Failed to load config.yaml", err);
@@ -186,111 +186,60 @@ function Flow() {
     const [showEventsTab, setShowEventsTab] = React.useState(false);
 
     const availableDimensions = React.useMemo(() => {
-        const dims = new Set();
-        metricsMap.forEach(metrics => {
-            if (metrics.physical?.pipeline) dims.add('Pipeline');
-            if (metrics.dynamic?.responseTime || metrics.usage) dims.add('Consumption');
-            if (metrics.dynamic?.freshness) dims.add('Freshness');
-            if (metrics.dynamic?.quality) dims.add('Quality');
-        });
-        const activeList = ['Pipeline', 'Quality', 'Freshness', 'Consumption'].filter(d => dims.has(d));
-        if (activeList.length > 1) {
-            return ['Any', ...activeList];
-        }
-        return activeList;
-    }, [metricsMap]);
+        if (!config?.observability?.dimensions) return [];
+        const dims = Object.keys(config.observability.dimensions);
+        return dims.length > 1 ? ['Any', ...dims] : dims;
+    }, [config]);
 
     // Health Status Derivation Logic
-    const isDimUnknown = (metrics, dim) => {
-        if (!metrics) return true;
-        switch (dim) {
-            case 'consumption':
-                return metrics.dynamic?.responseTime?.met == null;
-            case 'pipeline':
-                return !metrics.physical?.pipeline;
-            case 'freshness':
-                return !metrics.dynamic?.freshness;
-            case 'quality':
-                return !metrics.dynamic?.quality;
-            default:
-                return true;
-        }
-    };
-
-    const isDimCritical = (metrics, dim) => {
-        if (!metrics) return false;
-        switch (dim) {
-            case 'consumption': {
-                if (metrics.dynamic?.responseTime?.met === false) {
-                    return metrics.dynamic.responseTime?.actualP95Ms > 2 * metrics.dynamic.responseTime?.objectiveMs;
-                }
-                return false;
-            }
-            case 'freshness': {
-                const lag = metrics.dynamic?.freshness?.lagMinutes;
-                const max = metrics.dynamic?.freshness?.maxAllowedLagMinutes;
-                return lag != null && max != null && lag > 2 * max;
-            }
-            case 'quality': return (metrics.dynamic?.quality?.rulesFailed || 0) > 1;
-            case 'pipeline': return metrics.physical?.pipeline?.status === 'failed';
-            default: return false;
-        }
-    };
-
-    const isDimDegraded = (metrics, dim) => {
-        if (!metrics) return false;
-        switch (dim) {
-            case 'consumption': {
-                if (isDimCritical(metrics, 'consumption')) return false;
-                return metrics.dynamic?.responseTime?.met === false;
-            }
-            case 'freshness': return metrics.dynamic?.freshness?.withinExpectation === false;
-            case 'quality': return metrics.dynamic?.quality?.rulesFailed === 1;
-            case 'pipeline': return false; // Pipeline only has critical or healthy states
-
-            default: return false;
-        }
-    };
-
     const deriveStatus = React.useCallback((productId, dimension) => {
         const metrics = metricsMap.get(productId);
         if (!metrics) return 'unknown';
 
-        let dimsToCheck = dimension ? [dimension] : ['pipeline', 'quality', 'freshness', 'consumption'];
-        
-        // If aggregating, only check dimensions that are globally available
-        if (!dimension) {
-            dimsToCheck = availableDimensions
-                .filter(d => d !== 'Any')
-                .map(d => d === 'Consumption' ? 'consumption' : d.toLowerCase());
+        const dimsConfig = config?.observability?.dimensions;
+
+        if (!dimension || dimension === 'Any') {
+             if (!dimsConfig) return metrics.health || 'unknown';
+             const dimsToCheck = Object.keys(dimsConfig);
+             if (dimsToCheck.length === 0) return metrics.health || 'unknown';
+
+             let hasCritical = false;
+             let hasDegraded = false;
+             let hasHealthy = false;
+
+             for (const d of dimsToCheck) {
+                 const healthCheckName = dimsConfig[d].healthCheck;
+                 if (!healthCheckName) continue;
+
+                 const checkResult = metrics.results?.find(r => r.name === healthCheckName && r.type === 'check');
+                 if (!checkResult) continue;
+
+                 if (checkResult.status === 'fail' && checkResult.severity === 'critical') hasCritical = true;
+                 else if (checkResult.status === 'fail') hasDegraded = true;
+                 else if (checkResult.status === 'pass') hasHealthy = true;
+             }
+
+             if (hasCritical) return 'critical';
+             if (hasDegraded) return 'degraded';
+             if (hasHealthy) return 'healthy';
+             return 'unknown';
         }
 
-        if (dimsToCheck.length === 0) return 'unknown';
+        if (!dimsConfig || !dimsConfig[dimension]) return 'unknown';
 
-        // 1. Critical if any are critical
-        for (const d of dimsToCheck) {
-            if (isDimCritical(metrics, d)) return 'critical';
+        const healthCheckName = dimsConfig[dimension].healthCheck;
+        if (!healthCheckName) return 'unknown';
+
+        const checkResult = metrics.results?.find(r => r.name === healthCheckName && r.type === 'check');
+        if (!checkResult) return 'unknown';
+
+        if (checkResult.status === 'pass') return 'healthy';
+        if (checkResult.status === 'fail') {
+             if (checkResult.severity === 'critical') return 'critical';
+             return 'degraded';
         }
-        
-        // 2. Degraded if any are degraded
-        for (const d of dimsToCheck) {
-            if (isDimDegraded(metrics, d)) return 'degraded';
-        }
-
-        // 3. Healthy if at least one is healthy (not unknown)
-        let hasHealthy = false;
-        for (const d of dimsToCheck) {
-            if (!isDimUnknown(metrics, d)) {
-                hasHealthy = true;
-                break;
-            }
-        }
-
-        if (hasHealthy) return 'healthy';
-
-        // 4. Unknown if all are unknown
         return 'unknown';
-    }, [metricsMap, availableDimensions]);
+    }, [metricsMap, config]);
 
     // Testability State
     const [isTestMode, setIsTestMode] = React.useState(() => window.location.hash.includes('#test'));
@@ -310,16 +259,13 @@ function Flow() {
     React.useEffect(() => {
         if (availableDimensions.length > 0) {
             // Mapping current activeDimension back to labels to check existence
-            const currentLabel = activeDimension === null ? 'Any' : 
-                               (activeDimension === 'consumption' ? 'Consumption' : 
-                                activeDimension.charAt(0).toUpperCase() + activeDimension.slice(1));
+            const currentLabel = activeDimension === null ? 'Any' : activeDimension;
             
             if (!availableDimensions.includes(currentLabel)) {
                 // If current selected dimension is invalid (e.g. 'Any' when only 1 dim exists)
                 // Default to the first available dimension
                 const firstDim = availableDimensions[0];
-                const dimKey = firstDim === 'Any' ? null : 
-                             (firstDim === 'Consumption' ? 'consumption' : firstDim.toLowerCase());
+                const dimKey = firstDim === 'Any' ? null : firstDim;
                 setActiveDimension(dimKey);
             }
         }
@@ -359,8 +305,8 @@ function Flow() {
 
         // First pass: find the latest asOf date to calculate offset if needed
         dataMeshRegistry.forEach(item => {
-            if (item.kind === 'DataProductObservabilityMetrics' && item.asOf) {
-                const asOfTime = new Date(item.asOf).getTime();
+            if (item.kind === 'DataProductObservability' && item.observedAt) {
+                const asOfTime = new Date(item.observedAt).getTime();
                 if (asOfTime > latestAsOf) {
                     latestAsOf = asOfTime;
                 }
@@ -369,61 +315,44 @@ function Flow() {
 
         const timeOffset = (adjustMetricsTime && latestAsOf > 0 && isTestMode) ? (Date.now() - latestAsOf) : 0;
 
-        const shiftTimeStr = (timeStr) => {
-            if (!timeStr) return timeStr;
-            return new Date(new Date(timeStr).getTime() + timeOffset).toISOString();
-        };
-
         const shiftTimeIso = (isoStr) => {
              if (!isoStr) return isoStr;
              return new Date(new Date(isoStr).getTime() + timeOffset).toISOString();
         }
 
         dataMeshRegistry.forEach(item => {
-            if (item.kind === 'DataProductObservabilityMetrics') {
+            if (item.kind === 'DataProductObservability') {
                 if (timeOffset > 0) {
                     // Deep clone to avoid mutating original registry
                     const clonedItem = JSON.parse(JSON.stringify(item));
-                    if (clonedItem.asOf) clonedItem.asOf = shiftTimeIso(clonedItem.asOf);
-                    if (clonedItem.dynamic?.freshness?.lastUpdatedAt) clonedItem.dynamic.freshness.lastUpdatedAt = shiftTimeIso(clonedItem.dynamic.freshness.lastUpdatedAt);
-                    if (clonedItem.dynamic?.quality?.lastRunAt) clonedItem.dynamic.quality.lastRunAt = shiftTimeIso(clonedItem.dynamic.quality.lastRunAt);
-                    if (clonedItem.physical?.pipeline?.lastRunAt) clonedItem.physical.pipeline.lastRunAt = shiftTimeIso(clonedItem.physical.pipeline.lastRunAt);
-
-                    if (clonedItem.events) {
-                        clonedItem.events = clonedItem.events.map(ev => ({
-                            ...ev,
-                            timestamp: shiftTimeIso(ev.timestamp)
-                        }));
+                    if (clonedItem.observedAt) clonedItem.observedAt = shiftTimeIso(clonedItem.observedAt);
+                    
+                    if (clonedItem.results) {
+                        clonedItem.results.forEach(res => {
+                            if (res.name && res.name.includes('At') && res.measure && res.measure.value) {
+                                res.measure.value = shiftTimeIso(res.measure.value);
+                            }
+                        });
                     }
-                    metrics.set(clonedItem.productId, clonedItem);
+
+                    metrics.set(clonedItem.id, clonedItem);
                 } else {
-                    metrics.set(item.productId, item);
+                    metrics.set(item.id, item);
                 }
             }
         });
 
         // Add simulated metrics for designated dimensions
         if (isTestMode && simulatedDims.size > 0) {
-            const simulatedMetrics = ObsSim.simulateRegistryMetrics(dataMeshRegistry, Array.from(simulatedDims));
+            const simulatedMetrics = ObsSim.simulateRegistryMetrics(dataMeshRegistry, Array.from(simulatedDims), config?.observability);
             simulatedMetrics.forEach(metric => {
-                const existing = metrics.get(metric.productId) || { productId: metric.productId };
-                // Merge simulated data into existing metrics
-                const merged = { ...existing };
-                if (metric.physical) merged.physical = { ...merged.physical, ...metric.physical };
-                if (metric.usage) merged.usage = metric.usage;
-                if (metric.dynamic) {
-                    merged.dynamic = { ...merged.dynamic, ...metric.dynamic };
-                }
-                if (metric.status) merged.status = metric.status;
-                if (metric.asOf) merged.asOf = metric.asOf;
-                
-                metrics.set(metric.productId, merged);
+                // Merge simulated data into existing metrics (replace completely)
+                metrics.set(metric.id, metric);
             });
         }
 
         setMetricsMap(metrics);
     }, [dataMeshRegistry, adjustMetricsTime, isTestMode, simulatedDims]);
-
 
     const handleLoadRegistryText = (text) => {
         setIsLoading(true);
@@ -432,7 +361,6 @@ function Flow() {
             processRegistryText(text);
             setSelection({ id: null, kind: null });
             setRegistryUrl(''); // Clear URL if loading from clipboard
-            setWorkingUrl('');
         } catch (err) {
             console.error("Error loading registry from text:", err);
             setError(err.message);
@@ -607,12 +535,15 @@ function Flow() {
                 // Observability Data
                 const healthStatus = observeMode ? deriveStatus(node.id, activeDimension) : null;
                 const metrics = metricsMap.get(node.id);
-                const pips = observeMode ? {
-                    consumption: deriveStatus(node.id, 'consumption'),
-                    freshness: deriveStatus(node.id, 'freshness'),
-                    quality: deriveStatus(node.id, 'quality'),
-                    pipeline: deriveStatus(node.id, 'pipeline')
-                } : null;
+                let pips = null;
+                if (observeMode && availableDimensions) {
+                    pips = {};
+                    availableDimensions.forEach(dim => {
+                        if (dim !== 'Any') {
+                             pips[dim] = deriveStatus(node.id, dim);
+                        }
+                    });
+                }
 
                 return {
                     id: node.id,
@@ -1297,7 +1228,7 @@ function Flow() {
         }
     }, [observeMode, metricsMap]);
 
-    const onNodeDoubleClick = (event, node) => {
+    const onNodeDoubleClick = () => {
         console.log('Double click ignored');
     };
 
@@ -1325,10 +1256,6 @@ function Flow() {
         return 'Back to Mesh';
     }, [selection.id, selection.kind]);
 
-    const handleLoadUrl = (e) => {
-        e.preventDefault();
-        setRegistryUrl(workingUrl);
-    };
 
     const onEdgeClick = React.useCallback((event, edge) => {
         event.stopPropagation();
@@ -1348,7 +1275,7 @@ function Flow() {
         setHoveredEdgeId(edge.id);
     }, []);
 
-    const onEdgeMouseLeave = React.useCallback((event, edge) => {
+    const onEdgeMouseLeave = React.useCallback(() => {
         setHoveredEdgeId(null);
     }, []);
 
@@ -1701,7 +1628,7 @@ function Flow() {
                                 msOverflowStyle: 'none'
                             }}>
                                 {availableDimensions.map(dim => {
-                                    const dimKey = dim === 'Any' ? null : (dim === 'Consumption' ? 'consumption' : dim.toLowerCase());
+                                    const dimKey = dim === 'Any' ? null : dim;
                                     const isActive = activeDimension === dimKey;
                                     return (
                                         <button
@@ -1812,7 +1739,7 @@ function Flow() {
                                         {isTestMode && (
                                             <div style={{ borderTop: '1px solid #e2e8f0', marginTop: '12px', paddingTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                                 <div style={{ fontSize: '10px', fontWeight: '700', color: '#64748b', textTransform: 'uppercase' }}>Simulation</div>
-                                                {['Pipeline', 'Consumption', 'Freshness', 'Quality'].map(dim => {
+                                                {Object.keys(config?.observability?.dimensions || {}).length > 0 ? Object.keys(config.observability.dimensions).map(dim => {
                                                     const isSimulated = simulatedDims.has(dim);
                                                     return (
                                                         <div 
@@ -1830,7 +1757,7 @@ function Flow() {
                                                             <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Simulate {dim}</span>
                                                         </div>
                                                     );
-                                                })}
+                                                }) : <div style={{ fontSize: '12px', color: '#64748b' }}>No dimensions configured</div>}
                                             </div>
                                         )}
                                         {isTestMode && (
@@ -2297,6 +2224,7 @@ function Flow() {
                                     activeTab={sidePanelTab}
                                     availableDimensions={availableDimensions}
                                     showEventsTab={showEventsTab}
+                                    config={config}
                                 />
                             ) : sidePanelTab === 'visual' && sidePanelType === 'data-product-yaml' ? (
                                 <DataProductVisual data={sidePanelContent.originalData || sidePanelContent} />

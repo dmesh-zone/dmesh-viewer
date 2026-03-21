@@ -14,22 +14,11 @@
  * limitations under the License.
  */
 
-/**
- * Observability Simulation Module
- * 
- * This module generates realistic observability metrics for data products.
- * It can be used both at runtime in the browser and as a CLI tool.
- */
-
-// --- Constants & Config ---
-
 const STATUS_DISTRIBUTION = {
     healthy: 0.7,
     degraded: 0.2,
     critical: 0.1
 };
-
-// --- Helper Functions ---
 
 const getRandomStatus = () => {
     const r = Math.random();
@@ -40,7 +29,26 @@ const getRandomStatus = () => {
 
 const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-// --- Simulation Generators ---
+const createMetric = (name, value, unit) => {
+    const measure = { value };
+    if (unit) measure.unit = unit;
+    return { name, type: 'metric', measure };
+};
+
+const createCheck = (name, status, severity, value, unit, threshold, message) => {
+    const measure = { value };
+    if (unit) measure.unit = unit;
+    const check = {
+        name,
+        type: 'check',
+        status,
+        severity,
+        threshold,
+        measure
+    };
+    if (message) check.message = message;
+    return check;
+};
 
 export const generatePipelineMetrics = (statusOverride) => {
     const status = statusOverride || getRandomStatus();
@@ -48,36 +56,32 @@ export const generatePipelineMetrics = (statusOverride) => {
     const isDegraded = status === 'degraded';
     
     let mtbf = getRandomInt(15, 30);
-    let mttr = Math.random() * 90; // Green (x < 120)
+    let mttr = Math.random() * 90; 
 
     if (isCritical) {
         mtbf = getRandomInt(1, 6);
-        mttr = getRandomInt(361, 720); // Red (x > 360)
+        mttr = getRandomInt(361, 720); 
     } else if (isDegraded) {
         mtbf = getRandomInt(7, 14);
-        mttr = getRandomInt(121, 360); // Amber (120 < x <= 360)
+        mttr = getRandomInt(121, 360);
     }
 
-    const metrics = {
-        status: isCritical ? 'failed' : 'success',
-        lastRunAt: new Date().toISOString(),
-        durationSeconds: isCritical ? null : getRandomInt(60, 3600),
-        recordsProcessed: isCritical ? null : getRandomInt(100, 10000000),
-        meanTimeBetweenFailuresDays: mtbf,
-        meanTimeToRecoveryMinutes: parseFloat(mttr.toFixed(1))
-    };
+    const lastRunState = isCritical ? 'failed' : 'success';
+    const failureReason = isCritical ? 'Upstream source connection timed out.' : undefined;
 
-    if (isCritical) {
-        metrics.failureReason = 'Upstream source connection timed out.';
-    }
-
-    return metrics;
+    return [
+        createMetric('pipelineLastRanAt', new Date().toISOString()),
+        createMetric('pipelineDuration', isCritical ? null : getRandomInt(60, 3600), 'seconds'),
+        createMetric('pipelineRecordsProcessed', isCritical ? null : getRandomInt(100, 10000000)),
+        createMetric('pipelineLastRunState', lastRunState),
+        createCheck('pipelineLastRunStateCheck', isCritical ? 'fail' : 'pass', isCritical ? 'critical' : 'warning', lastRunState, null, { validValues: ['success'] }, failureReason),
+        createCheck('pipelineMeanTimeBetweenFailuresCheck', isDegraded ? 'fail' : 'pass', 'warning', mtbf, 'days', { mustBeGreaterThan: 5 }),
+        createCheck('pipelineMeanTimeToRecoveryCheck', isDegraded ? 'fail' : 'pass', 'warning', parseFloat(mttr.toFixed(1)), 'minutes', { mustBeLessThan: 120 })
+    ];
 };
 
 export const generateConsumptionMetrics = () => {
     const objectiveMs = 10000;
-    
-    // On average 4 out of 10 do not meet the objective
     const met = Math.random() >= 0.4;
     
     let actualP95Ms;
@@ -87,11 +91,11 @@ export const generateConsumptionMetrics = () => {
         actualP95Ms = getRandomInt(10001, 20000);
     }
     
-    return {
-        objectiveMs,
-        actualP95Ms,
-        met
-    };
+    return [
+        createMetric('productConsumerQueryCount', getRandomInt(100, 5000)),
+        createMetric('outputPortDistinctConsumers', getRandomInt(1, 15)),
+        createCheck('productOutputPortsResponseTimeCheck', met ? 'pass' : 'fail', 'warning', actualP95Ms, 'ms', { mustBeLessThan: objectiveMs }, `Objective: ${objectiveMs}ms`)
+    ];
 };
 
 export const generateFreshnessMetrics = (statusOverride) => {
@@ -108,12 +112,10 @@ export const generateFreshnessMetrics = (statusOverride) => {
         lag = maxAllowed * 1.2;
     }
     
-    return {
-        lagMinutes: lag,
-        maxAllowedLagMinutes: maxAllowed,
-        withinExpectation: !isCritical && !isDegraded,
-        lastUpdatedAt: new Date().toISOString()
-    };
+    return [
+        createMetric('productDataLatencyMaximumAcrossAllContracts', lag, 'minutes'),
+        createCheck('productDataLatencyBeyondSlaCheck', (!isCritical && !isDegraded) ? 'pass' : 'fail', isCritical ? 'critical' : 'warning', lag, 'minutes', { mustBeLessThan: maxAllowed })
+    ];
 };
 
 export const generateQualityMetrics = (statusOverride) => {
@@ -131,67 +133,60 @@ export const generateQualityMetrics = (statusOverride) => {
     }
     
     const score = (passed / totalRules) * 100;
-    
-    return {
-        score: score,
-        rulesPassed: passed,
-        rulesFailed: totalRules - passed,
-        lastRunAt: new Date().toISOString()
-    };
+    const failed = totalRules - passed;
+
+    return [
+        createMetric('contractDataQualityRuleCount', passed),
+        createMetric('contractDataQualityRuleFailCount', failed),
+        createMetric('contractDataQualityScore', score, 'percent'),
+        createCheck('productDataQualityRulesFailCheck', failed === 0 ? 'pass' : 'fail', isCritical ? 'critical' : 'warning', failed, null, { mustBe: 0 })
+    ];
 };
 
-export const generateUsageMetrics = () => {
-    return {
-        activeConsumers: getRandomInt(1, 15),
-        queryCount: getRandomInt(100, 5000)
-    };
-};
-
-/**
- * Simulates metrics for an entire registry.
- */
-export const simulateRegistryMetrics = (dataMeshRegistry, dimensions = ['Pipeline', 'Quality', 'Freshness', 'Consumption']) => {
+export const simulateRegistryMetrics = (dataMeshRegistry, dimensions = [], configObs = null) => {
     if (!dataMeshRegistry) return [];
     
+    const dimsToGen = dimensions.length > 0 ? dimensions : ['Pipeline', 'Quality', 'Freshness', 'Consumption'];
+
     return dataMeshRegistry
         .filter(item => {
             if (item.kind !== 'DataProduct') return false;
             const tier = item.customProperties?.find(p => p.property === 'dataProductTier')?.value;
-            // Exclude dataSource and application tiers from simulation
             if (tier === 'dataSource' || tier === 'application') return false;
             return true;
         })
         .map(dp => {
             const status = getRandomStatus();
-            const metrics = {
-                kind: 'DataProductObservabilityMetrics',
-                schemaVersion: '0.0.1',
-                productId: dp.id,
-                asOf: new Date().toISOString(),
+            
+            let results = [];
+            dimsToGen.forEach(dim => {
+                const healthCheck = configObs?.dimensions?.[dim]?.healthCheck || dim;
+
+                if (healthCheck.includes('pipeline') || healthCheck.includes('Pipeline')) results.push(...generatePipelineMetrics(status));
+                else if (healthCheck.includes('ResponseTime') || healthCheck.includes('Consumption')) results.push(...generateConsumptionMetrics(status));
+                else if (healthCheck.includes('Latency') || healthCheck.includes('Freshness') || healthCheck.includes('Sla')) results.push(...generateFreshnessMetrics(status));
+                else if (healthCheck.includes('Quality') || healthCheck.includes('Rule')) results.push(...generateQualityMetrics(status));
+                else {
+                    const dStr = dim.toLowerCase();
+                    if (dStr.includes('pipe')) results.push(...generatePipelineMetrics(status));
+                    else if (dStr.includes('consum') || dStr.includes('usage')) results.push(...generateConsumptionMetrics(status));
+                    else if (dStr.includes('fresh') || dStr.includes('latenc')) results.push(...generateFreshnessMetrics(status));
+                    else if (dStr.includes('qual')) results.push(...generateQualityMetrics(status));
+                }
+            });
+            
+            return {
+                kind: 'DataProductObservability',
+                schemaVersion: '0.1.0',
+                id: dp.id,
+                observedAt: new Date().toISOString(),
                 period: 'P1D',
-                status: status
+                health: status,
+                source: { process: 'simulator' },
+                results
             };
-            
-            if (dimensions.includes('Pipeline')) metrics.physical = { pipeline: generatePipelineMetrics(status) };
-            if (dimensions.includes('Consumption')) {
-                if (!metrics.dynamic) metrics.dynamic = {};
-                metrics.dynamic.responseTime = generateConsumptionMetrics(status);
-                metrics.usage = generateUsageMetrics();
-            }
-            if (dimensions.includes('Freshness')) {
-                if (!metrics.dynamic) metrics.dynamic = {};
-                metrics.dynamic.freshness = generateFreshnessMetrics(status);
-            }
-            if (dimensions.includes('Quality')) {
-                if (!metrics.dynamic) metrics.dynamic = {};
-                metrics.dynamic.quality = generateQualityMetrics(status);
-            }
-            
-            return metrics;
         });
 };
-
-// --- CLI Logic ---
 
 const runCli = async () => {
     const fs = await import('fs');
@@ -200,47 +195,37 @@ const runCli = async () => {
     
     const args = process.argv.slice(2);
     if (args.length === 0) {
-        console.log('Usage: node ObsSimulation.js <path-to-registry.yaml> [dimensions...]');
-        console.log('Dimensions: Pipeline, Quality, Freshness, Consumption (comma separated or space separated)');
-        process.exit(1);
+        console.log('Usage: node ObsSimulation.js <path-to-registry.yaml>');
+        return process.exit(1);
     }
     
     const registryPath = path.resolve(args[0]);
     if (!fs.existsSync(registryPath)) {
-        console.error(`Error: File not found at ${registryPath}`);
-        process.exit(1);
+        console.error(`Error: File not found`);
+        return process.exit(1);
+    }
+
+    let configObs = null;
+    const configPath = path.resolve('public/config.yaml');
+    if (fs.existsSync(configPath)) {
+         configObs = YAML.parse(fs.readFileSync(configPath, 'utf8'))?.observability;
     }
     
-    try {
-        const fileContent = fs.readFileSync(registryPath, 'utf8');
-        const registry = YAML.parse(fileContent);
-        
-        let dimensions = ['Pipeline', 'Quality', 'Freshness', 'Consumption'];
-        if (args.length > 1) {
-            dimensions = args.slice(1).flatMap(a => a.split(','));
-        }
-        
-        const metrics = simulateRegistryMetrics(registry, dimensions);
-        
-        // Append metrics to the registry if it's a list, or just print them
-        if (Array.isArray(registry)) {
-            const updatedRegistry = [...registry, ...metrics];
-            const output = YAML.stringify(updatedRegistry);
-            const outputPath = registryPath.replace('.yaml', '-with-sim-metrics.yaml');
-            fs.writeFileSync(outputPath, output);
-            console.log(`Successfully generated simulated metrics for ${metrics.length} data products.`);
-            console.log(`Output saved to: ${outputPath}`);
-        } else {
-            console.log(YAML.stringify(metrics));
-        }
-        
-    } catch (err) {
-        console.error(`Error processing registry: ${err.message}`);
-        process.exit(1);
+    let dimensions = ['Pipeline', 'Quality', 'Freshness', 'Consumption'];
+    if (configObs && configObs.dimensions) {
+        dimensions = Object.keys(configObs.dimensions);
+    }
+
+    const fileContent = fs.readFileSync(registryPath, 'utf8');
+    const registry = YAML.parse(fileContent);
+    const metrics = simulateRegistryMetrics(registry, dimensions, configObs);
+    
+    if (Array.isArray(registry)) {
+        const updated = [...registry, ...metrics];
+        fs.writeFileSync(registryPath.replace('.yaml', '-with-sim-metrics.yaml'), YAML.stringify(updated));
     }
 };
 
-// Detect if run directly from Node
-if (typeof process !== 'undefined' && process.argv && process.argv[1] && (process.argv[1].endsWith('ObsSimulation.js') || process.argv[1].endsWith('ObsSimulation.jsx'))) {
+if (typeof process !== 'undefined' && process.argv && process.argv[1] && process.argv[1].endsWith('ObsSimulation.js')) {
     runCli();
 }

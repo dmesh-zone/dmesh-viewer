@@ -1,4 +1,4 @@
-defaultDataMeshRegistryUrl: /DataMeshRegistryPetsExample.yaml
+defaultDataMeshRegistryUrl: /DataMeshRegistryObservability.yaml
 
 sampleDataMeshRegistryUrls:
   - /DataMeshRegistryPetsExample.yaml
@@ -86,3 +86,45 @@ tiers:
     color: "#e2e8f0"
     bannerColor: "#cbd5e1"
     columnNumber: 5
+
+observability:
+  dimensions:
+    Pipeline:
+      icon: "▸"
+      healthCheck: "pipelineLastRunStateCheck"
+      keyResult:
+        metric: "pipelineLastRunState"
+        name: ""
+      secondaryMetrics:
+        - metric: "pipelineDuration"
+          name: "Duration"
+        - metric: "pipelineRecordsProcessed"
+          name: "Records processed"
+        - metric: "pipelineMeanTimeBetweenFailuresCheck"
+          name: "MTBF"
+        - metric: "pipelineMeanTimeToRecoveryCheck"
+          name: "MTTR"
+    Consumption:
+      icon: "◈"
+      healthCheck: "productOutputPortsResponseTimeCheck"
+      keyResult:
+        metric: "productConsumerQueryCount"
+        name: "Queries"
+      secondaryMetrics:
+        - metric: "outputPortDistinctConsumers"
+          name: "Active consumers"
+    Latency:
+      icon: "⧗"
+      healthCheck: "productDataLatencyBeyondSlaCheck"
+      keyResult:
+        metric: "productDataLatencyMaximumAcrossAllContracts"
+        name: "Max Latency"
+    Quality:
+      icon: "✦"
+      healthCheck: "productDataQualityRulesFailCheck"
+      keyResult:
+        metric: "contractDataQualityRuleCount"
+        name: "Rules Passed"
+      secondaryMetrics:
+        - metric: "contractDataQualityRuleFailCount"
+          name: "Failed Rules"

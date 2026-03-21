@@ -1,0 +1,478 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://bitol-io.github.io/open-data-product-observability-standard/schema/odps-observability-json-schema-v0.1.0.json",
+    "title": "DataProductObservability",
+    "description": "Observability metrics and checks for a data product.",
+    "type": "object",
+    "required": [
+        "schemaVersion",
+        "id",
+        "observedAt",
+        "period",
+        "health"
+    ],
+    "properties": {
+        "schemaVersion": {
+            "type": "string",
+            "description": "Semantic version of this schema. Consumers should use this for compatibility checks.",
+            "examples": [
+                "0.1.0"
+            ]
+        },
+        "kind": {
+            "type": "string",
+            "description": "The kind of file this is. Valid value is `DataProductObservability`.",
+            "enum": [
+                "DataProductObservability"
+            ],
+            "default": "DataProductObservability"
+        },
+        "id": {
+            "type": "string",
+            "description": "UUID of the data product as declared in the ODPS"
+        },
+        "observedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 UTC timestamp at which these metrics were collected."
+        },
+        "period": {
+            "type": "string",
+            "description": "ISO 8601 duration representing the observation window for rate-based metrics (e.g. query volume, pipeline runs)."
+        },
+        "health": {
+            "type": "string",
+            "description": "Composite any-case health status derived across all dimensions and output ports.",
+            "enum": [
+                "critical",
+                "degraded",
+                "healthy"
+            ]
+        },
+        "source": {
+            "type": "object",
+            "description": "Source of the metrics.",
+            "required": [
+                "process"
+            ],
+            "properties": {
+                "process": {
+                    "type": "string",
+                    "description": "The process that generated the metrics."
+                }
+            },
+            "additionalProperties": false
+        },
+        "results": {
+            "type": "array",
+            "description": "Array of objects each with a metric or a check",
+            "items": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "type",
+                    "measure"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "The name of the metric."
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "The type of the metric.",
+                        "enum": [
+                            "metric",
+                            "check"
+                        ]
+                    },
+                    "target": {
+                        "type": "object",
+                        "description": "The target of the metric.",
+                        "properties": {
+                            "resourceType": {
+                                "type": "string",
+                                "description": "The type of the resource.",
+                                "enum": [
+                                    "DataProduct",
+                                    "DataContract",
+                                    "DataContract/schema",
+                                    "DataContract/schema/object"
+                                ],
+                                "default": "DataProduct"
+                            },
+                            "resourceIdentifier": {
+                                "type": "string",
+                                "description": "The identifier of the resource."
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "measure": {
+                        "type": "object",
+                        "description": "The measure of the metric.",
+                        "required": [
+                            "value"
+                        ],
+                        "properties": {
+                            "value": {
+                                "description": "The value of the metric."
+                            },
+                            "unit": {
+                                "type": "string",
+                                "description": "The unit of the metric."
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "When type is `check`, this is the status of the `check`.",
+                        "enum": [
+                            "pass",
+                            "fail"
+                        ]
+                    },
+                    "threshold": {
+                        "type": "object",
+                        "description": "An object describing the pass criteria.",
+                        "properties": {
+                            "mustBe": {},
+                            "mustNotBe": {},
+                            "mustBeGreaterThan": {
+                                "type": "number"
+                            },
+                            "mustBeGreaterOrEqualThan": {
+                                "type": "number"
+                            },
+                            "mustBeLessThan": {
+                                "type": "number"
+                            },
+                            "mustBeLessOrEqualThan": {
+                                "type": "number"
+                            },
+                            "mustBeBetween": {
+                                "type": "array",
+                                "items": {
+                                    "type": "number"
+                                },
+                                "minItems": 2,
+                                "maxItems": 2
+                            },
+                            "mustNotBeBetween": {
+                                "type": "array",
+                                "items": {
+                                    "type": "number"
+                                },
+                                "minItems": 2,
+                                "maxItems": 2
+                            },
+                            "validValues": {
+                                "type": "array"
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "severity": {
+                        "type": "string",
+                        "description": "Determines how severe a failed check should be treated as.",
+                        "enum": [
+                            "critical",
+                            "error",
+                            "warning"
+                        ]
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Human-readable message associated with the metric or check."
+                    }
+                },
+                "additionalProperties": false,
+                "allOf": [
+                    {
+                        "if": {
+                            "properties": {
+                                "type": {
+                                    "const": "check"
+                                }
+                            }
+                        },
+                        "then": {
+                            "required": [
+                                "status",
+                                "threshold"
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "additionalProperties": false,
+    "examples": [
+        {
+            "schemaVersion": "0.1.0",
+            "kind": "DataProductObservability",
+            "id": "fbe8d147-28db-4f1d-bedf-a3fe9f458427",
+            "observedAt": "2026-03-13T09:00:00Z",
+            "period": "P1D",
+            "health": "healthy",
+            "source": {
+                "process": "customDataProductObserver"
+            },
+            "results": [
+                {
+                    "name": "pipelineLastRanAt",
+                    "type": "metric",
+                    "measure": {
+                        "value": "2026-03-13T08:45:00Z"
+                    }
+                },
+                {
+                    "name": "pipelineDuration",
+                    "type": "metric",
+                    "measure": {
+                        "unit": "minutes",
+                        "value": 1200
+                    }
+                },
+                {
+                    "name": "pipelineDurationCheck",
+                    "type": "check",
+                    "status": "fail",
+                    "severity": "warning",
+                    "threshold": {
+                        "mustBeLessThan": 1000
+                    },
+                    "measure": {
+                        "unit": "minutes",
+                        "value": 1200
+                    }
+                },
+                {
+                    "name": "pipelineLastRunState",
+                    "type": "metric",
+                    "measure": {
+                        "value": "success"
+                    },
+                    "message": "Spark executor OOM"
+                },
+                {
+                    "name": "pipelineLastRunStateCheck",
+                    "type": "check",
+                    "status": "fail",
+                    "severity": "critical",
+                    "threshold": {
+                        "validValues": [
+                            "success",
+                            "skipped"
+                        ]
+                    },
+                    "measure": {
+                        "value": "failed"
+                    },
+                    "message": "Spark executor OOM"
+                },
+                {
+                    "name": "pipelineRecordsProcessed",
+                    "type": "metric",
+                    "measure": {
+                        "value": 100000
+                    }
+                },
+                {
+                    "name": "pipelineMeanTimeBetweenFailuresCheck",
+                    "type": "check",
+                    "severity": "warning",
+                    "status": "pass",
+                    "threshold": {
+                        "mustBeGreaterThan": 5
+                    },
+                    "measure": {
+                        "value": 10,
+                        "unit": "days"
+                    }
+                },
+                {
+                    "name": "pipelineMeanTimeToRecoveryCheck",
+                    "type": "check",
+                    "severity": "warning",
+                    "status": "pass",
+                    "threshold": {
+                        "mustBeLessThan": 2
+                    },
+                    "measure": {
+                        "value": 1,
+                        "unit": "hours"
+                    }
+                },
+                {
+                    "name": "productOutputPortsResponseTimeCheck",
+                    "type": "check",
+                    "status": "pass",
+                    "severity": "warning",
+                    "threshold": {
+                        "mustBeGreaterThan": 50
+                    },
+                    "measure": {
+                        "unit": "percent",
+                        "value": 100
+                    }
+                },
+                {
+                    "name": "productConsumerQueryCount",
+                    "type": "metric",
+                    "measure": {
+                        "value": 2509
+                    }
+                },
+                {
+                    "name": "outputPortResponseTimeMeanCheck",
+                    "target": {
+                        "resourceType": "DataContract",
+                        "resourceIdentifier": "123e4567-e89b-12d3-a456-426614174000"
+                    },
+                    "type": "check",
+                    "status": "fail",
+                    "severity": "warning",
+                    "threshold": {
+                        "mustBeLessThan": 10000
+                    },
+                    "measure": {
+                        "unit": "seconds",
+                        "value": 12000
+                    }
+                },
+                {
+                    "name": "outputPortDistinctConsumers",
+                    "target": {
+                        "resourceType": "DataContract",
+                        "resourceIdentifier": "123e4567-e89b-12d3-a456-426614174000"
+                    },
+                    "type": "metric",
+                    "measure": {
+                        "value": 10
+                    }
+                },
+                {
+                    "name": "outputPortQueryCount",
+                    "target": {
+                        "resourceType": "DataContract",
+                        "resourceIdentifier": "123e4567-e89b-12d3-a456-426614174000"
+                    },
+                    "type": "metric",
+                    "measure": {
+                        "value": 2590
+                    }
+                },
+                {
+                    "name": "productDataLatencyBeyondSlaCheck",
+                    "type": "check",
+                    "status": "pass",
+                    "severity": "warning",
+                    "threshold": {
+                        "mustBe": 0
+                    },
+                    "measure": {
+                        "unit": "percent",
+                        "value": 0
+                    }
+                },
+                {
+                    "name": "productDataLatencyMaximumAcrossAllContracts",
+                    "type": "metric",
+                    "measure": {
+                        "unit": "hours",
+                        "value": 12
+                    }
+                },
+                {
+                    "name": "contractDataLatencySlaCheck",
+                    "target": {
+                        "resourceType": "DataContract",
+                        "resourceIdentifier": "123e4567-e89b-12d3-a456-426614174000"
+                    },
+                    "type": "check",
+                    "severity": "warning",
+                    "status": "fail",
+                    "threshold": {
+                        "mustBeLessThan": 6
+                    },
+                    "measure": {
+                        "unit": "hours",
+                        "value": 12
+                    }
+                },
+                {
+                    "name": "contractDataLatencySlaCheck",
+                    "target": {
+                        "resourceType": "DataContract",
+                        "resourceIdentifier": "123e4567-e89b-12d3-a456-426614174001"
+                    },
+                    "type": "check",
+                    "severity": "warning",
+                    "status": "pass",
+                    "threshold": {
+                        "mustBeLessThan": 6
+                    },
+                    "measure": {
+                        "unit": "hours",
+                        "value": 3
+                    }
+                },
+                {
+                    "name": "productDataQualityRulesFailCheck",
+                    "type": "check",
+                    "status": "pass",
+                    "severity": "warning",
+                    "threshold": {
+                        "mustBe": 0
+                    },
+                    "measure": {
+                        "unit": "percent",
+                        "value": 0
+                    }
+                },
+                {
+                    "name": "contractDataQualityRuleCount",
+                    "target": {
+                        "resourceType": "DataContract",
+                        "resourceIdentifier": "123e4567-e89b-12d3-a456-426614174000"
+                    },
+                    "type": "metric",
+                    "measure": {
+                        "value": 100
+                    }
+                },
+                {
+                    "name": "contractDataQualityRuleFailCount",
+                    "target": {
+                        "resourceType": "DataContract",
+                        "resourceIdentifier": "123e4567-e89b-12d3-a456-426614174000"
+                    },
+                    "type": "metric",
+                    "measure": {
+                        "value": 0
+                    }
+                },
+                {
+                    "name": "contractDataQualityRulesFailCheck",
+                    "target": {
+                        "resourceType": "DataContract",
+                        "resourceIdentifier": "123e4567-e89b-12d3-a456-426614174000"
+                    },
+                    "type": "check",
+                    "status": "pass",
+                    "severity": "warning",
+                    "threshold": {
+                        "mustBe": 0
+                    },
+                    "measure": {
+                        "unit": "percent",
+                        "value": 0
+                    }
+                }
+            ]
+        }
+    ]
+}

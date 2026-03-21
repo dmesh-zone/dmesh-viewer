@@ -85,40 +85,100 @@ const formatRecords = (count) => {
     return (count / 1000000000).toFixed(1) + 'B';
 };
 
-const ObservabilityDrilldown = ({ metrics, filterText, activeTab, availableDimensions = ['Pipeline', 'Consumption', 'Freshness', 'Quality'], showEventsTab = false }) => {
+const formatTimeAgo = (isoStr) => {
+    if (!isoStr) return '';
+    return new Date(isoStr).toLocaleString();
+};
+
+const ObservabilityDrilldown = ({ metrics, filterText, activeTab, availableDimensions = [], config }) => {
 
     if (!metrics) return <div style={{ padding: '20px', color: 'var(--m3-on-surface-variant)' }}>No observability data available.</div>;
 
-    // Helper to determine status for cards
     const getCardStatus = (dim) => {
-        if (dim === 'Consumption') {
-            if (metrics.dynamic?.responseTime?.met == null) return 'unknown';
+        const dimsConfig = config?.observability?.dimensions;
+        if (!dimsConfig || !dimsConfig[dim]) return 'unknown';
 
-            if (metrics.dynamic?.responseTime?.met === false) {
-                if (metrics.dynamic.responseTime?.actualP95Ms > 2 * metrics.dynamic.responseTime?.objectiveMs) return 'critical';
-                return 'degraded';
-            }
+        const healthCheckName = dimsConfig[dim].healthCheck;
+        if (!healthCheckName) return 'unknown';
 
-            return 'healthy';
-        }
-        if (dim === 'Freshness') {
-            const lag = metrics.dynamic?.freshness?.lagMinutes;
-            const max = metrics.dynamic?.freshness?.maxAllowedLagMinutes;
-            if (lag != null && max != null && lag > 2 * max) return 'critical';
-            if (metrics.dynamic?.freshness?.withinExpectation === false) return 'degraded';
-            return 'healthy';
-        }
-        if (dim === 'Quality') {
-            const failed = metrics.dynamic?.quality?.rulesFailed || 0;
-            if (failed > 1) return 'critical';
-            if (failed === 1) return 'degraded';
-            return 'healthy';
-        }
-        if (dim === 'Pipeline') {
-            if (metrics.physical?.pipeline?.status === 'failed') return 'critical';
-            return 'healthy';
+        const checkResult = metrics.results?.find(r => r.name === healthCheckName && r.type === 'check');
+        if (!checkResult) return 'unknown';
+
+        if (checkResult.status === 'pass') return 'healthy';
+        if (checkResult.status === 'fail') {
+             if (checkResult.severity === 'critical') return 'critical';
+             return 'degraded';
         }
         return 'unknown';
+    };
+
+    const renderCard = (dim) => {
+        const dimConfig = config?.observability?.dimensions?.[dim];
+        if (!dimConfig) return null;
+
+        const results = metrics.results || [];
+        const status = getCardStatus(dim);
+        
+        // keyResult logic
+        let keyValue = 'N/A';
+        let keyUnit = '';
+        if (dimConfig.keyResult) {
+            const keyMetric = results.find(r => r.name === dimConfig.keyResult.metric);
+            if (keyMetric && keyMetric.measure) {
+                keyValue = keyMetric.measure.value != null ? keyMetric.measure.value : 'N/A';
+                
+                // Format large numbers or dates
+                if (typeof keyValue === 'number' && keyValue >= 1000) {
+                    keyValue = formatRecords(keyValue);
+                } else if (typeof keyValue === 'string' && keyValue.includes('T') && keyValue.endsWith('Z')) {
+                    keyValue = formatTimeAgo(keyValue);
+                }
+
+                keyUnit = keyMetric.measure.unit || dimConfig.keyResult.name;
+            } else {
+                keyUnit = dimConfig.keyResult.name;
+            }
+        }
+
+        // secondaryMetrics mapping
+        const details = (
+            <>
+                {dimConfig.secondaryMetrics?.map((sm, i) => {
+                    const smMetric = results.find(r => r.name === sm.metric);
+                    if (!smMetric || !smMetric.measure || smMetric.measure.value == null) return null;
+                    
+                    let val = smMetric.measure.value;
+                    let unit = smMetric.measure.unit || '';
+
+                    // Some generic formatting heuristics
+                    if (sm.name.toLowerCase().includes('duration') && (unit === 'seconds' || unit === 's')) {
+                        val = formatDuration(val);
+                        unit = '';
+                    } else if (typeof val === 'number') {
+                        if (val >= 10000) val = formatRecords(val);
+                        else val = Math.round(val * 100) / 100; // max 2 decimals
+                    }
+
+                    return (
+                        <div key={i} style={{ marginTop: '4px' }}>
+                            {sm.name}: <span style={{ fontWeight: 'bold' }}>{val} {unit}</span>
+                        </div>
+                    );
+                })}
+            </>
+        );
+
+        return (
+             <MetricCard
+                 key={dim}
+                 title={dim}
+                 status={status}
+                 value={keyValue}
+                 unit={keyUnit}
+                 detail={details}
+                 icon={dimConfig.icon || '▸'}
+             />
+        );
     };
 
     return (
@@ -126,147 +186,11 @@ const ObservabilityDrilldown = ({ metrics, filterText, activeTab, availableDimen
             <div style={{ flex: 1, overflow: 'auto', padding: activeTab === 'yaml' ? '0' : '16px' }}>
                 {activeTab === 'metrics' ? (
                     <div>
-                        {availableDimensions.includes('Pipeline') && (
-                            <MetricCard
-                                title="Pipeline Status"
-                                status={getCardStatus('Pipeline')}
-                                value={metrics.physical?.pipeline?.status?.toUpperCase() || 'UNKNOWN'}
-                                unit=""
-                                detail={(() => {
-                                    const lastRunStr = `Last run: ${new Date(metrics.asOf).toLocaleString()}`;
-                                    const mtbf = metrics.physical?.pipeline?.meanTimeBetweenFailuresDays;
-                                    const mttr = metrics.physical?.pipeline?.meanTimeToRecoveryMinutes;
-                                    const mtMetrics = (
-                                        <>
-                                            {mtbf != null && (
-                                                <div style={{ marginTop: '4px' }}>
-                                                    MTBF (Mean Time Between Failures):{' '}
-                                                    <span style={{ 
-                                                        color: mtbf < 7 ? 'var(--health-critical)' : 
-                                                               mtbf <= 14 ? 'var(--health-degraded)' : 
-                                                               'var(--health-healthy)',
-                                                        fontWeight: 'bold'
-                                                    }}>{mtbf} days</span>
-                                                </div>
-                                            )}
-                                            {mttr != null && (
-                                                <div style={{ marginTop: '2px' }}>
-                                                    MTTR (Mean Time To Recover):{' '}
-                                                    <span style={{ 
-                                                        color: mttr < 120 ? 'var(--health-healthy)' : 
-                                                               mttr <= 360 ? 'var(--health-degraded)' : 
-                                                               'var(--health-critical)',
-                                                        fontWeight: 'bold'
-                                                    }}>{mttr < 60 ? `${Math.round(mttr)} minutes` : `${Math.round(mttr / 60)} hours`}</span>
-                                                </div>
-                                            )}
-                                        </>
-                                    );
-
-                                    if (getCardStatus('Pipeline') === 'critical') {
-                                        return (
-                                            <>
-                                                <div>{lastRunStr}</div>
-                                                {metrics.physical?.pipeline?.failureReason && <div style={{ color: 'var(--health-critical)', marginTop: '4px' }}>Failure reason: {metrics.physical.pipeline.failureReason}</div>}
-                                                {mtMetrics}
-                                            </>
-                                        );
-                                    } else if (getCardStatus('Pipeline') === 'healthy') {
-                                        const durationStr = formatDuration(metrics.physical?.pipeline?.durationSeconds);
-                                        const recordsStr = formatRecords(metrics.physical?.pipeline?.recordsProcessed);
-                                        return (
-                                            <>
-                                                <div>{lastRunStr}</div>
-                                                {durationStr && <div>Duration: {durationStr}</div>}
-                                                {recordsStr && <div>Records processed: {recordsStr}</div>}
-                                                {mtMetrics}
-                                            </>
-                                        );
-                                    }
-                                    return (
-                                        <>
-                                            <div>{lastRunStr}</div>
-                                            {metrics.physical?.pipeline?.nextRun && <div>Next: {metrics.physical.pipeline.nextRun}</div>}
-                                            {mtMetrics}
-                                        </>
-                                    );
-                                })()}
-
-                                icon="▸"
-                            />
-                        )}
-                        {availableDimensions.includes('Consumption') && (() => {
-                            const actualMs = metrics.dynamic?.responseTime?.actualP95Ms;
-                            const objMs = metrics.dynamic?.responseTime?.objectiveMs;
-                            const isSec = objMs != null && objMs > 1000;
-                            
-                            const displayValue = actualMs != null 
-                                ? (isSec ? Number((actualMs / 1000).toFixed(1)) : actualMs)
-                                : 'N/A';
-                            const displayUnit = isSec ? "s Response time (p95)" : "ms Response time (p95)";
-                            const targetStr = objMs != null 
-                                ? (isSec ? `${Number((objMs / 1000).toFixed(1))} s` : `${objMs} ms`)
-                                : '? ms';
-
-                            return (
-                                <MetricCard
-                                    title="Consumption"
-                                    status={getCardStatus('Consumption')}
-                                    value={displayValue}
-                                    unit={displayUnit}
-                                    detail={(
-                                        <>
-                                            <div>Target response time: {targetStr}</div>
-                                            {metrics.usage && (
-                                                <div>
-                                                    Active consumers: {metrics.usage.activeConsumers || 0}, Query count: {metrics.usage.queryCount || 0}
-                                                </div>
-                                            )}
-                                        </>
-                                    )}
-                                    icon="◈"
-                                />
-                            );
-                        })()}
-                        {availableDimensions.includes('Freshness') && (
-                            <MetricCard
-                                title="Data Freshness"
-                                status={getCardStatus('Freshness')}
-                                value={metrics.dynamic?.freshness?.lagMinutes || 0}
-                                unit="min lag"
-                                detail={
-                                    metrics.dynamic?.freshness?.maxAllowedLagMinutes != null
-                                        ? `Max Allowed: ${metrics.dynamic.freshness.maxAllowedLagMinutes}m. ${metrics.dynamic.freshness.withinExpectation ? 'Within expectations.' : 'Outside expectations.'}`
-                                        : 'Max Allowed: unknown'
-                                }
-                                icon="⧗"
-                            />
-                        )}
-                        {availableDimensions.includes('Quality') && (
-                            <MetricCard
-                                title="Data Quality"
-                                status={getCardStatus('Quality')}
-                                value={metrics.dynamic?.quality?.rulesPassed || 0}
-                                unit={`/ ${(metrics.dynamic?.quality?.rulesPassed || 0) + (metrics.dynamic?.quality?.rulesFailed || 0)} tests`}
-                                detail={`Score: ${metrics.dynamic?.quality?.score}%. Failed: ${metrics.dynamic?.quality?.rulesFailed}.`}
-                                icon="✦"
-                            />
-                        )}
+                        {availableDimensions.filter(d => d !== 'Any').map(dim => renderCard(dim))}
                     </div>
                 ) : activeTab === 'events' ? (
                     <div style={{ color: 'var(--m3-on-surface-variant)', fontSize: '14px' }}>
-                        <div style={{ marginBottom: '20px', padding: '12px', background: '#f8fafc', borderRadius: '8px', borderLeft: '4px solid #3b82f6' }}>
-                            <strong>Pipeline Succeeded</strong>
-                            <div style={{ fontSize: '12px', marginTop: '4px' }}>Today at 10:00 AM</div>
-                        </div>
-                        <div style={{ marginBottom: '20px', padding: '12px', background: '#f8fafc', borderRadius: '8px', borderLeft: '4px solid #ef4444' }}>
-                            <strong>Consumption Breach: Latency spiked</strong>
-                            <div style={{ fontSize: '12px', marginTop: '4px' }}>Yesterday at 11:30 PM</div>
-                        </div>
-                        <div style={{ marginBottom: '20px', padding: '12px', background: '#f8fafc', borderRadius: '8px', borderLeft: '4px solid #f59e0b' }}>
-                            <strong>Quality Warning: Null values detected</strong>
-                            <div style={{ fontSize: '12px', marginTop: '4px' }}>2 days ago</div>
-                        </div>
+                         <div style={{ padding: '20px' }}>Events not supported yet inside configuration.</div>
                     </div>
                 ) : (
                     <InteractiveYaml data={metrics} filterText={filterText} />
