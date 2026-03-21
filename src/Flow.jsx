@@ -1538,7 +1538,7 @@ function Flow() {
                     </div>
                     
                     {/* Mobile KPIs */}
-                    {isMobile && observeMode && !selection.id && !hideKpis && kpiStats && (
+                    {isMobile && !selection.id && !hideKpis && kpiStats && (
                         <div style={{ 
                             display: 'flex', 
                             flexDirection: 'column', 
@@ -1553,23 +1553,15 @@ function Flow() {
                             {renderKpiCards()}
                         </div>
                     )}
-                </div>
-
-                {/* Spacer */}
-                <div style={{ flex: 1 }}></div>
-
-                {/* Right Controls Group - Observability */}
-                <div style={{ display: 'flex', gap: '16px', pointerEvents: 'auto', alignItems: 'flex-start', flexShrink: 1, minWidth: 0 }}>
-
+                    
                     {/* Desktop KPIs */}
-                    {!isMobile && observeMode && !selection.id && !hideKpis && kpiStats && (
+                    {!isMobile && !selection.id && !hideKpis && kpiStats && (
                         <div 
                             style={{ 
                                 display: 'flex', 
                                 flexWrap: 'nowrap',
                                 gap: '8px', 
                                 animation: 'slideDown 0.3s ease-out', 
-                                marginTop: '48px', 
                                 flexShrink: 1, 
                                 minWidth: 0,
                                 overflowX: 'auto',
@@ -1581,6 +1573,13 @@ function Flow() {
                             {renderKpiCards()}
                         </div>
                     )}
+                </div>
+
+                {/* Spacer */}
+                <div style={{ flex: 1 }}></div>
+
+                {/* Right Controls Group - Observability */}
+                <div style={{ display: 'flex', gap: '16px', pointerEvents: 'auto', alignItems: 'flex-start', flexShrink: 1, minWidth: 0 }}>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end', flexShrink: 1, minWidth: 0, maxWidth: '100%' }}>
                         <button

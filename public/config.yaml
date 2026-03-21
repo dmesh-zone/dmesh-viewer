@@ -131,6 +131,14 @@ observability:
         metric: "pipelineRecordsProcessed"
         criteria:
           dataProductTier: ["curated", "consumerAligned"]
+    consumingApplication:
+      name: "Consuming applications"
+      visible: true
+      bgColor: "#0f766e"
+      aggregation:
+        type: count
+        criteria:
+          dataProductTier: ["source", "application"]
   dimensions:
     Pipeline:
       icon: "▸"
