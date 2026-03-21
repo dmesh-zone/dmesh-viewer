@@ -88,6 +88,49 @@ tiers:
     columnNumber: 5
 
 observability:
+  kpis:
+    dataSources:
+      name: "Data sources"
+      visible: true
+      bgColor: "#831843"
+      aggregation:
+        type: count
+        criteria:
+          dataProductTier: ["source", "dataSource"]
+    dataProducts:
+      name: "Data Products"
+      visible: true
+      bgColor: "#1e3a8a"
+      aggregation:
+        type: count
+        criteria:
+          dataProductTier:
+            ["sourceAligned", "consumerAligned", "analyticsAligned"]
+    outputPorts:
+      name: "Output ports"
+      visible: true
+      bgColor: "#4c1d95"
+      aggregation:
+        type: sum
+        field: outputPortCount
+    recordsIngested:
+      name: "Records Ingested"
+      visible: true
+      bgColor: "#064e3b"
+      aggregation:
+        type: sumMetric
+        metric: "pipelineRecordsProcessed"
+        criteria:
+          dataProductTier: ["sourceAligned"]
+    recordsProcessed:
+      name: "Records Processed"
+      visible: true
+      bgColor: "#9a3412"
+      aggregation:
+        type: sumMetric
+        metric: "pipelineRecordsProcessed"
+        criteria:
+          dataProductTier: ["curated", "consumerAligned"]
   dimensions:
     Pipeline:
       icon: "▸"
@@ -95,6 +138,7 @@ observability:
       keyResult:
         metric: "pipelineLastRunState"
         name: ""
+        case: upper
       secondaryMetrics:
         - metric: "pipelineDuration"
           name: "Duration"

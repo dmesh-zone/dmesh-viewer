@@ -1308,47 +1308,57 @@ function Flow() {
     );
 
     const kpiStats = React.useMemo(() => {
-        if (!observeMode || selection.id) return null;
-        let dataSources = 0;
-        let dataProducts = 0;
-        let outputPorts = 0;
-        let recordsIngested = 0;
-        let recordsProcessed = 0;
+        if (selection.id || !config?.observability?.kpis) return null;
+        
+        const kpisConfig = config.observability.kpis;
+        const results = Object.keys(kpisConfig).map(k => ({ id: k, value: 0, config: kpisConfig[k] }));
 
         visibleNodes.forEach(node => {
             if (node.type !== 'selectorNode') return;
             const tier = node.data.originalData?.customProperties?.find(p => p.property === 'dataProductTier')?.value;
-            
-            if (tier === 'source' || tier === 'dataSource') {
-                dataSources++;
-            } else if (tier !== 'application') {
-                dataProducts++;
-            }
-            
-            outputPorts += (node.data.outputPortCount || 0);
-
             const metrics = metricsMap.get(node.id);
-            const records = metrics?.physical?.pipeline?.recordsProcessed || 0;
-            
-            if (tier === 'sourceAligned') {
-                recordsIngested += records;
-            } else if (tier !== 'sourceAligned' && tier !== 'application' && tier !== 'dataSource' && tier !== 'source') {
-                recordsProcessed += records;
-            }
+
+            results.forEach(kpiObj => {
+                const kpi = kpiObj.config;
+                if (!kpi.visible || !kpi.aggregation) return;
+
+                const agg = kpi.aggregation;
+                let matchesCriteria = true;
+
+                if (agg.criteria) {
+                    if (agg.criteria.dataProductTier && (!tier || !agg.criteria.dataProductTier.includes(tier))) {
+                        matchesCriteria = false;
+                    }
+                    if (agg.criteria.kind && node.data.originalData?.kind !== agg.criteria.kind) {
+                        matchesCriteria = false;
+                    }
+                }
+
+                if (!matchesCriteria) return;
+
+                if (agg.type === 'count') {
+                    kpiObj.value += 1;
+                } else if (agg.type === 'sum' && agg.field) {
+                    kpiObj.value += (node.data[agg.field] || 0);
+                } else if (agg.type === 'sumMetric' && agg.metric) {
+                    const resultMetric = metrics?.results?.find(r => r.name === agg.metric && r.type === 'metric');
+                    if (resultMetric && resultMetric.measure && typeof resultMetric.measure.value === 'number') {
+                        kpiObj.value += resultMetric.measure.value;
+                    }
+                }
+            });
         });
 
-        return { dataSources, dataProducts, outputPorts, recordsIngested, recordsProcessed };
-    }, [visibleNodes, observeMode, selection.id, metricsMap]);
+        return results;
+    }, [visibleNodes, observeMode, selection.id, metricsMap, config]);
 
     const renderKpiCards = () => {
-        if (!observeMode || selection.id || !kpiStats) return null;
+        if (selection.id || !kpiStats) return null;
         return (
             <React.Fragment>
-                <KpiCard title="Data sources" value={formatKpiNumber(kpiStats.dataSources)} bgColor="#831843" />
-                <KpiCard title="Data Products" value={formatKpiNumber(kpiStats.dataProducts)} bgColor="#1e3a8a" />
-                <KpiCard title="Output ports" value={formatKpiNumber(kpiStats.outputPorts)} bgColor="#4c1d95" />
-                <KpiCard title="Records Ingested" value={formatKpiNumber(kpiStats.recordsIngested)} bgColor="#064e3b" />
-                <KpiCard title="Records Processed" value={formatKpiNumber(kpiStats.recordsProcessed)} bgColor="#9a3412" />
+                {kpiStats.filter(k => k.config.visible).map(kpi => (
+                    <KpiCard key={kpi.id} title={kpi.config.name} value={formatKpiNumber(kpi.value)} bgColor={kpi.config.bgColor} />
+                ))}
             </React.Fragment>
         );
     };

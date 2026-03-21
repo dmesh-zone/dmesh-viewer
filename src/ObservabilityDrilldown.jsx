@@ -134,6 +134,11 @@ const ObservabilityDrilldown = ({ metrics, filterText, activeTab, availableDimen
                     keyValue = formatTimeAgo(keyValue);
                 }
 
+                if (typeof keyValue === 'string') {
+                    if (dimConfig.keyResult.case === 'upper') keyValue = keyValue.toUpperCase();
+                    else if (dimConfig.keyResult.case === 'lower') keyValue = keyValue.toLowerCase();
+                }
+
                 keyUnit = keyMetric.measure.unit || dimConfig.keyResult.name;
             } else {
                 keyUnit = dimConfig.keyResult.name;
@@ -157,6 +162,11 @@ const ObservabilityDrilldown = ({ metrics, filterText, activeTab, availableDimen
                     } else if (typeof val === 'number') {
                         if (val >= 10000) val = formatRecords(val);
                         else val = Math.round(val * 100) / 100; // max 2 decimals
+                    }
+
+                    if (typeof val === 'string') {
+                        if (sm.case === 'upper') val = val.toUpperCase();
+                        else if (sm.case === 'lower') val = val.toLowerCase();
                     }
 
                     return (
