@@ -35,7 +35,7 @@ try {
 }
 
 console.log('Parsing registry...');
-const registryRaw = fs.readFileSync(path.join(__dirname, 'public/DataMeshRegistryPetsExample.yaml'), 'utf8');
+const registryRaw = fs.readFileSync(path.join(__dirname, 'public/DataMeshOperationalDataPetsExample.yaml'), 'utf8');
 const registry = YAML.parse(registryRaw);
 
 console.log('Validating items...');

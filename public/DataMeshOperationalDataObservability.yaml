@@ -214,7 +214,7 @@
             - property: technology
               value: deltalake
           examples:
-            - 2024-06-01T10:30:00Z
+            - 2024-06-01 10:30:00+00:00
           quality:
             - dimension: timeliness
               type: sql
@@ -418,7 +418,7 @@
             - property: technology
               value: deltalake
           examples:
-            - 2024-06-01T08:00:00Z
+            - 2024-06-01 08:00:00+00:00
 - kind: DataProduct
   id: urn:petstore-b:source-aligned:retail-data
   name: Petstore B
@@ -569,7 +569,7 @@
             - property: technology
               value: deltalake
           examples:
-            - 2024-06-01T10:30:00Z
+            - 2024-06-01 10:30:00+00:00
           quality:
             - dimension: timeliness
               type: sql
@@ -773,7 +773,7 @@
             - property: technology
               value: deltalake
           examples:
-            - 2024-06-01T08:00:00Z
+            - 2024-06-01 08:00:00+00:00
 - kind: DataProduct
   id: urn:food-production:source-aligned:manufacturing-data
   name: Food Production
@@ -1115,8 +1115,9 @@
   schema:
     - name: unified_customers
       physicalType: table
-      description: Unified view of customers, orders, products, inventory, sales,
-        customer segments, and product categories data for unified_customers
+      description:
+        Unified view of customers, orders, products, inventory, sales, customer
+        segments, and product categories data for unified_customers
       customProperties:
         - property: technology
           value: deltalake
@@ -1161,8 +1162,9 @@
               mustBe: 0
     - name: unified_orders
       physicalType: table
-      description: Unified view of customers, orders, products, inventory, sales,
-        customer segments, and product categories data for unified_orders
+      description:
+        Unified view of customers, orders, products, inventory, sales, customer
+        segments, and product categories data for unified_orders
       customProperties:
         - property: technology
           value: deltalake
@@ -1194,7 +1196,7 @@
             - property: technology
               value: deltalake
           examples:
-            - 2024-06-01T10:00:00Z
+            - 2024-06-01 10:00:00+00:00
         - name: total_amount
           logicalType: number
           physicalType: DECIMAL(10,2)
@@ -1205,8 +1207,9 @@
             - 150
     - name: unified_products
       physicalType: table
-      description: Unified view of customers, orders, products, inventory, sales,
-        customer segments, and product categories data for unified_products
+      description:
+        Unified view of customers, orders, products, inventory, sales, customer
+        segments, and product categories data for unified_products
       customProperties:
         - property: technology
           value: deltalake
@@ -1241,8 +1244,9 @@
               type: foreignKey
     - name: unified_inventory
       physicalType: table
-      description: Unified view of customers, orders, products, inventory, sales,
-        customer segments, and product categories data for unified_inventory
+      description:
+        Unified view of customers, orders, products, inventory, sales, customer
+        segments, and product categories data for unified_inventory
       customProperties:
         - property: technology
           value: deltalake
@@ -1277,8 +1281,9 @@
             - 500
     - name: sales_facts
       physicalType: table
-      description: Unified view of customers, orders, products, inventory, sales,
-        customer segments, and product categories data for sales_facts
+      description:
+        Unified view of customers, orders, products, inventory, sales, customer
+        segments, and product categories data for sales_facts
       customProperties:
         - property: technology
           value: deltalake
@@ -1324,8 +1329,9 @@
             - 75
     - name: customer_segments
       physicalType: table
-      description: Unified view of customers, orders, products, inventory, sales,
-        customer segments, and product categories data for customer_segments
+      description:
+        Unified view of customers, orders, products, inventory, sales, customer
+        segments, and product categories data for customer_segments
       customProperties:
         - property: technology
           value: deltalake
@@ -1357,8 +1363,9 @@
             - 1000
     - name: product_categories
       physicalType: table
-      description: Unified view of customers, orders, products, inventory, sales,
-        customer segments, and product categories data for product_categories
+      description:
+        Unified view of customers, orders, products, inventory, sales, customer
+        segments, and product categories data for product_categories
       customProperties:
         - property: technology
           value: deltalake
@@ -1395,8 +1402,7 @@
   status: active
   apiVersion: v1.0.0
   description:
-    purpose: Curated food production data with quality metrics and performance
-      indicators
+    purpose: Curated food production data with quality metrics and performance indicators
   customProperties:
     - property: dataProductTier
       value: curated
@@ -1429,9 +1435,9 @@
   schema:
     - name: product_quality
       physicalType: table
-      description: Production data with quality metrics, batch performance, inventory
-        levels, cost analysis, supplier ratings, and production schedules data
-        for product_quality
+      description:
+        Production data with quality metrics, batch performance, inventory
+        levels, cost analysis, supplier ratings, and production schedules data for product_quality
       customProperties:
         - property: technology
           value: deltalake
@@ -1463,9 +1469,9 @@
             - 97.5
     - name: batch_performance
       physicalType: table
-      description: Production data with quality metrics, batch performance, inventory
-        levels, cost analysis, supplier ratings, and production schedules data
-        for batch_performance
+      description:
+        Production data with quality metrics, batch performance, inventory
+        levels, cost analysis, supplier ratings, and production schedules data for batch_performance
       customProperties:
         - property: technology
           value: deltalake
@@ -1497,9 +1503,9 @@
             - 95
     - name: material_inventory
       physicalType: table
-      description: Production data with quality metrics, batch performance, inventory
-        levels, cost analysis, supplier ratings, and production schedules data
-        for material_inventory
+      description:
+        Production data with quality metrics, batch performance, inventory
+        levels, cost analysis, supplier ratings, and production schedules data for material_inventory
       customProperties:
         - property: technology
           value: deltalake
@@ -1531,9 +1537,9 @@
             - 5000
     - name: cost_analysis
       physicalType: table
-      description: Production data with quality metrics, batch performance, inventory
-        levels, cost analysis, supplier ratings, and production schedules data
-        for cost_analysis
+      description:
+        Production data with quality metrics, batch performance, inventory
+        levels, cost analysis, supplier ratings, and production schedules data for cost_analysis
       customProperties:
         - property: technology
           value: deltalake
@@ -1565,9 +1571,9 @@
             - 8.5
     - name: supplier_performance
       physicalType: table
-      description: Production data with quality metrics, batch performance, inventory
-        levels, cost analysis, supplier ratings, and production schedules data
-        for supplier_performance
+      description:
+        Production data with quality metrics, batch performance, inventory
+        levels, cost analysis, supplier ratings, and production schedules data for supplier_performance
       customProperties:
         - property: technology
           value: deltalake
@@ -1599,9 +1605,9 @@
             - 98.5
     - name: production_schedule
       physicalType: table
-      description: Production data with quality metrics, batch performance, inventory
-        levels, cost analysis, supplier ratings, and production schedules data
-        for production_schedule
+      description:
+        Production data with quality metrics, batch performance, inventory
+        levels, cost analysis, supplier ratings, and production schedules data for production_schedule
       customProperties:
         - property: technology
           value: deltalake
@@ -2146,8 +2152,9 @@
   id: urn:dua:food-to-unified-retail
   info:
     active: true
-    purpose: Consume manufacturing data from Food Production to enrich Unified
-      Petstore Retail Data
+    purpose:
+      Consume manufacturing data from Food Production to enrich Unified Petstore
+      Retail Data
     status: approved
     startDate: 2026-02-14
   provider:
@@ -2160,743 +2167,642 @@
 - kind: DataProductObservability
   schemaVersion: 0.1.0
   id: urn:petstore-a:source-aligned:retail-data
-  observedAt: 2026-03-21T15:09:37.657Z
+  observedAt: 2026-03-21 15:09:37.014000+00:00
   period: P1D
   health: healthy
   source:
-    process: simulator
+    process: customDataProductObserver
   results:
-    - name: pipelineLastRanAt
-      type: metric
-      measure:
-        value: 2026-03-21T15:09:37.652Z
-    - name: pipelineDuration
-      type: metric
-      measure:
-        value: 2613
-        unit: seconds
-    - name: pipelineRecordsProcessed
-      type: metric
-      measure:
-        value: 5210572
-    - name: pipelineLastRunState
-      type: metric
-      measure:
-        value: success
-    - name: pipelineLastRunStateCheck
+    - name: dpPipelineLastRunStateCheck
       type: check
       status: pass
-      severity: warning
+      severity: critical
       threshold:
         validValues:
           - success
       measure:
         value: success
-    - name: pipelineMeanTimeBetweenFailuresCheck
+    - name: dpPipelineLastRanAt
+      type: metric
+      measure:
+        value: 2026-03-21 15:09:37.015000+00:00
+    - name: dpPipelineRunDuration
+      type: metric
+      measure:
+        value: 2642
+        unit: seconds
+    - name: dpPipelineMeanTimeBetweenFailuresCheck
       type: check
       status: pass
       severity: warning
       threshold:
         mustBeGreaterThan: 5
       measure:
-        value: 22
+        value: 10
         unit: days
-    - name: pipelineMeanTimeToRecoveryCheck
+    - name: dpPipelineMeanTimeToRecoveryCheck
       type: check
       status: pass
       severity: warning
       threshold:
         mustBeLessThan: 120
       measure:
-        value: 30.9
+        value: 60
         unit: minutes
-    - name: productConsumerQueryCount
+    - name: dpConsumerQueryCount
       type: metric
       measure:
-        value: 1703
-    - name: outputPortDistinctConsumers
-      type: metric
-      measure:
-        value: 10
-    - name: productOutputPortsResponseTimeCheck
-      type: check
-      status: pass
-      severity: warning
-      threshold:
-        mustBeLessThan: 10000
-      measure:
-        value: 8529
-        unit: ms
-      message: "Objective: 10000ms"
-    - name: productDataLatencyMaximumAcrossAllContracts
-      type: metric
-      measure:
-        value: 5
-        unit: minutes
-    - name: productDataLatencyBeyondSlaCheck
-      type: check
-      status: pass
-      severity: warning
-      threshold:
-        mustBeLessThan: 60
-      measure:
-        value: 5
-        unit: minutes
-    - name: contractDataQualityRuleCount
-      type: metric
-      measure:
-        value: 10
-    - name: contractDataQualityRuleFailCount
-      type: metric
-      measure:
-        value: 0
-    - name: contractDataQualityScore
-      type: metric
-      measure:
-        value: 100
-        unit: percent
-    - name: productDataQualityRulesFailCheck
-      type: check
-      status: pass
-      severity: warning
-      threshold:
-        mustBe: 0
-      measure:
-        value: 0
-- kind: DataProductObservability
-  schemaVersion: 0.1.0
-  id: urn:petstore-b:source-aligned:retail-data
-  observedAt: 2026-03-21T15:09:37.657Z
-  period: P1D
-  health: critical
-  source:
-    process: simulator
-  results:
-    - name: pipelineLastRanAt
-      type: metric
-      measure:
-        value: 2026-03-21T15:09:37.657Z
-    - name: pipelineDuration
-      type: metric
-      measure:
-        value: null
-        unit: seconds
-    - name: pipelineRecordsProcessed
-      type: metric
-      measure:
-        value: null
-    - name: pipelineLastRunState
-      type: metric
-      measure:
-        value: failed
-    - name: pipelineLastRunStateCheck
-      type: check
-      status: fail
-      severity: critical
-      threshold:
-        validValues:
-          - success
-      measure:
-        value: failed
-      message: Upstream source connection timed out.
-    - name: pipelineMeanTimeBetweenFailuresCheck
-      type: check
-      status: pass
-      severity: warning
-      threshold:
-        mustBeGreaterThan: 5
-      measure:
-        value: 5
-        unit: days
-    - name: pipelineMeanTimeToRecoveryCheck
-      type: check
-      status: pass
-      severity: warning
-      threshold:
-        mustBeLessThan: 120
-      measure:
-        value: 581
-        unit: minutes
-    - name: productConsumerQueryCount
-      type: metric
-      measure:
-        value: 3685
-    - name: outputPortDistinctConsumers
-      type: metric
-      measure:
-        value: 2
-    - name: productOutputPortsResponseTimeCheck
-      type: check
-      status: fail
-      severity: warning
-      threshold:
-        mustBeLessThan: 10000
-      measure:
-        value: 14960
-        unit: ms
-      message: "Objective: 10000ms"
-    - name: productDataLatencyMaximumAcrossAllContracts
-      type: metric
-      measure:
-        value: 150
-        unit: minutes
-    - name: productDataLatencyBeyondSlaCheck
-      type: check
-      status: fail
-      severity: critical
-      threshold:
-        mustBeLessThan: 60
-      measure:
-        value: 150
-        unit: minutes
-    - name: contractDataQualityRuleCount
+        value: 1476
+    - name: dpOutputPortDistinctConsumers
       type: metric
       measure:
         value: 6
-    - name: contractDataQualityRuleFailCount
-      type: metric
-      measure:
-        value: 4
-    - name: contractDataQualityScore
-      type: metric
-      measure:
-        value: 60
-        unit: percent
-    - name: productDataQualityRulesFailCheck
+    - name: dpOutputPortsResponseTimeCheck
       type: check
-      status: fail
-      severity: critical
+      status: pass
+      severity: warning
       threshold:
-        mustBe: 0
+        mustBeGreaterThan: 50
       measure:
-        value: 4
+        value: 100
+        unit: percent
+    - name: dpDataLatencyMaximum
+      type: metric
+      measure:
+        value: 26
+        unit: minutes
+    - name: dpDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessThan: 60
+      measure:
+        value: 26
+        unit: minutes
+    - name: dpDataQualityRulesPassCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBe: 100
+      measure:
+        value: 100
+        unit: percent
+    - name: dcDataQualityRuleCount
+      type: metric
+      measure:
+        value: 10
+    - name: dpDataQualityRuleFailCount
+      type: metric
+      measure:
+        value: 0
+# - kind: DataProductObservability
+#   schemaVersion: 0.1.0
+#   id: urn:petstore-b:source-aligned:retail-data
+#   observedAt: 2026-03-21 15:09:37.015000+00:00
+#   period: P1D
+#   health: healthy
+#   source:
+#     process: customDataProductObserver
+#   results:
+#     - name: dpPipelineLastRunStateCheck
+#       type: check
+#       status: pass
+#       severity: critical
+#       threshold:
+#         validValues:
+#           - success
+#       measure:
+#         value: success
+#     - name: dpPipelineLastRanAt
+#       type: metric
+#       measure:
+#         value: 2026-03-21 15:09:37.015000+00:00
+#     - name: dpPipelineRunDuration
+#       type: metric
+#       measure:
+#         value: 2642
+#         unit: seconds
+#     - name: dpPipelineMeanTimeBetweenFailuresCheck
+#       type: check
+#       status: pass
+#       severity: warning
+#       threshold:
+#         mustBeGreaterThan: 5
+#       measure:
+#         value: 10
+#         unit: days
+#     - name: dpPipelineMeanTimeToRecoveryCheck
+#       type: check
+#       status: pass
+#       severity: warning
+#       threshold:
+#         mustBeLessThan: 120
+#       measure:
+#         value: 60
+#         unit: minutes
+#     - name: dpConsumerQueryCount
+#       type: metric
+#       measure:
+#         value: 1476
+#     - name: dpOutputPortDistinctConsumers
+#       type: metric
+#       measure:
+#         value: 6
+#     - name: dpOutputPortsResponseTimeCheck
+#       type: check
+#       status: pass
+#       severity: warning
+#       threshold:
+#         mustBeGreaterThan: 50
+#       measure:
+#         value: 100
+#         unit: percent
+#     - name: dpDataLatencyCheck
+#       type: check
+#       status: pass
+#       severity: warning
+#       threshold:
+#         mustBeLessThan: 60
+#       measure:
+#         value: 26
+#         unit: minutes
+#     - name: dpDataQualityRulesPassCheck
+#       type: check
+#       status: pass
+#       severity: warning
+#       threshold:
+#         mustBe: 100
+#       measure:
+#         value: 100
+#         unit: percent
+#     - name: dcDataQualityRuleCount
+#       type: metric
+#       measure:
+#         value: 10
+#     - name: dpDataQualityRuleFailCount
+#       type: metric
+#       measure:
+#         value: 0
 - kind: DataProductObservability
   schemaVersion: 0.1.0
   id: urn:food-production:source-aligned:manufacturing-data
-  observedAt: 2026-03-21T15:09:37.657Z
+  observedAt: 2026-03-21 15:09:37.015000+00:00
+  period: P1D
+  health: healthy
+  source:
+    process: customDataProductObserver
+  results:
+    - name: dpPipelineLastRunStateCheck
+      type: check
+      status: pass
+      severity: critical
+      threshold:
+        validValues:
+          - success
+      measure:
+        value: success
+    - name: dpPipelineLastRanAt
+      type: metric
+      measure:
+        value: 2026-03-21 15:09:37.015000+00:00
+    - name: dpPipelineRunDuration
+      type: metric
+      measure:
+        value: 2642
+        unit: seconds
+    - name: dpPipelineMeanTimeBetweenFailuresCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeGreaterThan: 5
+      measure:
+        value: 10
+        unit: days
+    - name: dpPipelineMeanTimeToRecoveryCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessThan: 120
+      measure:
+        value: 60
+        unit: minutes
+    - name: dpConsumerQueryCount
+      type: metric
+      measure:
+        value: 1476
+    - name: dpOutputPortDistinctConsumers
+      type: metric
+      measure:
+        value: 6
+    - name: dpOutputPortsResponseTimeCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeGreaterThan: 50
+      measure:
+        value: 100
+        unit: percent
+    - name: dpDataLatencyMaximum
+      type: metric
+      measure:
+        value: 26
+        unit: minutes
+    - name: dpDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessThan: 60
+      measure:
+        value: 26
+        unit: minutes
+    - name: dpDataQualityRulesPassCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBe: 100
+      measure:
+        value: 100
+        unit: percent
+    - name: dcDataQualityRuleCount
+      type: metric
+      measure:
+        value: 10
+    - name: dpDataQualityRuleFailCount
+      type: metric
+      measure:
+        value: 0
+- kind: DataProductObservability
+  schemaVersion: 0.1.0
+  id: urn:petstore:curated:unified-retail
+  observedAt: 2026-03-21 15:09:37.015000+00:00
   period: P1D
   health: degraded
   source:
-    process: simulator
+    process: customDataProductObserver
   results:
-    - name: pipelineLastRanAt
-      type: metric
-      measure:
-        value: 2026-03-21T15:09:37.657Z
-    - name: pipelineDuration
-      type: metric
-      measure:
-        value: 623
-        unit: seconds
-    - name: pipelineRecordsProcessed
-      type: metric
-      measure:
-        value: 4791413
-    - name: pipelineLastRunState
-      type: metric
-      measure:
-        value: success
-    - name: pipelineLastRunStateCheck
+    - name: dpPipelineLastRunStateCheck
       type: check
       status: pass
-      severity: warning
+      severity: critical
       threshold:
         validValues:
           - success
       measure:
         value: success
-    - name: pipelineMeanTimeBetweenFailuresCheck
+    - name: dpPipelineLastRanAt
+      type: metric
+      measure:
+        value: 2026-03-21 15:09:37.015000+00:00
+    - name: dpPipelineRunDuration
+      type: metric
+      measure:
+        value: 2642
+        unit: seconds
+    - name: dpPipelineMeanTimeBetweenFailuresCheck
       type: check
-      status: fail
+      status: pass
       severity: warning
       threshold:
         mustBeGreaterThan: 5
       measure:
-        value: 13
+        value: 10
         unit: days
-    - name: pipelineMeanTimeToRecoveryCheck
+    - name: dpPipelineMeanTimeToRecoveryCheck
       type: check
-      status: fail
+      status: pass
       severity: warning
       threshold:
         mustBeLessThan: 120
       measure:
-        value: 347
+        value: 60
         unit: minutes
-    - name: productConsumerQueryCount
+    - name: dpConsumerQueryCount
       type: metric
       measure:
-        value: 3043
-    - name: outputPortDistinctConsumers
+        value: 1476
+    - name: dpOutputPortDistinctConsumers
       type: metric
       measure:
-        value: 11
-    - name: productOutputPortsResponseTimeCheck
+        value: 6
+    - name: dpOutputPortsResponseTimeCheck
       type: check
       status: fail
       severity: warning
       threshold:
-        mustBeLessThan: 10000
+        mustBeGreaterThan: 50
       measure:
-        value: 18764
-        unit: ms
-      message: "Objective: 10000ms"
-    - name: productDataLatencyMaximumAcrossAllContracts
+        value: 40
+        unit: percent
+    - name: dpDataLatencyMaximum
       type: metric
       measure:
-        value: 72
+        value: 26
         unit: minutes
-    - name: productDataLatencyBeyondSlaCheck
+    - name: dpDataLatencyCheck
       type: check
       status: fail
       severity: warning
       threshold:
         mustBeLessThan: 60
       measure:
-        value: 72
+        value: 70
         unit: minutes
-    - name: contractDataQualityRuleCount
-      type: metric
-      measure:
-        value: 9
-    - name: contractDataQualityRuleFailCount
-      type: metric
-      measure:
-        value: 1
-    - name: contractDataQualityScore
-      type: metric
+    - name: dpDataQualityRulesPassCheck
+      type: check
+      status: fail
+      severity: warning
+      threshold:
+        mustBe: 100
       measure:
         value: 90
         unit: percent
-    - name: productDataQualityRulesFailCheck
-      type: check
-      status: fail
-      severity: warning
-      threshold:
-        mustBe: 0
+    - name: dcDataQualityRuleCount
+      type: metric
+      measure:
+        value: 10
+    - name: dpDataQualityRuleFailCount
+      type: metric
       measure:
         value: 1
 - kind: DataProductObservability
   schemaVersion: 0.1.0
-  id: urn:petstore:curated:unified-retail
-  observedAt: 2026-03-21T15:09:37.657Z
+  id: urn:food-production:curated:production-analytics
+  observedAt: 2026-03-21 15:09:37.015000+00:00
   period: P1D
-  health: healthy
+  health: degraded
   source:
-    process: simulator
+    process: customDataProductObserver
   results:
-    - name: pipelineLastRanAt
-      type: metric
-      measure:
-        value: 2026-03-21T15:09:37.657Z
-    - name: pipelineDuration
-      type: metric
-      measure:
-        value: 2547
-        unit: seconds
-    - name: pipelineRecordsProcessed
-      type: metric
-      measure:
-        value: 966759
-    - name: pipelineLastRunState
-      type: metric
-      measure:
-        value: success
-    - name: pipelineLastRunStateCheck
+    - name: dpPipelineLastRunStateCheck
       type: check
       status: pass
-      severity: warning
+      severity: critical
       threshold:
         validValues:
           - success
       measure:
         value: success
-    - name: pipelineMeanTimeBetweenFailuresCheck
-      type: check
-      status: pass
-      severity: warning
-      threshold:
-        mustBeGreaterThan: 5
-      measure:
-        value: 21
-        unit: days
-    - name: pipelineMeanTimeToRecoveryCheck
-      type: check
-      status: pass
-      severity: warning
-      threshold:
-        mustBeLessThan: 120
-      measure:
-        value: 65.5
-        unit: minutes
-    - name: productConsumerQueryCount
+    - name: dpPipelineLastRanAt
       type: metric
       measure:
-        value: 4669
-    - name: outputPortDistinctConsumers
+        value: 2026-03-21 15:09:37.015000+00:00
+    - name: dpPipelineRunDuration
       type: metric
       measure:
-        value: 15
-    - name: productOutputPortsResponseTimeCheck
+        value: 2642
+        unit: seconds
+    - name: dpPipelineMeanTimeBetweenFailuresCheck
       type: check
       status: fail
       severity: warning
       threshold:
-        mustBeLessThan: 10000
-      measure:
-        value: 12145
-        unit: ms
-      message: "Objective: 10000ms"
-    - name: productDataLatencyMaximumAcrossAllContracts
-      type: metric
-      measure:
-        value: 30
-        unit: minutes
-    - name: productDataLatencyBeyondSlaCheck
-      type: check
-      status: pass
-      severity: warning
-      threshold:
-        mustBeLessThan: 60
-      measure:
-        value: 30
-        unit: minutes
-    - name: contractDataQualityRuleCount
-      type: metric
-      measure:
-        value: 10
-    - name: contractDataQualityRuleFailCount
-      type: metric
-      measure:
-        value: 0
-    - name: contractDataQualityScore
-      type: metric
-      measure:
-        value: 100
-        unit: percent
-    - name: productDataQualityRulesFailCheck
-      type: check
-      status: pass
-      severity: warning
-      threshold:
-        mustBe: 0
-      measure:
-        value: 0
-- kind: DataProductObservability
-  schemaVersion: 0.1.0
-  id: urn:food-production:curated:production-analytics
-  observedAt: 2026-03-21T15:09:37.657Z
-  period: P1D
-  health: healthy
-  source:
-    process: simulator
-  results:
-    - name: pipelineLastRanAt
-      type: metric
-      measure:
-        value: 2026-03-21T15:09:37.657Z
-    - name: pipelineDuration
-      type: metric
-      measure:
-        value: 2248
-        unit: seconds
-    - name: pipelineRecordsProcessed
-      type: metric
-      measure:
-        value: 8290728
-    - name: pipelineLastRunState
-      type: metric
-      measure:
-        value: success
-    - name: pipelineLastRunStateCheck
-      type: check
-      status: pass
-      severity: warning
-      threshold:
-        validValues:
-          - success
-      measure:
-        value: success
-    - name: pipelineMeanTimeBetweenFailuresCheck
-      type: check
-      status: pass
-      severity: warning
-      threshold:
         mustBeGreaterThan: 5
       measure:
-        value: 28
+        value: 2
         unit: days
-    - name: pipelineMeanTimeToRecoveryCheck
+    - name: dpPipelineMeanTimeToRecoveryCheck
       type: check
       status: pass
       severity: warning
       threshold:
         mustBeLessThan: 120
       measure:
-        value: 26.9
+        value: 60
         unit: minutes
-    - name: productConsumerQueryCount
+    - name: dpConsumerQueryCount
       type: metric
       measure:
-        value: 584
-    - name: outputPortDistinctConsumers
+        value: 1476
+    - name: dpOutputPortDistinctConsumers
       type: metric
       measure:
-        value: 15
-    - name: productOutputPortsResponseTimeCheck
+        value: 6
+    - name: dpOutputPortsResponseTimeCheck
       type: check
       status: pass
       severity: warning
       threshold:
-        mustBeLessThan: 10000
+        mustBeGreaterThan: 50
       measure:
-        value: 8933
-        unit: ms
-      message: "Objective: 10000ms"
-    - name: productDataLatencyMaximumAcrossAllContracts
+        value: 100
+        unit: percent
+    - name: dpDataLatencyMaximum
       type: metric
       measure:
-        value: 42
+        value: 26
         unit: minutes
-    - name: productDataLatencyBeyondSlaCheck
+    - name: dpDataLatencyCheck
       type: check
       status: pass
       severity: warning
       threshold:
         mustBeLessThan: 60
       measure:
-        value: 42
+        value: 26
         unit: minutes
-    - name: contractDataQualityRuleCount
-      type: metric
-      measure:
-        value: 10
-    - name: contractDataQualityRuleFailCount
-      type: metric
-      measure:
-        value: 0
-    - name: contractDataQualityScore
-      type: metric
-      measure:
-        value: 100
-        unit: percent
-    - name: productDataQualityRulesFailCheck
+    - name: dpDataQualityRulesPassCheck
       type: check
       status: pass
       severity: warning
       threshold:
-        mustBe: 0
+        mustBe: 100
+      measure:
+        value: 100
+        unit: percent
+    - name: dcDataQualityRuleCount
+      type: metric
+      measure:
+        value: 10
+    - name: dpDataQualityRuleFailCount
+      type: metric
       measure:
         value: 0
 - kind: DataProductObservability
   schemaVersion: 0.1.0
   id: urn:petstore:consumer-aligned:business-analytics
-  observedAt: 2026-03-21T15:09:37.657Z
+  observedAt: 2026-03-21 15:09:37.015000+00:00
   period: P1D
-  health: healthy
+  health: critical
   source:
-    process: simulator
+    process: customDataProductObserver
   results:
-    - name: pipelineLastRanAt
-      type: metric
-      measure:
-        value: 2026-03-21T15:09:37.657Z
-    - name: pipelineDuration
-      type: metric
-      measure:
-        value: 3066
-        unit: seconds
-    - name: pipelineRecordsProcessed
-      type: metric
-      measure:
-        value: 9427987
-    - name: pipelineLastRunState
-      type: metric
-      measure:
-        value: success
-    - name: pipelineLastRunStateCheck
+    - name: dpPipelineLastRunStateCheck
       type: check
       status: pass
-      severity: warning
+      severity: critical
       threshold:
         validValues:
           - success
       measure:
         value: success
-    - name: pipelineMeanTimeBetweenFailuresCheck
+    - name: dpPipelineLastRanAt
+      type: metric
+      measure:
+        value: 2026-03-21 15:09:37.015000+00:00
+    - name: dpPipelineRunDuration
+      type: metric
+      measure:
+        value: 2642
+        unit: seconds
+    - name: dpPipelineMeanTimeBetweenFailuresCheck
       type: check
       status: pass
       severity: warning
       threshold:
         mustBeGreaterThan: 5
       measure:
-        value: 25
+        value: 10
         unit: days
-    - name: pipelineMeanTimeToRecoveryCheck
+    - name: dpPipelineMeanTimeToRecoveryCheck
       type: check
       status: pass
       severity: warning
       threshold:
         mustBeLessThan: 120
       measure:
-        value: 61.9
+        value: 60
         unit: minutes
-    - name: productConsumerQueryCount
-      type: metric
-      measure:
-        value: 218
-    - name: outputPortDistinctConsumers
-      type: metric
-      measure:
-        value: 14
-    - name: productOutputPortsResponseTimeCheck
+    - name: dpOutputPortsResponseTimeCheck
       type: check
       status: fail
-      severity: warning
+      severity: critical
       threshold:
-        mustBeLessThan: 10000
+        mustBeGreaterThan: 50
       measure:
-        value: 19716
-        unit: ms
-      message: "Objective: 10000ms"
-    - name: productDataLatencyMaximumAcrossAllContracts
+        value: 20
+        unit: percent
+    - name: dpConsumerQueryCount
       type: metric
       measure:
-        value: 18
-        unit: minutes
-    - name: productDataLatencyBeyondSlaCheck
+        value: 1476
+    - name: dpOutputPortDistinctConsumers
+      type: metric
+      measure:
+        value: 6
+    - name: dpDataLatencyCheck
       type: check
-      status: pass
-      severity: warning
+      status: fail
+      severity: critical
       threshold:
         mustBeLessThan: 60
       measure:
-        value: 18
+        value: 360
         unit: minutes
-    - name: contractDataQualityRuleCount
+    - name: dpDataQualityRulesPassCheck
+      type: check
+      status: fail
+      severity: critical
+      threshold:
+        mustBe: 100
+      measure:
+        value: 0
+        unit: percent
+    - name: dcDataQualityRuleCount
       type: metric
       measure:
         value: 10
-    - name: contractDataQualityRuleFailCount
+    - name: dpDataQualityRuleFailCount
       type: metric
-      measure:
-        value: 0
-    - name: contractDataQualityScore
-      type: metric
-      measure:
-        value: 100
-        unit: percent
-    - name: productDataQualityRulesFailCheck
-      type: check
-      status: pass
-      severity: warning
-      threshold:
-        mustBe: 0
       measure:
         value: 0
 - kind: DataProductObservability
   schemaVersion: 0.1.0
   id: urn:food-production:consumer-aligned:operations-analytics
-  observedAt: 2026-03-21T15:09:37.657Z
+  observedAt: 2026-03-21 15:09:37.015000+00:00
   period: P1D
-  health: healthy
+  health: critical
   source:
-    process: simulator
+    process: customDataProductObserver
   results:
-    - name: pipelineLastRanAt
-      type: metric
-      measure:
-        value: 2026-03-21T15:09:37.657Z
-    - name: pipelineDuration
-      type: metric
-      measure:
-        value: 1293
-        unit: seconds
-    - name: pipelineRecordsProcessed
-      type: metric
-      measure:
-        value: 4652866
-    - name: pipelineLastRunState
-      type: metric
-      measure:
-        value: success
-    - name: pipelineLastRunStateCheck
+    - name: dpPipelineLastRunStateCheck
       type: check
-      status: pass
-      severity: warning
+      status: fail
+      severity: critical
       threshold:
         validValues:
           - success
       measure:
-        value: success
-    - name: pipelineMeanTimeBetweenFailuresCheck
+        value: failed
+      message: Spark executor Out of Memory error
+    - name: dpPipelineLastRanAt
+      type: metric
+      measure:
+        value: 2026-03-21 15:09:37.015000+00:00
+    - name: dpPipelineRunDuration
+      type: metric
+      measure:
+        value: 2642
+        unit: seconds
+    - name: dpPipelineMeanTimeBetweenFailuresCheck
       type: check
-      status: pass
+      status: fail
       severity: warning
       threshold:
         mustBeGreaterThan: 5
       measure:
-        value: 18
+        value: 3
         unit: days
-    - name: pipelineMeanTimeToRecoveryCheck
+    - name: dpPipelineMeanTimeToRecoveryCheck
       type: check
-      status: pass
+      status: fail
       severity: warning
       threshold:
         mustBeLessThan: 120
       measure:
-        value: 89.9
+        value: 130
         unit: minutes
-    - name: productConsumerQueryCount
+    - name: dpConsumerQueryCount
       type: metric
       measure:
-        value: 3071
-    - name: outputPortDistinctConsumers
+        value: 1476
+    - name: dpOutputPortDistinctConsumers
       type: metric
       measure:
-        value: 15
-    - name: productOutputPortsResponseTimeCheck
+        value: 6
+    - name: dpOutputPortsResponseTimeCheck
       type: check
       status: pass
       severity: warning
       threshold:
-        mustBeLessThan: 10000
+        mustBeGreaterThan: 50
       measure:
-        value: 3452
-        unit: ms
-      message: "Objective: 10000ms"
-    - name: productDataLatencyMaximumAcrossAllContracts
+        value: 100
+        unit: percent
+    - name: dpDataLatencyMaximum
       type: metric
       measure:
-        value: 16
+        value: 26
         unit: minutes
-    - name: productDataLatencyBeyondSlaCheck
+    - name: dpDataLatencyCheck
       type: check
       status: pass
       severity: warning
       threshold:
         mustBeLessThan: 60
       measure:
-        value: 16
+        value: 26
         unit: minutes
-    - name: contractDataQualityRuleCount
-      type: metric
-      measure:
-        value: 10
-    - name: contractDataQualityRuleFailCount
-      type: metric
-      measure:
-        value: 0
-    - name: contractDataQualityScore
-      type: metric
-      measure:
-        value: 100
-        unit: percent
-    - name: productDataQualityRulesFailCheck
+    - name: dpDataQualityRulesPassCheck
       type: check
       status: pass
       severity: warning
       threshold:
-        mustBe: 0
+        mustBe: 100
+      measure:
+        value: 100
+        unit: percent
+    - name: dcDataQualityRuleCount
+      type: metric
+      measure:
+        value: 10
+    - name: dpDataQualityRuleFailCount
+      type: metric
       measure:
         value: 0

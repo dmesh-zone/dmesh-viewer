@@ -59,42 +59,42 @@ export const generatePipelineMetrics = (statusOverride) => {
     let mttr = Math.random() * 90; 
 
     if (isCritical) {
-        mtbf = getRandomInt(1, 6);
-        mttr = getRandomInt(361, 720); 
+        mtbf = getRandomInt(1, 4);
+        mttr = getRandomInt(121, 360); 
     } else if (isDegraded) {
-        mtbf = getRandomInt(7, 14);
+        mtbf = getRandomInt(1, 4);
         mttr = getRandomInt(121, 360);
     }
 
     const lastRunState = isCritical ? 'failed' : 'success';
-    const failureReason = isCritical ? 'Upstream source connection timed out.' : undefined;
+    const failureReason = isCritical ? 'Spark executor Out of Memory error' : undefined;
 
     return [
-        createMetric('pipelineLastRanAt', new Date().toISOString()),
-        createMetric('pipelineDuration', isCritical ? null : getRandomInt(60, 3600), 'seconds'),
-        createMetric('pipelineRecordsProcessed', isCritical ? null : getRandomInt(100, 10000000)),
-        createMetric('pipelineLastRunState', lastRunState),
-        createCheck('pipelineLastRunStateCheck', isCritical ? 'fail' : 'pass', isCritical ? 'critical' : 'warning', lastRunState, null, { validValues: ['success'] }, failureReason),
-        createCheck('pipelineMeanTimeBetweenFailuresCheck', isDegraded ? 'fail' : 'pass', 'warning', mtbf, 'days', { mustBeGreaterThan: 5 }),
-        createCheck('pipelineMeanTimeToRecoveryCheck', isDegraded ? 'fail' : 'pass', 'warning', parseFloat(mttr.toFixed(1)), 'minutes', { mustBeLessThan: 120 })
+        createMetric('dpPipelineLastRanAt', new Date().toISOString()),
+        createMetric('dpPipelineRunDuration', isCritical ? null : getRandomInt(60, 3600), 'seconds'),
+        createMetric('dpPipelineRecordsProcessed', isCritical ? null : getRandomInt(100, 10000000)),
+        createCheck('dpPipelineLastRunStateCheck', isCritical ? 'fail' : 'pass', isCritical ? 'critical' : 'warning', lastRunState, null, { validValues: ['success'] }, failureReason),
+        createCheck('dpPipelineMeanTimeBetweenFailuresCheck', (isCritical || isDegraded) ? 'fail' : 'pass', 'warning', mtbf, 'days', { mustBeGreaterThan: 5 }),
+        createCheck('dpPipelineMeanTimeToRecoveryCheck', (isCritical || isDegraded) ? 'fail' : 'pass', 'warning', parseFloat(mttr.toFixed(1)), 'minutes', { mustBeLessThan: 120 })
     ];
 };
 
-export const generateConsumptionMetrics = () => {
-    const objectiveMs = 10000;
-    const met = Math.random() >= 0.4;
-    
-    let actualP95Ms;
-    if (met) {
-        actualP95Ms = getRandomInt(2000, 10000);
-    } else {
-        actualP95Ms = getRandomInt(10001, 20000);
+export const generateConsumptionMetrics = (statusOverride) => {
+    const status = statusOverride || getRandomStatus();
+    const isCritical = status === 'critical';
+    const isDegraded = status === 'degraded';
+
+    let val = getRandomInt(80, 100);
+    if (isCritical) {
+        val = getRandomInt(0, 49);
+    } else if (isDegraded) {
+        val = getRandomInt(0, 49);
     }
-    
+
     return [
-        createMetric('productConsumerQueryCount', getRandomInt(100, 5000)),
-        createMetric('outputPortDistinctConsumers', getRandomInt(1, 15)),
-        createCheck('productOutputPortsResponseTimeCheck', met ? 'pass' : 'fail', 'warning', actualP95Ms, 'ms', { mustBeLessThan: objectiveMs }, `Objective: ${objectiveMs}ms`)
+        createMetric('dpConsumerQueryCount', getRandomInt(100, 5000)),
+        createMetric('dpOutputPortDistinctConsumers', getRandomInt(1, 15)),
+        createCheck('dpOutputPortsResponseTimeCheck', val > 50 ? 'pass' : 'fail', isCritical ? 'critical' : 'warning', val, 'percent', { mustBeGreaterThan: 50 })
     ];
 };
 
@@ -107,14 +107,14 @@ export const generateFreshnessMetrics = (statusOverride) => {
     let lag = getRandomInt(5, 45);
     
     if (isCritical) {
-        lag = maxAllowed * 2.5;
+        lag = getRandomInt(100, 400);
     } else if (isDegraded) {
-        lag = maxAllowed * 1.2;
+        lag = getRandomInt(61, 99);
     }
     
     return [
-        createMetric('productDataLatencyMaximumAcrossAllContracts', lag, 'minutes'),
-        createCheck('productDataLatencyBeyondSlaCheck', (!isCritical && !isDegraded) ? 'pass' : 'fail', isCritical ? 'critical' : 'warning', lag, 'minutes', { mustBeLessThan: maxAllowed })
+        createMetric('dpDataLatencyMaximum', lag, 'minutes'),
+        createCheck('dpDataLatencyCheck', (!isCritical && !isDegraded) ? 'pass' : 'fail', isCritical ? 'critical' : 'warning', lag, 'minutes', { mustBeLessThan: maxAllowed })
     ];
 };
 
@@ -127,65 +127,97 @@ export const generateQualityMetrics = (statusOverride) => {
     let passed = 10;
     
     if (isCritical) {
-        passed = 6;
+        passed = getRandomInt(0, 5);
     } else if (isDegraded) {
-        passed = 9;
+        passed = getRandomInt(6, 9);
     }
     
     const score = (passed / totalRules) * 100;
     const failed = totalRules - passed;
 
     return [
-        createMetric('contractDataQualityRuleCount', passed),
-        createMetric('contractDataQualityRuleFailCount', failed),
-        createMetric('contractDataQualityScore', score, 'percent'),
-        createCheck('productDataQualityRulesFailCheck', failed === 0 ? 'pass' : 'fail', isCritical ? 'critical' : 'warning', failed, null, { mustBe: 0 })
+        createCheck('dpDataQualityRulesPassCheck', failed === 0 ? 'pass' : 'fail', isCritical ? 'critical' : 'warning', score, 'percent', { mustBe: 100 }),
+        createMetric('dcDataQualityRuleCount', totalRules),
+        createMetric('dpDataQualityRuleFailCount', failed)
     ];
 };
 
-export const simulateRegistryMetrics = (dataMeshRegistry, dimensions = [], configObs = null) => {
-    if (!dataMeshRegistry) return [];
+export const simulateRegistryMetrics = (dataMeshOperationalData, dimensions = [], configObs = null) => {
+    if (!dataMeshOperationalData) return [];
     
     const dimsToGen = dimensions.length > 0 ? dimensions : ['Pipeline', 'Quality', 'Freshness', 'Consumption'];
 
-    return dataMeshRegistry
-        .filter(item => {
-            if (item.kind !== 'DataProduct') return false;
-            const tier = item.customProperties?.find(p => p.property === 'dataProductTier')?.value;
-            if (tier === 'dataSource' || tier === 'application') return false;
-            return true;
-        })
-        .map(dp => {
-            const status = getRandomStatus();
-            
-            let results = [];
-            dimsToGen.forEach(dim => {
-                const healthCheck = configObs?.dimensions?.[dim]?.healthCheck || dim;
+    const targetDPs = dataMeshOperationalData.filter(item => {
+        if (item.kind !== 'DataProduct') return false;
+        const tier = item.customProperties?.find(p => p.property === 'dataProductTier')?.value;
+        if (tier === 'dataSource' || tier === 'application') return false;
+        return true;
+    });
 
-                if (healthCheck.includes('pipeline') || healthCheck.includes('Pipeline')) results.push(...generatePipelineMetrics(status));
-                else if (healthCheck.includes('ResponseTime') || healthCheck.includes('Consumption')) results.push(...generateConsumptionMetrics(status));
-                else if (healthCheck.includes('Latency') || healthCheck.includes('Freshness') || healthCheck.includes('Sla')) results.push(...generateFreshnessMetrics(status));
-                else if (healthCheck.includes('Quality') || healthCheck.includes('Rule')) results.push(...generateQualityMetrics(status));
-                else {
-                    const dStr = dim.toLowerCase();
-                    if (dStr.includes('pipe')) results.push(...generatePipelineMetrics(status));
-                    else if (dStr.includes('consum') || dStr.includes('usage')) results.push(...generateConsumptionMetrics(status));
-                    else if (dStr.includes('fresh') || dStr.includes('latenc')) results.push(...generateFreshnessMetrics(status));
-                    else if (dStr.includes('qual')) results.push(...generateQualityMetrics(status));
+    const total = targetDPs.length;
+    let numCrit = Math.round(total * 0.1);
+    let numDeg  = Math.round(total * 0.2);
+    // Adjust boundaries to guarantee remainder equates natively mapped gracefully to Healthy
+    if (numCrit + numDeg > total) numDeg = total - numCrit;
+    
+    // Build deterministic distribution pool
+    const statuses = [];
+    for (let i = 0; i < numCrit; i++) statuses.push('critical');
+    for (let i = 0; i < numDeg; i++) statuses.push('degraded');
+    while (statuses.length < total) statuses.push('healthy');
+    
+    // Shuffle the statuses deterministically
+    for (let i = statuses.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [statuses[i], statuses[j]] = [statuses[j], statuses[i]];
+    }
+
+    return targetDPs.map((dp, index) => {
+        const overallStatus = statuses[index];
+        
+        const worstDimIndex = Math.floor(Math.random() * dimsToGen.length);
+        
+        let results = [];
+        dimsToGen.forEach((dim, dimIndex) => {
+            const healthCheck = configObs?.dimensions?.[dim]?.healthCheck || dim;
+
+            let dimStatus = 'healthy';
+            if (dimIndex === worstDimIndex) {
+                dimStatus = overallStatus;
+            } else {
+                const r = Math.random();
+                if (overallStatus === 'critical') {
+                    if (r < 0.1) dimStatus = 'critical';
+                    else if (r < 0.3) dimStatus = 'degraded';
+                } else if (overallStatus === 'degraded') {
+                    if (r < 0.2) dimStatus = 'degraded';
                 }
-            });
-            
-            return {
-                kind: 'DataProductObservability',
-                schemaVersion: '0.1.0',
-                id: dp.id,
-                observedAt: new Date().toISOString(),
-                period: 'P1D',
-                health: status,
-                source: { process: 'simulator' },
-                results
-            };
+            }
+
+            if (healthCheck.includes('pipeline') || healthCheck.includes('Pipeline')) results.push(...generatePipelineMetrics(dimStatus));
+            else if (healthCheck.includes('ResponseTime') || healthCheck.includes('Consumption')) results.push(...generateConsumptionMetrics(dimStatus));
+            else if (healthCheck.includes('Latency') || healthCheck.includes('Freshness') || healthCheck.includes('Sla')) results.push(...generateFreshnessMetrics(dimStatus));
+            else if (healthCheck.includes('Quality') || healthCheck.includes('Rule')) results.push(...generateQualityMetrics(dimStatus));
+            else {
+                const dStr = dim.toLowerCase();
+                if (dStr.includes('pipe')) results.push(...generatePipelineMetrics(dimStatus));
+                else if (dStr.includes('consum') || dStr.includes('usage')) results.push(...generateConsumptionMetrics(dimStatus));
+                else if (dStr.includes('fresh') || dStr.includes('latenc')) results.push(...generateFreshnessMetrics(dimStatus));
+                else if (dStr.includes('qual')) results.push(...generateQualityMetrics(dimStatus));
+            }
         });
+        
+        return {
+            kind: 'DataProductObservability',
+            schemaVersion: '0.1.0',
+            id: dp.id,
+            observedAt: new Date().toISOString(),
+            period: 'P1D',
+            health: overallStatus,
+            source: { process: 'simulator' },
+            results
+        };
+    });
 };
 
 const runCli = async () => {

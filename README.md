@@ -20,7 +20,7 @@ Additionally, you can create a `./public/customConfig.yaml` file to override any
 ### Configuration File Structure
 
 ```yaml
-defaultDataMeshRegistryUrl: /DataMeshRegistry.yaml
+defaultDataMeshOperationalDataUrl: /DataMeshOperationalData.yaml
 iconMap:
   ...
 domainPalette:
@@ -31,19 +31,19 @@ tiers:
 
 ### Required Fields
 
-#### `defaultDataMeshRegistryUrl` (required)
+#### `defaultDataMeshOperationalDataUrl` (required)
 
 The path or URL to your Data Mesh registry YAML or JSON file.
 
 **Examples:**
 local file: 
 ```yaml
-defaultDataMeshRegistryUrl: /DataMeshRegistryPetsExample.yaml
+defaultDataMeshOperationalDataUrl: /DataMeshOperationalDataPetsExample.yaml
 ```
 
 remote file:
 ```yaml
-defaultDataMeshRegistryUrl: https://www.example.com/DataMeshRegistryPetsExample.yaml
+defaultDataMeshOperationalDataUrl: https://www.example.com/DataMeshOperationalDataPetsExample.yaml
 ```
 
 ### Optional Fields
@@ -183,9 +183,9 @@ If you see a red "Configuration Error" banner:
 - Ensure colons have spaces after them
 - Validate your YAML using an online validator
 
-**"config.yaml is missing required field 'defaultDataMeshRegistryUrl'"**
-- Add the `defaultDataMeshRegistryUrl` field to your config.yaml
-- Example: `defaultDataMeshRegistryUrl: /DataMeshRegistry.yaml`
+**"config.yaml is missing required field 'defaultDataMeshOperationalDataUrl'"**
+- Add the `defaultDataMeshOperationalDataUrl` field to your config.yaml
+- Example: `defaultDataMeshOperationalDataUrl: /DataMeshOperationalData.yaml`
 
 **"config.yaml must contain a valid YAML document"**
 - Ensure the file is not empty
@@ -195,7 +195,7 @@ If you see a red "Configuration Error" banner:
 ### Registry Loading Errors
 
 **"Failed to fetch registry"**
-- Verify the registry URL in `defaultDataMeshRegistryUrl` is correct
+- Verify the registry URL in `defaultDataMeshOperationalDataUrl` is correct
 - Ensure the registry file exists at the specified path
 - Check browser console for CORS errors if loading from external URL
 

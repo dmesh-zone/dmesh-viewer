@@ -222,92 +222,76 @@
             },
             "results": [
                 {
-                    "name": "pipelineLastRanAt",
-                    "type": "metric",
-                    "measure": {
-                        "value": "2026-03-13T08:45:00Z"
-                    }
-                },
-                {
-                    "name": "pipelineDuration",
-                    "type": "metric",
-                    "measure": {
-                        "unit": "minutes",
-                        "value": 1200
-                    }
-                },
-                {
-                    "name": "pipelineDurationCheck",
+                    "name": "dpPipelineLastRunStateCheck",
                     "type": "check",
-                    "status": "fail",
-                    "severity": "warning",
-                    "threshold": {
-                        "mustBeLessThan": 1000
-                    },
-                    "measure": {
-                        "unit": "minutes",
-                        "value": 1200
-                    }
-                },
-                {
-                    "name": "pipelineLastRunState",
-                    "type": "metric",
-                    "measure": {
-                        "value": "success"
-                    },
-                    "message": "Spark executor OOM"
-                },
-                {
-                    "name": "pipelineLastRunStateCheck",
-                    "type": "check",
-                    "status": "fail",
+                    "status": "pass",
                     "severity": "critical",
                     "threshold": {
                         "validValues": [
-                            "success",
-                            "skipped"
+                            "success"
                         ]
                     },
                     "measure": {
-                        "value": "failed"
-                    },
-                    "message": "Spark executor OOM"
-                },
-                {
-                    "name": "pipelineRecordsProcessed",
-                    "type": "metric",
-                    "measure": {
-                        "value": 100000
+                        "value": "success"
                     }
                 },
                 {
-                    "name": "pipelineMeanTimeBetweenFailuresCheck",
+                    "name": "dpPipelineLastRanAt",
+                    "type": "metric",
+                    "measure": {
+                        "value": "2026-03-21 15:09:37.015000+00:00"
+                    }
+                },
+                {
+                    "name": "dpPipelineRunDuration",
+                    "type": "metric",
+                    "measure": {
+                        "value": 2642,
+                        "unit": "seconds"
+                    }
+                },
+                {
+                    "name": "dpPipelineMeanTimeBetweenFailuresCheck",
                     "type": "check",
+                    "status": "fail",
                     "severity": "warning",
-                    "status": "pass",
                     "threshold": {
                         "mustBeGreaterThan": 5
                     },
                     "measure": {
-                        "value": 10,
+                        "value": 2,
                         "unit": "days"
                     }
                 },
                 {
-                    "name": "pipelineMeanTimeToRecoveryCheck",
+                    "name": "dpPipelineMeanTimeToRecoveryCheck",
                     "type": "check",
-                    "severity": "warning",
                     "status": "pass",
+                    "severity": "warning",
                     "threshold": {
-                        "mustBeLessThan": 2
+                        "mustBeLessThan": 120
                     },
                     "measure": {
-                        "value": 1,
-                        "unit": "hours"
+                        "value": 60,
+                        "unit": "minutes"
                     }
                 },
                 {
-                    "name": "productOutputPortsResponseTimeCheck",
+                    "name": "dpConsumerQueryCount",
+                    "type": "metric",
+                    "measure": {
+                        "value": 1476
+                    }
+                },
+                {
+                    "name": "dpOutputPortDistinctConsumers",
+                    "type": "metric",
+                    "measure": {
+                        "value": 6
+                    }
+                },
+                {
+                    "name": "dpOutputPortsResponseTimeCheck",
                     "type": "check",
                     "status": "pass",
                     "severity": "warning",
@@ -315,126 +299,77 @@
                         "mustBeGreaterThan": 50
                     },
                     "measure": {
-                        "unit": "percent",
-                        "value": 100
+                        "value": 100,
+                        "unit": "percent"
                     }
                 },
                 {
-                    "name": "productConsumerQueryCount",
+                    "name": "dpDataLatencyMaximum",
                     "type": "metric",
                     "measure": {
-                        "value": 2509
+                        "value": 26,
+                        "unit": "minutes"
                     }
                 },
                 {
-                    "name": "outputPortResponseTimeMeanCheck",
+                    "name": "dpDataLatencyCheck",
+                    "type": "check",
+                    "status": "pass",
+                    "severity": "warning",
+                    "threshold": {
+                        "mustBeLessThan": 60
+                    },
+                    "measure": {
+                        "value": 26,
+                        "unit": "minutes"
+                    }
+                },
+                {
+                    "name": "dpDataQualityRulesPassCheck",
+                    "type": "check",
+                    "status": "pass",
+                    "severity": "warning",
+                    "threshold": {
+                        "mustBe": 100
+                    },
+                    "measure": {
+                        "value": 100,
+                        "unit": "percent"
+                    }
+                },
+                {
+                    "name": "dcDataQualityRulesPassCheck",
                     "target": {
                         "resourceType": "DataContract",
                         "resourceIdentifier": "123e4567-e89b-12d3-a456-426614174000"
                     },
                     "type": "check",
-                    "status": "fail",
+                    "status": "pass",
                     "severity": "warning",
                     "threshold": {
-                        "mustBeLessThan": 10000
+                        "mustBe": 0
                     },
                     "measure": {
-                        "unit": "seconds",
-                        "value": 12000
+                        "unit": "percent",
+                        "value": 0
                     }
                 },
                 {
-                    "name": "outputPortDistinctConsumers",
-                    "target": {
-                        "resourceType": "DataContract",
-                        "resourceIdentifier": "123e4567-e89b-12d3-a456-426614174000"
-                    },
+                    "name": "dcDataQualityRuleCount",
                     "type": "metric",
                     "measure": {
                         "value": 10
                     }
                 },
                 {
-                    "name": "outputPortQueryCount",
-                    "target": {
-                        "resourceType": "DataContract",
-                        "resourceIdentifier": "123e4567-e89b-12d3-a456-426614174000"
-                    },
+                    "name": "dpDataQualityRuleFailCount",
                     "type": "metric",
                     "measure": {
-                        "value": 2590
-                    }
-                },
-                {
-                    "name": "productDataLatencyBeyondSlaCheck",
-                    "type": "check",
-                    "status": "pass",
-                    "severity": "warning",
-                    "threshold": {
-                        "mustBe": 0
-                    },
-                    "measure": {
-                        "unit": "percent",
                         "value": 0
                     }
                 },
                 {
-                    "name": "productDataLatencyMaximumAcrossAllContracts",
-                    "type": "metric",
-                    "measure": {
-                        "unit": "hours",
-                        "value": 12
-                    }
-                },
-                {
-                    "name": "contractDataLatencySlaCheck",
-                    "target": {
-                        "resourceType": "DataContract",
-                        "resourceIdentifier": "123e4567-e89b-12d3-a456-426614174000"
-                    },
-                    "type": "check",
-                    "severity": "warning",
-                    "status": "fail",
-                    "threshold": {
-                        "mustBeLessThan": 6
-                    },
-                    "measure": {
-                        "unit": "hours",
-                        "value": 12
-                    }
-                },
-                {
-                    "name": "contractDataLatencySlaCheck",
-                    "target": {
-                        "resourceType": "DataContract",
-                        "resourceIdentifier": "123e4567-e89b-12d3-a456-426614174001"
-                    },
-                    "type": "check",
-                    "severity": "warning",
-                    "status": "pass",
-                    "threshold": {
-                        "mustBeLessThan": 6
-                    },
-                    "measure": {
-                        "unit": "hours",
-                        "value": 3
-                    }
-                },
-                {
-                    "name": "productDataQualityRulesFailCheck",
-                    "type": "check",
-                    "status": "pass",
-                    "severity": "warning",
-                    "threshold": {
-                        "mustBe": 0
-                    },
-                    "measure": {
-                        "unit": "percent",
-                        "value": 0
-                    }
-                },
-                {
-                    "name": "contractDataQualityRuleCount",
+                    "name": "dcDataQualityRuleCount",
                     "target": {
                         "resourceType": "DataContract",
                         "resourceIdentifier": "123e4567-e89b-12d3-a456-426614174000"
@@ -445,30 +380,13 @@
                     }
                 },
                 {
-                    "name": "contractDataQualityRuleFailCount",
+                    "name": "dcDataQualityRuleFailCount",
                     "target": {
                         "resourceType": "DataContract",
                         "resourceIdentifier": "123e4567-e89b-12d3-a456-426614174000"
                     },
                     "type": "metric",
                     "measure": {
-                        "value": 0
-                    }
-                },
-                {
-                    "name": "contractDataQualityRulesFailCheck",
-                    "target": {
-                        "resourceType": "DataContract",
-                        "resourceIdentifier": "123e4567-e89b-12d3-a456-426614174000"
-                    },
-                    "type": "check",
-                    "status": "pass",
-                    "severity": "warning",
-                    "threshold": {
-                        "mustBe": 0
-                    },
-                    "measure": {
-                        "unit": "percent",
                         "value": 0
                     }
                 }

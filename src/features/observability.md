@@ -24,19 +24,21 @@ Each data product node in the Data Mesh Viewer graph exposes the management port
 
 The observability management port points to a runtime /observe/metrics endpoint. This specification defines how the platform consumes that endpoint, surfaces results in the mesh graph, and provides drilldown access for operators and consumers.
 
-For runtime efficiency Data Mesh Viewer will expect the /observe/metrics for all data products as part of the DataMeshRegistry payload, /observe/metrics entry indentified as an array element of kind:DataProductObservabilityMetrics
+For runtime efficiency Data Mesh Viewer will expect the /observe/metrics for all data products as part of the DataMeshOperationalData payload, /observe/metrics entry indentified as an array element of kind:DataProductObservability
 
 ### 1.3 Observability Model
 
-The feature is structured around three observability spaces as defined by Petrella:
+The goal of this standard is to provide a common format for data product observability metrics, fulfilling its observabilty endpoints:
+- {dp}/observe/health 
+- {dp}/observe/metrics
 
-| **Space** | **What it measures** | **Examples in /observe/metrics** |
-|-----------|---------------------|----------------------------------|
-| Physical  | Infrastructure and compute layer          | Pipeline run status, duration, storage size, compute credits       |
-| Static    | Schema structure and contract conformance | Schema version, drift detection, column count, contract validation |
-| Dynamic   | Runtime data values and fitness           | Volume/row counts, freshness/lag, quality rule pass rates, consumption/latency |
+The aim is to provide data product level granular metrics, at the following levels:
+- data product overall health (e.g. healthy, degraded, critical)
+- data product overall metrics (e.g. pipeline health, consumption, etc.)
+- data product data contract metrics (e.g. quality, schema conformance, etc.)
+- data product output port usage metrics (e.g. number of queries, active user statistics, query response time statistics, etc.)
 
-A fourth cross-cutting dimension, Consumption, mirrors the SLA response time objectives declared in the linked ODCS output port contracts and compares them against actuals observed by consumers.
+This standard enables visualisation tools to monitor data product health and drill down into associated metrics and checks.
 
 ### 1.4 Scope
 
@@ -50,7 +52,7 @@ In scope for this specification:
 
 - Node drilldown side panel with Metrics and Events tabs
 
-- kind:DataProductObservabilityMetrics array element handling from DataMeshRegistry
+- kind:DataProductObservabilityMetrics array element handling from DataMeshOperationalData
 
 - JSON Schema for the src\schemas\odps-observability-metrics-schema-v0.0.1.json
 
@@ -119,7 +121,7 @@ Requirements are expressed as user stories following the standard format: As a [
 | --- | --- |
 | Role      | Platform operator, data product owner                                                                                                                                                        |
 | Story     | I want to see per-dimension status indicators directly on the node so that I can understand which specific dimension is causing a degraded or critical status without opening the drilldown. |
-| Priority  | P1                                                                                                                                                                                           |
+| Priority  | P0                                                                                                                                                                                           |
 
 ##### Acceptance Criteria
 
@@ -213,7 +215,7 @@ Requirements are expressed as user stories following the standard format: As a [
 | --- | --- |
 | Role      | Platform operator                                                                                                                                                                |
 | Story     | I want edges between nodes to be coloured and animated according to the health of the nodes they connect so that I can see how health issues propagate across the mesh topology. |
-| Priority  | P1                                                                                                                                                                               |
+| Priority  | P0                                                                                                                                                                               |
 
 ##### Acceptance Criteria
 
@@ -275,27 +277,13 @@ Requirements are expressed as user stories following the standard format: As a [
 
 - Cards reveal with a staggered animation (100ms delay between cards) when the panel opens.
 
-- All metric values are sourced from the /observe/metrics response for the selected output port's contractId.
+- All metric values are sourced from the `results` array of the `DataProductObservability` payload.
 
-- **Pipeline Metric Card Specifics:**
-  - If `physical.pipeline.status` equals failed, pipeline status should be CRITICAL. "Failure reason: <failureReason>" will be shown in the card using the value from `physical.pipeline.failureReason`.
-  - In Pipeline Status card show "Last run: <asOf>" as the first line below status
-  - If `physical.pipeline.status` is healthy (i.e. not "failed"), and `physical.pipeline.durationInSeconds` and `physical.pipeline.recordsProcessed` are available, they should be shown in the card's detail section, as "Duration: <duration>" and "Records processed: <records>", one in each line
-  - Duration is formatted as `Nh Nm` (e.g., 1h 30m, 0h 45m).
-  - "Records processed: " should prefix the formatted number of records. Records are formatted concisely: 
-    - `< 1000`: `nnn` 
-    - `< 1,000,000`: `Nk.N` (e.g., 1.5k)
-    - `< 1,000,000,000`: `NM.N` (e.g., 1.5M)
-    - `≥ 1,000,000,000`: `NB.N` (e.g., 1.5B)
-  - `MTBF (Mean Time Between Failures): x days` (value color: x < 7 Red, 7 < x < 14 Amber, x > 14 Green)
-  - `MTTR (Mean Time To Recover): x minutes/hours` (value color: x < 120 Green, 120 < x < 360 Amber, x > 360 Red) showing minutes if number less than 60 and hours otherwise
-    
-- **Consumption Metric Card Specifics:**
-  - Instead of a single primary value and unit, the Consumption card should display a distinct primary value:
-    - `{dynamic.responseTime.actualP95Ms} ms` labelled with "Response time"
-  - The detail reference text below the values should display: 
-    - `Target response time: {dynamic.responseTime.objectiveMs} ms`
-    - If usage data is available: `Active consumers: {usage.activeConsumers}, Query count: {usage.queryCount}`
+- **Dynamic Visualization Specifics:**
+  - Card layout is entirely dynamically driven by `config.yaml` which defines the exact `dimensions` to map payload keys into the UI.
+  - Data points map dynamically to a designated visually prominent `keyResult` (rendering explicitly with primary status colors against expected string variables directly beside it natively).
+  - Conditionally failing checks will broadcast detailed `message` strings in CRITICAL red strictly mapped immediately below the primary metric.
+  - Remaining metrics are populated into an ordered dynamically mapping `secondaryMetrics` list, injecting threshold RAG grade variables directly onto numbered values when their thresholds evaluate to `severity: critical` or `severity: warning` gracefully.
 
 
 
@@ -305,7 +293,7 @@ Requirements are expressed as user stories following the standard format: As a [
 | --- | --- |
 | Role      | Platform operator, data product owner                                                                                                                                       |
 | Story     | I want an Events tab that shows a chronological feed of recent incidents and pipeline events for the selected data product so that I can understand what happened and when. |
-| Priority  | P0                                                                                                                                                                          |
+| Priority  | P2                                                                                                                                                                          |
 
 ##### Acceptance Criteria
 
@@ -329,13 +317,13 @@ Requirements are expressed as user stories following the standard format: As a [
 | --- | --- |
 | Role      | Developer, technical operator                                                                                                                                                             |
 | Story     | I want a YAML tab that shows the raw metric data in YAML format for the selected data product so that I can debug and inspect the underlying data source directly. |
-| Priority  | P2                                                                                                                                                                                                                       |
+| Priority  | P0                                                                                                                                                                                                                       |
 
 ##### Acceptance Criteria
 
 - The YAML tab is available alongside the Metrics and Events tabs.
 
-- It displays the currently loaded `DataProductObservabilityMetrics` object in a syntax-highlighted YAML format.
+- It displays the currently loaded `DataProductObservability` object in a syntax-highlighted YAML format.
 
 - The data shown matches what is currently stored in memory (including any runtime date adjustments if Test Mode is active).
 
@@ -349,7 +337,7 @@ Requirements are expressed as user stories following the standard format: As a [
 | **Field** | **Detail** |
 | --- | --- |
 | Role      | Platform (system story)                                                                                                                                                          |
-| Story     | When Observe Mode is activated, the platform fetches kind:DataProductObservabilityMetrics from the DataMeshRegistry for all visible data product nodes in parallel so that health shading is applied without sequential delay. |
+| Story     | When Observe Mode is activated, the platform fetches kind:DataProductObservability from the DataMeshOperationalData for all visible data product nodes in parallel so that health shading is applied without sequential delay. |
 | Priority  | P0                                                                                                                                                                               |
 
 ##### Acceptance Criteria
@@ -370,14 +358,14 @@ Requirements are expressed as user stories following the standard format: As a [
 | **Field** | **Detail** |
 | --- | --- |
 | Role      | Platform (system story)                                                                                                                                           |
-| Story     | The platform validates each /observe/metrics response against  odps-observability-metrics-schema-v0.0.1.json JSON Schema so that malformed or non-conformant responses are handled gracefully. |
-| Priority  | P1                                                                                                                                                                |
+| Story     | The platform validates each /observe/metrics response against odps-observability-json-schema-v0.1.0.json JSON Schema so that malformed or non-conformant responses are handled gracefully. |
+| Priority  | P0                                                                                                                                                                |
 
 ##### Acceptance Criteria
 
-- Each API response is validated against odps-observability-metrics-schema-v0.0.1.json JSON Schema before being applied to the UI state.
+- Each API response is validated against odps-observability-json-schema-v0.1.0.json JSON Schema before being applied to the UI state.
 
-- Validation failures are logged as per other DataMeshRegistry elements and the affected node is shaded grey with a "Schema mismatch" tooltip.
+- Validation failures are logged as per other DataMeshOperationalData elements and the affected node is shaded grey with a "Schema mismatch" tooltip.
 
 - The platform supports partial responses where optional top-level objects (physical, static, usage) are absent.
 
@@ -438,10 +426,10 @@ The following state machine governs the Observe Mode lifecycle:
 
 | **Dimension** | **Icon** | **Scope** | **Source in /observe/metrics** |
 | --- | --- | --- | --- |
-| Pipeline      | ▸        | Most recent pipeline run status and duration    | physical.pipeline.status                                      |
-| Consumption   | ◈        | Overall consumption response time objective evaluation | dynamic.responseTime |
-| Freshness     | ⧗        | Data lag vs. max allowed lag from ODCS contract | dynamic.freshness.lagMinutes vs maxAllowedLagMinutes          |
-| Quality       | ✦        | Quality rule pass rate from ODCS contract rules | dynamic.quality.rulesPassed / rulesTotal                      |
+| Pipeline      | ▸        | Most recent pipeline run status and duration    | dynamic `results` mapped mapped by config.yaml |
+| Consumption   | ◈        | Overall consumption response time objective evaluation | dynamic `results` mapped mapped by config.yaml |
+| Freshness     | ⧗        | Data lag vs. max allowed lag from ODCS contract | dynamic `results` mapped mapped by config.yaml |
+| Quality       | ✦        | Quality rule pass rate from ODCS contract rules | dynamic `results` mapped mapped by config.yaml |
 
 ### 3.5 Drilldown Panel Layout
 
@@ -482,35 +470,29 @@ Cards animate in with a staggered reveal (opacity + translateY) with 100ms betwe
 
 ### 4.1 Data Product Observability Metrics sourcing
 
-The Data Product Observability Metrics are sourced from the DataMeshRegistry that exposes other nodes such kind:DataProduct and kind:DataContract
+The Data Product Observability Metrics are sourced from the DataMeshOperationalData that exposes other nodes such kind:DataProduct and kind:DataContract
 
 ## 5. Health Status Derivation
 
 ### 5.1 Composite Status Algorithm
 
-The composite status field on each node is not taken directly from the API response status field. It is derived client-side from the four dimension statuses, enabling the dimension filter to re-shade nodes without an additional API call:
+The composite status field on each node is evaluated dynamically against aggregated object conditions spanning pipeline, consumption, freshness, and quality configuration directives matching severity payloads dynamically:
 
 ```javascript
-function deriveStatus(metrics, dimension) {
-  const dims = dimension ? [dimension] : ['pipeline', 'consumption', 'freshness', 'quality'];
-  for (const d of dims) {
-    if (isDimCritical(metrics, d)) return 'critical';
-  }
-  for (const d of dims) {
-    if (isDimDegraded(metrics, d)) return 'degraded';
-  }
-  return dims.every(d => isDimHealthy(metrics, d)) ? 'healthy' : 'unknown';
+function getWorstStatus(results, dimension) {
+    if (!results || !Array.isArray(results)) return 'unknown';
+
+    const checks = results.filter(r => r.type === 'check');
+    
+    // Evaluate mapped conditions conditionally yielding 'critical' | 'degraded' | 'healthy' natively across UI parameters globally.
 }
 ```
 
 ### 5.2 Per-Dimension Thresholds
 
-| **Dimension** | **Critical condition** | **Degraded condition** | **Healthy condition** |
-|---|---|---|---|
-| Pipeline      | physical.pipeline.status === "failed"                   | N/A                                                          | physical.pipeline.status !== "failed"      |
-| Consumption   | (dynamic.responseTime.met=F) AND (actualP95>2×obj) | (dynamic.responseTime.met=F) AND NOT Critical          | dynamic.responseTime.met=T        |
-| Freshness     | dynamic.freshness.lagMinutes > 2× maxAllowedLagMinutes | dynamic.freshness.withinExpectation === false                 | withinExpectation === true |
-| Quality       | dynamic.quality.rulesFailed > 1                        | dynamic.quality.rulesFailed === 1                             | rulesFailed === 0          |
+Rather than static schema references, dimensions pull evaluations gracefully from individual `DataProductObservability` payload measurements formatted elegantly natively:
+- Evaluating `mustBeGreaterThan` or `mustBeLessThan` parameters inline natively.
+- Projecting mapped errors dynamically.
 
 *Note on Unknown states: A dimension evaluates to `unknown` if there is insufficient metric data available. For Consumption specifically, the dimension is `unknown` if `dynamic.responseTime.met` is null or unavailable.*
 
@@ -565,7 +547,7 @@ function deriveStatus(metrics, dimension) {
 
 7. Visual Test Plan
 
-Create a DataMeshRegistryObservability.yaml derived with the exact same Data Product and Data Contracts as DataMeshRegistryPetsExample.yaml that illustrates the various features of the observability feature.
+Create a DataMeshOperationalDataObservability.yaml derived with the exact same Data Product and Data Contracts as DataMeshOperationalDataPetsExample.yaml that illustrates the various features of the observability feature.
 When creating test data, create a sample view that shows metrics for a 24 hour window ending on the 2nd of March 2026 (dates will normally become stale but this will be mitigated dynamically via the #test mode logic).
-Ensure that in DataMeshRegistryObservability.yaml Data Sources and Applications data products (dataSource and application data product tiers) don't have observability data, so unknown status can be visually verified.
-Ensure that DataMeshRegistryObservability.yaml is valid against all schemas in src/schemas.
+Ensure that in DataMeshOperationalDataObservability.yaml Data Sources and Applications data products (dataSource and application data product tiers) don't have observability data, so unknown status can be visually verified.
+Ensure that DataMeshOperationalDataObservability.yaml is valid against all schemas in src/schemas.

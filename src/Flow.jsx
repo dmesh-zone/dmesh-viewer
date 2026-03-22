@@ -64,11 +64,11 @@ function Flow() {
     // Registry State - URL will be loaded from config.json
     const [registryUrl, setRegistryUrl] = React.useState('');
 
-    const [dataMeshRegistry, setDataMeshRegistry] = React.useState([]);
-    const [dataMeshRegistryRaw, setDataMeshRegistryRaw] = React.useState('');
+    const [dataMeshRegistry, setDataMeshOperationalData] = React.useState([]);
+    const [dataMeshRegistryRaw, setDataMeshOperationalDataRaw] = React.useState('');
     const [isLoading, setIsLoading] = React.useState(true);
     const [error, setError] = React.useState(null);
-    const [config, setConfig] = React.useState({ iconMap: {}, tiers: {}, domainPalette: [], defaultDataMeshRegistryUrl: '', registries: [] }); // Config state
+    const [config, setConfig] = React.useState({ iconMap: {}, tiers: {}, domainPalette: [], defaultDataMeshOperationalDataUrl: '', registries: [] }); // Config state
     const [configError, setConfigError] = React.useState(null); // Track config loading errors
     const [showRegistryModal, setShowRegistryModal] = React.useState(false);
 
@@ -121,8 +121,8 @@ function Flow() {
             }
 
             // Validate required fields
-            if (!data.defaultDataMeshRegistryUrl) {
-                setConfigError('config.yaml is missing required field "defaultDataMeshRegistryUrl". Please add this field with the path to your registry YAML file.');
+            if (!data.defaultDataMeshOperationalDataUrl) {
+                setConfigError('config.yaml is missing required field "defaultDataMeshOperationalDataUrl". Please add this field with the path to your registry YAML file.');
                 return;
             }
 
@@ -131,8 +131,8 @@ function Flow() {
                 tiers: data.tiers || {},
                 domainPalette: data.domainPalette || ['#fee2e2', '#f3e8ff', '#fef3c7', '#ffedd5', '#e0e7ff', '#dbeafe', '#dcfce7'],
                 observability: data.observability || {},
-                defaultDataMeshRegistryUrl: normalizePath(data.defaultDataMeshRegistryUrl),
-                registries: (data.sampleDataMeshRegistryUrls || []).map(reg => ({
+                defaultDataMeshOperationalDataUrl: normalizePath(data.defaultDataMeshOperationalDataUrl),
+                registries: (data.sampleDataMeshOperationalDataUrls || []).map(reg => ({
                     original: reg,
                     normalized: normalizePath(reg)
                 }))
@@ -140,7 +140,7 @@ function Flow() {
             setConfig(loadedConfig);
             setConfigError(null);
             // Set initial registry URL from config
-            setRegistryUrl(loadedConfig.defaultDataMeshRegistryUrl);
+            setRegistryUrl(loadedConfig.defaultDataMeshOperationalDataUrl);
         })
         .catch(err => {
             console.error("Failed to load config.yaml", err);
@@ -199,46 +199,37 @@ function Flow() {
         const dimsConfig = config?.observability?.dimensions;
 
         if (!dimension || dimension === 'Any') {
-             if (!dimsConfig) return metrics.health || 'unknown';
-             const dimsToCheck = Object.keys(dimsConfig);
-             if (dimsToCheck.length === 0) return metrics.health || 'unknown';
-
-             let hasCritical = false;
-             let hasDegraded = false;
-             let hasHealthy = false;
-
-             for (const d of dimsToCheck) {
-                 const healthCheckName = dimsConfig[d].healthCheck;
-                 if (!healthCheckName) continue;
-
-                 const checkResult = metrics.results?.find(r => r.name === healthCheckName && r.type === 'check');
-                 if (!checkResult) continue;
-
-                 if (checkResult.status === 'fail' && checkResult.severity === 'critical') hasCritical = true;
-                 else if (checkResult.status === 'fail') hasDegraded = true;
-                 else if (checkResult.status === 'pass') hasHealthy = true;
-             }
-
-             if (hasCritical) return 'critical';
-             if (hasDegraded) return 'degraded';
-             if (hasHealthy) return 'healthy';
-             return 'unknown';
+             return metrics.health || 'unknown';
         }
 
         if (!dimsConfig || !dimsConfig[dimension]) return 'unknown';
 
-        const healthCheckName = dimsConfig[dimension].healthCheck;
+        const dimConfig = dimsConfig[dimension];
+        const healthCheckName = dimConfig.healthCheck;
         if (!healthCheckName) return 'unknown';
 
-        const checkResult = metrics.results?.find(r => r.name === healthCheckName && r.type === 'check');
-        if (!checkResult) return 'unknown';
-
-        if (checkResult.status === 'pass') return 'healthy';
-        if (checkResult.status === 'fail') {
-             if (checkResult.severity === 'critical') return 'critical';
-             return 'degraded';
+        const checksToEvaluate = [healthCheckName];
+        if (dimConfig.secondaryMetrics) {
+            dimConfig.secondaryMetrics.forEach(sm => checksToEvaluate.push(sm.metric));
         }
-        return 'unknown';
+
+        const activeChecks = metrics.results?.filter(r => checksToEvaluate.includes(r.name) && r.type === 'check') || [];
+        if (activeChecks.length === 0) return 'unknown';
+
+        let worstStatus = 'healthy';
+        activeChecks.forEach(checkResult => {
+             if (checkResult.status === 'fail') {
+                 let s = 'degraded';
+                 if (checkResult.severity === 'critical') s = 'critical';
+                 else if (checkResult.severity === 'error') s = 'degraded';
+                 else if (checkResult.severity === 'warning') s = 'degraded';
+
+                 if (worstStatus === 'healthy') worstStatus = s;
+                 else if (worstStatus === 'degraded' && s === 'critical') worstStatus = 'critical';
+             }
+        });
+        
+        return worstStatus;
     }, [metricsMap, config]);
 
     // Testability State
@@ -274,7 +265,7 @@ function Flow() {
     const [isResizing, setIsResizing] = React.useState(false);
 
     const processRegistryText = (text) => {
-        setDataMeshRegistryRaw(text);
+        setDataMeshOperationalDataRaw(text);
 
         // Check if response is HTML instead of YAML (common when file doesn't exist)
         if (text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html')) {
@@ -290,10 +281,10 @@ function Flow() {
 
         if (!parsed) {
             console.warn("Parsed registry is empty");
-            setDataMeshRegistry([]);
+            setDataMeshOperationalData([]);
         } else {
             const items = Array.isArray(parsed) ? parsed : [parsed];
-            setDataMeshRegistry(items);
+            setDataMeshOperationalData(items);
             // Observability Metrics extracted in a separate useEffect
         }
     };
@@ -364,7 +355,7 @@ function Flow() {
         } catch (err) {
             console.error("Error loading registry from text:", err);
             setError(err.message);
-            setDataMeshRegistry([]);
+            setDataMeshOperationalData([]);
         } finally {
             setIsLoading(false);
         }
@@ -391,7 +382,7 @@ function Flow() {
             } catch (err) {
                 console.error("Error loading registry:", err);
                 setError(err.message);
-                setDataMeshRegistry([]);
+                setDataMeshOperationalData([]);
             } finally {
                 setIsLoading(false);
             }
@@ -533,7 +524,7 @@ function Flow() {
                 }
 
                 // Observability Data
-                const healthStatus = observeMode ? deriveStatus(node.id, activeDimension) : null;
+                const healthStatus = observeMode ? deriveStatus(node.id, 'Any') : null;
                 const metrics = metricsMap.get(node.id);
                 let pips = null;
                 if (observeMode && availableDimensions) {

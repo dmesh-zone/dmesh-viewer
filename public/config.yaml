@@ -1,15 +1,15 @@
-defaultDataMeshRegistryUrl: /DataMeshRegistryObservability.yaml
+defaultDataMeshOperationalDataUrl: /DataMeshOperationalDataPetsExample.yaml
 
-sampleDataMeshRegistryUrls:
-  - /DataMeshRegistryPetsExample.yaml
-  - /DataMeshRegistryLongStringExample.yaml
-  - /DataMeshRegistryIconsExample.yaml
-  - /DataMeshRegistryIdCollisionExample.yaml
-  - /DataMeshRegistryGenExample.yaml
-  - /DataMeshRegistryDqExample.yaml
-  - /DataMeshRegistryPortAdapterExample.yaml
-  - /DataMeshRegistryObservability.yaml
-  - /DataMeshRegistryObservabilityLight.yaml
+sampleDataMeshOperationalDataUrls:
+  - /DataMeshOperationalDataPetsExample.yaml
+  - /DataMeshOperationalDataLongStringExample.yaml
+  - /DataMeshOperationalDataIconsExample.yaml
+  - /DataMeshOperationalDataIdCollisionExample.yaml
+  - /DataMeshOperationalDataGenExample.yaml
+  - /DataMeshOperationalDataDqExample.yaml
+  - /DataMeshOperationalDataPortAdapterExample.yaml
+  - /DataMeshOperationalDataObservability.yaml
+  - /DataMeshOperationalDataObservabilityLight.yaml
 
 iconMap:
   dataproduct: /icons/dataproduct.svg
@@ -142,41 +142,45 @@ observability:
   dimensions:
     Pipeline:
       icon: "▸"
-      healthCheck: "pipelineLastRunStateCheck"
+      healthCheck: "dpPipelineLastRunStateCheck"
       keyResult:
-        metric: "pipelineLastRunState"
-        name: ""
+        metric: "dpPipelineLastRunStateCheck"
+        text: ""
         case: upper
       secondaryMetrics:
-        - metric: "pipelineDuration"
+        - metric: "dpPipelineRunDuration"
           name: "Duration"
-        - metric: "pipelineRecordsProcessed"
+        - metric: "dpPipelineRecordsProcessed"
           name: "Records processed"
-        - metric: "pipelineMeanTimeBetweenFailuresCheck"
+        - metric: "dpPipelineMeanTimeBetweenFailuresCheck"
           name: "MTBF (Mean Time Between Failure)"
-        - metric: "pipelineMeanTimeToRecoveryCheck"
+        - metric: "dpPipelineMeanTimeToRecoveryCheck"
           name: "MTTR (Mean Time To Recovery)"
     Consumption:
       icon: "◈"
-      healthCheck: "productOutputPortsResponseTimeCheck"
+      healthCheck: "dpOutputPortsResponseTimeCheck"
       keyResult:
-        metric: "productConsumerQueryCount"
-        name: "Queries"
+        - metric: "dpOutputPortsResponseTimeCheck"
+          text: "data products within expected response time"
       secondaryMetrics:
-        - metric: "outputPortDistinctConsumers"
+        - metric: "dpConsumerQueryCount"
+          name: "Queries"
+        - metric: "dpOutputPortDistinctConsumers"
           name: "Active consumers"
     Latency:
       icon: "⧗"
-      healthCheck: "productDataLatencyBeyondSlaCheck"
+      healthCheck: "dpDataLatencyCheck"
       keyResult:
-        metric: "productDataLatencyMaximumAcrossAllContracts"
-        name: "Max Latency"
+        metric: "dpDataLatencyCheck"
+        text: "is the worse data latency"
     Quality:
       icon: "✦"
-      healthCheck: "productDataQualityRulesFailCheck"
+      healthCheck: "dpDataQualityRulesPassCheck"
       keyResult:
-        metric: "contractDataQualityRuleCount"
-        name: "Rules Passed"
+        metric: "dpDataQualityRulesPassCheck"
+        text: "of DQ rules passed"
       secondaryMetrics:
-        - metric: "contractDataQualityRuleFailCount"
-          name: "Failed Rules"
+        - metric: "dcDataQualityRuleCount"
+          name: "Number of rules"
+        - metric: "dpDataQualityRuleFailCount"
+          name: "Rules Failed"
