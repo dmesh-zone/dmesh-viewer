@@ -119,7 +119,7 @@ observability:
       bgColor: "#064e3b"
       aggregation:
         type: sumMetric
-        metric: "pipelineRecordsProcessed"
+        metric: "dpPipelineRecordsProcessed"
         criteria:
           dataProductTier: ["sourceAligned"]
     recordsProcessed:
@@ -128,7 +128,7 @@ observability:
       bgColor: "#9a3412"
       aggregation:
         type: sumMetric
-        metric: "pipelineRecordsProcessed"
+        metric: "dpPipelineRecordsProcessed"
         criteria:
           dataProductTier: ["curated", "consumerAligned"]
     consumingApplication:

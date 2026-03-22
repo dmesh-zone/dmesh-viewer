@@ -1115,9 +1115,8 @@
   schema:
     - name: unified_customers
       physicalType: table
-      description:
-        Unified view of customers, orders, products, inventory, sales, customer
-        segments, and product categories data for unified_customers
+      description: Unified view of customers, orders, products, inventory, sales,
+        customer segments, and product categories data for unified_customers
       customProperties:
         - property: technology
           value: deltalake
@@ -1162,9 +1161,8 @@
               mustBe: 0
     - name: unified_orders
       physicalType: table
-      description:
-        Unified view of customers, orders, products, inventory, sales, customer
-        segments, and product categories data for unified_orders
+      description: Unified view of customers, orders, products, inventory, sales,
+        customer segments, and product categories data for unified_orders
       customProperties:
         - property: technology
           value: deltalake
@@ -1207,9 +1205,8 @@
             - 150
     - name: unified_products
       physicalType: table
-      description:
-        Unified view of customers, orders, products, inventory, sales, customer
-        segments, and product categories data for unified_products
+      description: Unified view of customers, orders, products, inventory, sales,
+        customer segments, and product categories data for unified_products
       customProperties:
         - property: technology
           value: deltalake
@@ -1244,9 +1241,8 @@
               type: foreignKey
     - name: unified_inventory
       physicalType: table
-      description:
-        Unified view of customers, orders, products, inventory, sales, customer
-        segments, and product categories data for unified_inventory
+      description: Unified view of customers, orders, products, inventory, sales,
+        customer segments, and product categories data for unified_inventory
       customProperties:
         - property: technology
           value: deltalake
@@ -1281,9 +1277,8 @@
             - 500
     - name: sales_facts
       physicalType: table
-      description:
-        Unified view of customers, orders, products, inventory, sales, customer
-        segments, and product categories data for sales_facts
+      description: Unified view of customers, orders, products, inventory, sales,
+        customer segments, and product categories data for sales_facts
       customProperties:
         - property: technology
           value: deltalake
@@ -1329,9 +1324,8 @@
             - 75
     - name: customer_segments
       physicalType: table
-      description:
-        Unified view of customers, orders, products, inventory, sales, customer
-        segments, and product categories data for customer_segments
+      description: Unified view of customers, orders, products, inventory, sales,
+        customer segments, and product categories data for customer_segments
       customProperties:
         - property: technology
           value: deltalake
@@ -1363,9 +1357,8 @@
             - 1000
     - name: product_categories
       physicalType: table
-      description:
-        Unified view of customers, orders, products, inventory, sales, customer
-        segments, and product categories data for product_categories
+      description: Unified view of customers, orders, products, inventory, sales,
+        customer segments, and product categories data for product_categories
       customProperties:
         - property: technology
           value: deltalake
@@ -1402,7 +1395,8 @@
   status: active
   apiVersion: v1.0.0
   description:
-    purpose: Curated food production data with quality metrics and performance indicators
+    purpose: Curated food production data with quality metrics and performance
+      indicators
   customProperties:
     - property: dataProductTier
       value: curated
@@ -1435,9 +1429,9 @@
   schema:
     - name: product_quality
       physicalType: table
-      description:
-        Production data with quality metrics, batch performance, inventory
-        levels, cost analysis, supplier ratings, and production schedules data for product_quality
+      description: Production data with quality metrics, batch performance, inventory
+        levels, cost analysis, supplier ratings, and production schedules data
+        for product_quality
       customProperties:
         - property: technology
           value: deltalake
@@ -1469,9 +1463,9 @@
             - 97.5
     - name: batch_performance
       physicalType: table
-      description:
-        Production data with quality metrics, batch performance, inventory
-        levels, cost analysis, supplier ratings, and production schedules data for batch_performance
+      description: Production data with quality metrics, batch performance, inventory
+        levels, cost analysis, supplier ratings, and production schedules data
+        for batch_performance
       customProperties:
         - property: technology
           value: deltalake
@@ -1503,9 +1497,9 @@
             - 95
     - name: material_inventory
       physicalType: table
-      description:
-        Production data with quality metrics, batch performance, inventory
-        levels, cost analysis, supplier ratings, and production schedules data for material_inventory
+      description: Production data with quality metrics, batch performance, inventory
+        levels, cost analysis, supplier ratings, and production schedules data
+        for material_inventory
       customProperties:
         - property: technology
           value: deltalake
@@ -1537,9 +1531,9 @@
             - 5000
     - name: cost_analysis
       physicalType: table
-      description:
-        Production data with quality metrics, batch performance, inventory
-        levels, cost analysis, supplier ratings, and production schedules data for cost_analysis
+      description: Production data with quality metrics, batch performance, inventory
+        levels, cost analysis, supplier ratings, and production schedules data
+        for cost_analysis
       customProperties:
         - property: technology
           value: deltalake
@@ -1571,9 +1565,9 @@
             - 8.5
     - name: supplier_performance
       physicalType: table
-      description:
-        Production data with quality metrics, batch performance, inventory
-        levels, cost analysis, supplier ratings, and production schedules data for supplier_performance
+      description: Production data with quality metrics, batch performance, inventory
+        levels, cost analysis, supplier ratings, and production schedules data
+        for supplier_performance
       customProperties:
         - property: technology
           value: deltalake
@@ -1605,9 +1599,9 @@
             - 98.5
     - name: production_schedule
       physicalType: table
-      description:
-        Production data with quality metrics, batch performance, inventory
-        levels, cost analysis, supplier ratings, and production schedules data for production_schedule
+      description: Production data with quality metrics, batch performance, inventory
+        levels, cost analysis, supplier ratings, and production schedules data
+        for production_schedule
       customProperties:
         - property: technology
           value: deltalake
@@ -2152,9 +2146,8 @@
   id: urn:dua:food-to-unified-retail
   info:
     active: true
-    purpose:
-      Consume manufacturing data from Food Production to enrich Unified Petstore
-      Retail Data
+    purpose: Consume manufacturing data from Food Production to enrich Unified
+      Petstore Retail Data
     status: approved
     startDate: 2026-02-14
   provider:
@@ -2257,94 +2250,10 @@
       type: metric
       measure:
         value: 0
-# - kind: DataProductObservability
-#   schemaVersion: 0.1.0
-#   id: urn:petstore-b:source-aligned:retail-data
-#   observedAt: 2026-03-21 15:09:37.015000+00:00
-#   period: P1D
-#   health: healthy
-#   source:
-#     process: customDataProductObserver
-#   results:
-#     - name: dpPipelineLastRunStateCheck
-#       type: check
-#       status: pass
-#       severity: critical
-#       threshold:
-#         validValues:
-#           - success
-#       measure:
-#         value: success
-#     - name: dpPipelineLastRanAt
-#       type: metric
-#       measure:
-#         value: 2026-03-21 15:09:37.015000+00:00
-#     - name: dpPipelineRunDuration
-#       type: metric
-#       measure:
-#         value: 2642
-#         unit: seconds
-#     - name: dpPipelineMeanTimeBetweenFailuresCheck
-#       type: check
-#       status: pass
-#       severity: warning
-#       threshold:
-#         mustBeGreaterThan: 5
-#       measure:
-#         value: 10
-#         unit: days
-#     - name: dpPipelineMeanTimeToRecoveryCheck
-#       type: check
-#       status: pass
-#       severity: warning
-#       threshold:
-#         mustBeLessThan: 120
-#       measure:
-#         value: 60
-#         unit: minutes
-#     - name: dpConsumerQueryCount
-#       type: metric
-#       measure:
-#         value: 1476
-#     - name: dpOutputPortDistinctConsumers
-#       type: metric
-#       measure:
-#         value: 6
-#     - name: dpOutputPortsResponseTimeCheck
-#       type: check
-#       status: pass
-#       severity: warning
-#       threshold:
-#         mustBeGreaterThan: 50
-#       measure:
-#         value: 100
-#         unit: percent
-#     - name: dpDataLatencyCheck
-#       type: check
-#       status: pass
-#       severity: warning
-#       threshold:
-#         mustBeLessThan: 60
-#       measure:
-#         value: 26
-#         unit: minutes
-#     - name: dpDataQualityRulesPassCheck
-#       type: check
-#       status: pass
-#       severity: warning
-#       threshold:
-#         mustBe: 100
-#       measure:
-#         value: 100
-#         unit: percent
-#     - name: dcDataQualityRuleCount
-#       type: metric
-#       measure:
-#         value: 10
-#     - name: dpDataQualityRuleFailCount
-#       type: metric
-#       measure:
-#         value: 0
+    - name: dpPipelineRecordsProcessed
+      type: metric
+      measure:
+        value: 59081
 - kind: DataProductObservability
   schemaVersion: 0.1.0
   id: urn:food-production:source-aligned:manufacturing-data
@@ -2438,6 +2347,10 @@
       type: metric
       measure:
         value: 0
+    - name: dpPipelineRecordsProcessed
+      type: metric
+      measure:
+        value: 7852
 - kind: DataProductObservability
   schemaVersion: 0.1.0
   id: urn:petstore:curated:unified-retail
@@ -2531,6 +2444,10 @@
       type: metric
       measure:
         value: 1
+    - name: dpPipelineRecordsProcessed
+      type: metric
+      measure:
+        value: 43083
 - kind: DataProductObservability
   schemaVersion: 0.1.0
   id: urn:food-production:curated:production-analytics
@@ -2624,6 +2541,10 @@
       type: metric
       measure:
         value: 0
+    - name: dpPipelineRecordsProcessed
+      type: metric
+      measure:
+        value: 50603
 - kind: DataProductObservability
   schemaVersion: 0.1.0
   id: urn:petstore:consumer-aligned:business-analytics
@@ -2712,6 +2633,10 @@
       type: metric
       measure:
         value: 0
+    - name: dpPipelineRecordsProcessed
+      type: metric
+      measure:
+        value: 42192
 - kind: DataProductObservability
   schemaVersion: 0.1.0
   id: urn:food-production:consumer-aligned:operations-analytics
@@ -2806,3 +2731,7 @@
       type: metric
       measure:
         value: 0
+    - name: dpPipelineRecordsProcessed
+      type: metric
+      measure:
+        value: 66235

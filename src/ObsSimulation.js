@@ -72,7 +72,7 @@ export const generatePipelineMetrics = (statusOverride) => {
     return [
         createMetric('dpPipelineLastRanAt', new Date().toISOString()),
         createMetric('dpPipelineRunDuration', isCritical ? null : getRandomInt(60, 3600), 'seconds'),
-        createMetric('dpPipelineRecordsProcessed', isCritical ? null : getRandomInt(100, 10000000)),
+        createMetric('dpPipelineRecordsProcessed', isCritical ? null : getRandomInt(1000, 100000)),
         createCheck('dpPipelineLastRunStateCheck', isCritical ? 'fail' : 'pass', isCritical ? 'critical' : 'warning', lastRunState, null, { validValues: ['success'] }, failureReason),
         createCheck('dpPipelineMeanTimeBetweenFailuresCheck', (isCritical || isDegraded) ? 'fail' : 'pass', 'warning', mtbf, 'days', { mustBeGreaterThan: 5 }),
         createCheck('dpPipelineMeanTimeToRecoveryCheck', (isCritical || isDegraded) ? 'fail' : 'pass', 'warning', parseFloat(mttr.toFixed(1)), 'minutes', { mustBeLessThan: 120 })
