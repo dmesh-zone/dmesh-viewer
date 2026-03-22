@@ -251,6 +251,13 @@
                     }
                 },
                 {
+                    "name": "dpPipelineRecordsProcessed",
+                    "type": "metric",
+                    "measure": {
+                        "value": 7852
+                    }
+                },
+                {
                     "name": "dpPipelineMeanTimeBetweenFailuresCheck",
                     "type": "check",
                     "status": "fail",
