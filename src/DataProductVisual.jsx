@@ -19,6 +19,16 @@ import React from 'react';
 export default function DataProductVisual({ data }) {
     // data is the full YAML object for the Data Product
 
+    const [copied, setCopied] = React.useState(false);
+
+    const handleCopy = () => {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(data.id);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        }
+    };
+
     const properties = data.customProperties || [];
     const outputPorts = data.outputPorts || [];
 
@@ -55,8 +65,39 @@ export default function DataProductVisual({ data }) {
                     borderRadius: '16px',
                     border: '1px solid var(--m3-outline-variant)'
                 }}>
-                    <span style={{ color: 'var(--m3-on-surface-variant)', fontWeight: '600' }}>ID</span>
-                    <span style={{ fontFamily: 'monospace', color: 'var(--m3-on-surface)' }}>{data.id}</span>
+                    <span style={{ color: 'var(--m3-on-surface-variant)', fontWeight: '600', display: 'flex', alignItems: 'center' }}>ID</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ fontFamily: 'monospace', color: 'var(--m3-on-surface)' }}>{data.id}</span>
+                        <button
+                            onClick={handleCopy}
+                            title="Copy ID to clipboard"
+                            style={{
+                                background: 'transparent',
+                                border: 'none',
+                                cursor: 'pointer',
+                                padding: '4px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: copied ? '#10b981' : 'var(--m3-on-surface-variant)',
+                                borderRadius: '4px',
+                                transition: 'all 0.2s ease',
+                            }}
+                            onMouseEnter={e => e.currentTarget.style.color = copied ? '#10b981' : 'var(--m3-primary)'}
+                            onMouseLeave={e => e.currentTarget.style.color = copied ? '#10b981' : 'var(--m3-on-surface-variant)'}
+                        >
+                            {copied ? (
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            ) : (
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            )}
+                        </button>
+                    </div>
 
                     <span style={{ color: 'var(--m3-on-surface-variant)', fontWeight: '600' }}>Domain</span>
                     <span>{data.domain}</span>
