@@ -524,7 +524,7 @@ function Flow() {
                 }
 
                 // Observability Data
-                const healthStatus = observeMode ? deriveStatus(node.id, 'Any') : null;
+                const healthStatus = observeMode ? deriveStatus(node.id, activeDimension || 'Any') : null;
                 const metrics = metricsMap.get(node.id);
                 let pips = null;
                 if (observeMode && availableDimensions) {
