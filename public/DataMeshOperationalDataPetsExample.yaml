@@ -1,5 +1,5 @@
 - kind: DataProduct
-  id: urn:petstore-a:source:operational-db
+  id: 4c9c60a6-9b7a-559f-9acb-2253b9f27a78
   name: Petstore A
   domain: petstore
   status: active
@@ -13,7 +13,7 @@
       value: rdsoracle
   outputPorts: []
 - kind: DataProduct
-  id: urn:petstore-b:source:operational-db
+  id: 30982ac5-326d-5744-915c-63ef5013c46e
   name: Petstore B
   domain: petstore
   status: active
@@ -27,7 +27,7 @@
       value: rdsoracle
   outputPorts: []
 - kind: DataProduct
-  id: urn:food-production:source:operational-db
+  id: b3d406b9-952f-5df4-8ab5-b10c1521d0ad
   name: Food Production
   domain: food_production
   status: active
@@ -41,7 +41,7 @@
       value: rdsoracle
   outputPorts: []
 - kind: DataProduct
-  id: urn:petstore-a:source-aligned:retail-data
+  id: 128a3c4b-71c6-5929-aa27-c98974544bf4
   name: Petstore A
   domain: petstore
   status: active
@@ -56,21 +56,21 @@
   outputPorts:
     - name: customers
       version: "1"
-      contractId: urn:petstore-a:contract:retail-data
+      contractId: e87611c2-76b4-567a-8c61-c81b36e7831a
     - name: orders
       version: "1"
-      contractId: urn:petstore-a:contract:retail-data
+      contractId: e87611c2-76b4-567a-8c61-c81b36e7831a
     - name: order_items
       version: "1"
-      contractId: urn:petstore-a:contract:retail-data
+      contractId: e87611c2-76b4-567a-8c61-c81b36e7831a
     - name: products
       version: "1"
-      contractId: urn:petstore-a:contract:retail-data
+      contractId: e87611c2-76b4-567a-8c61-c81b36e7831a
     - name: inventory
       version: "1"
-      contractId: urn:petstore-a:contract:retail-data
+      contractId: e87611c2-76b4-567a-8c61-c81b36e7831a
 - kind: DataContract
-  id: urn:petstore-a:contract:retail-data
+  id: e87611c2-76b4-567a-8c61-c81b36e7831a
   status: active
   version: "1"
   apiVersion: v3.0.1
@@ -420,7 +420,7 @@
           examples:
             - 2024-06-01T08:00:00Z
 - kind: DataProduct
-  id: urn:petstore-b:source-aligned:retail-data
+  id: 3297774a-3037-5b64-b0ff-41f6c075f1d6
   name: Petstore B
   domain: petstore
   status: active
@@ -435,21 +435,21 @@
   outputPorts:
     - name: customers
       version: "1"
-      contractId: urn:petstore-b:contract:retail-data
+      contractId: 688de69e-651c-5bef-a503-bf2b68c7e7c1
     - name: orders
       version: "1"
-      contractId: urn:petstore-b:contract:retail-data
+      contractId: 688de69e-651c-5bef-a503-bf2b68c7e7c1
     - name: order_items
       version: "1"
-      contractId: urn:petstore-b:contract:retail-data
+      contractId: 688de69e-651c-5bef-a503-bf2b68c7e7c1
     - name: products
       version: "1"
-      contractId: urn:petstore-b:contract:retail-data
+      contractId: 688de69e-651c-5bef-a503-bf2b68c7e7c1
     - name: inventory
       version: "1"
-      contractId: urn:petstore-b:contract:retail-data
+      contractId: 688de69e-651c-5bef-a503-bf2b68c7e7c1
 - kind: DataContract
-  id: urn:petstore-b:contract:retail-data
+  id: 688de69e-651c-5bef-a503-bf2b68c7e7c1
   status: active
   version: "1"
   apiVersion: v3.0.1
@@ -775,7 +775,7 @@
           examples:
             - 2024-06-01T08:00:00Z
 - kind: DataProduct
-  id: urn:food-production:source-aligned:manufacturing-data
+  id: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
   name: Food Production
   domain: food_production
   status: active
@@ -790,21 +790,21 @@
   outputPorts:
     - name: food_products
       version: "1"
-      contractId: urn:food-production:contract:manufacturing-data
+      contractId: 35d5516c-6e77-5423-9f8f-e7e368d38642
     - name: recipes
       version: "1"
-      contractId: urn:food-production:contract:manufacturing-data
+      contractId: 35d5516c-6e77-5423-9f8f-e7e368d38642
     - name: production_batches
       version: "1"
-      contractId: urn:food-production:contract:manufacturing-data
+      contractId: 35d5516c-6e77-5423-9f8f-e7e368d38642
     - name: raw_materials
       version: "1"
-      contractId: urn:food-production:contract:manufacturing-data
+      contractId: 35d5516c-6e77-5423-9f8f-e7e368d38642
     - name: suppliers
       version: "1"
-      contractId: urn:food-production:contract:manufacturing-data
+      contractId: 35d5516c-6e77-5423-9f8f-e7e368d38642
 - kind: DataContract
-  id: urn:food-production:contract:manufacturing-data
+  id: 35d5516c-6e77-5423-9f8f-e7e368d38642
   status: active
   version: "1"
   apiVersion: v3.0.1
@@ -1073,7 +1073,7 @@
               mustBe: 0
               query: rating BETWEEN 0 AND 5
 - kind: DataProduct
-  id: urn:petstore:curated:unified-retail
+  id: 7d4e218a-a30a-579d-982d-3e8bea3904a6
   name: Unified Petstore Retail Data
   domain: petstore
   status: active
@@ -1088,27 +1088,27 @@
   outputPorts:
     - name: unified_customers
       version: "1"
-      contractId: urn:petstore:contract:unified-retail
+      contractId: b636c282-7234-5728-b7a9-7ccaeab8d518
     - name: unified_orders
       version: "1"
-      contractId: urn:petstore:contract:unified-retail
+      contractId: b636c282-7234-5728-b7a9-7ccaeab8d518
     - name: unified_products
       version: "1"
-      contractId: urn:petstore:contract:unified-retail
+      contractId: b636c282-7234-5728-b7a9-7ccaeab8d518
     - name: unified_inventory
       version: "1"
-      contractId: urn:petstore:contract:unified-retail
+      contractId: b636c282-7234-5728-b7a9-7ccaeab8d518
     - name: sales_facts
       version: "1"
-      contractId: urn:petstore:contract:unified-retail
+      contractId: b636c282-7234-5728-b7a9-7ccaeab8d518
     - name: customer_segments
       version: "1"
-      contractId: urn:petstore:contract:unified-retail
+      contractId: b636c282-7234-5728-b7a9-7ccaeab8d518
     - name: product_categories
       version: "1"
-      contractId: urn:petstore:contract:unified-retail
+      contractId: b636c282-7234-5728-b7a9-7ccaeab8d518
 - kind: DataContract
-  id: urn:petstore:contract:unified-retail
+  id: b636c282-7234-5728-b7a9-7ccaeab8d518
   status: active
   version: "1"
   apiVersion: v3.0.1
@@ -1396,7 +1396,7 @@
           examples:
             - CAT-000
 - kind: DataProduct
-  id: urn:food-production:curated:production-analytics
+  id: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
   name: Food Production Analytics Data
   domain: food_production
   status: active
@@ -1412,24 +1412,24 @@
   outputPorts:
     - name: product_quality
       version: "1"
-      contractId: urn:food-production:contract:production-analytics
+      contractId: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5
     - name: batch_performance
       version: "1"
-      contractId: urn:food-production:contract:production-analytics
+      contractId: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5
     - name: material_inventory
       version: "1"
-      contractId: urn:food-production:contract:production-analytics
+      contractId: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5
     - name: cost_analysis
       version: "1"
-      contractId: urn:food-production:contract:production-analytics
+      contractId: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5
     - name: supplier_performance
       version: "1"
-      contractId: urn:food-production:contract:production-analytics
+      contractId: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5
     - name: production_schedule
       version: "1"
-      contractId: urn:food-production:contract:production-analytics
+      contractId: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5
 - kind: DataContract
-  id: urn:food-production:contract:production-analytics
+  id: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5
   status: active
   version: "1"
   apiVersion: v3.0.1
@@ -1645,7 +1645,7 @@
           examples:
             - 2000
 - kind: DataProduct
-  id: urn:petstore:consumer-aligned:business-analytics
+  id: deebe052-0a1d-5d2d-b7f6-53c74cb25282
   name: Petstore Business Analytics
   domain: petstore
   status: active
@@ -1660,18 +1660,18 @@
   outputPorts:
     - name: sales_metrics
       version: "1"
-      contractId: urn:petstore:contract:business-analytics
+      contractId: edc38778-1856-5164-955c-e1069d62a986
     - name: customer_metrics
       version: "1"
-      contractId: urn:petstore:contract:business-analytics
+      contractId: edc38778-1856-5164-955c-e1069d62a986
     - name: inventory_metrics
       version: "1"
-      contractId: urn:petstore:contract:business-analytics
+      contractId: edc38778-1856-5164-955c-e1069d62a986
     - name: product_performance_metrics
       version: "1"
-      contractId: urn:petstore:contract:business-analytics
+      contractId: edc38778-1856-5164-955c-e1069d62a986
 - kind: DataContract
-  id: urn:petstore:contract:business-analytics
+  id: edc38778-1856-5164-955c-e1069d62a986
   status: active
   version: "1"
   apiVersion: v3.0.1
@@ -1837,7 +1837,7 @@
           examples:
             - 7500
 - kind: DataProduct
-  id: urn:food-production:consumer-aligned:operations-analytics
+  id: a0314893-7445-5a8f-b603-d8f07ac25380
   name: Food Production Operations Analytics
   domain: food_production
   status: active
@@ -1852,15 +1852,15 @@
   outputPorts:
     - name: production_efficiency
       version: "1"
-      contractId: urn:food-production:contract:operations-analytics
+      contractId: 90752d80-7b05-5810-963c-62127c5bef06
     - name: quality_trends
       version: "1"
-      contractId: urn:food-production:contract:operations-analytics
+      contractId: 90752d80-7b05-5810-963c-62127c5bef06
     - name: supply_chain_metrics
       version: "1"
-      contractId: urn:food-production:contract:operations-analytics
+      contractId: 90752d80-7b05-5810-963c-62127c5bef06
 - kind: DataContract
-  id: urn:food-production:contract:operations-analytics
+  id: 90752d80-7b05-5810-963c-62127c5bef06
   status: active
   version: "1"
   apiVersion: v3.0.1
@@ -1986,7 +1986,7 @@
           examples:
             - 92.5
 - kind: DataProduct
-  id: urn:petstore:application:analytics-powerbi
+  id: 0c2ab542-0864-5294-91ce-cb9614c36391
   name: Petstore Analytics Dashboard Data
   domain: petstore
   status: active
@@ -2000,7 +2000,7 @@
       value: powerbi
   outputPorts: []
 - kind: DataProduct
-  id: urn:food-production:application:analytics-powerbi
+  id: c80d0183-3468-5dbe-b7be-9950c7c89e78
   name: Food Production Analytics Dashboard Data
   domain: food_production
   status: active
@@ -2014,7 +2014,7 @@
       value: powerbi
   outputPorts: []
 - dataUsageAgreementSpecification: 0.0.1
-  id: urn:dua:petstore-a-source-to-aligned
+  id: f5930479-ad9d-595e-a854-5d72d6246890
   info:
     active: true
     purpose: Extract operational data from Petstore A database
@@ -2023,12 +2023,12 @@
   provider:
     teamId: petstore-a-team
     outputPortId: "*"
-    dataProductId: urn:petstore-a:source:operational-db
+    dataProductId: 4c9c60a6-9b7a-559f-9acb-2253b9f27a78
   consumer:
     teamId: petstore-central-team
-    dataProductId: urn:petstore-a:source-aligned:retail-data
+    dataProductId: 128a3c4b-71c6-5929-aa27-c98974544bf4
 - dataUsageAgreementSpecification: 0.0.1
-  id: urn:dua:petstore-b-source-to-aligned
+  id: 8472bc2c-2e00-5a15-853a-cf893d82f612
   info:
     active: true
     purpose: Extract operational data from Petstore B database
@@ -2037,12 +2037,12 @@
   provider:
     teamId: petstore-b-team
     outputPortId: "*"
-    dataProductId: urn:petstore-b:source:operational-db
+    dataProductId: 30982ac5-326d-5744-915c-63ef5013c46e
   consumer:
     teamId: petstore-central-team
-    dataProductId: urn:petstore-b:source-aligned:retail-data
+    dataProductId: 3297774a-3037-5b64-b0ff-41f6c075f1d6
 - dataUsageAgreementSpecification: 0.0.1
-  id: urn:dua:food-source-to-aligned
+  id: deb5d7ae-47a9-587a-83d1-6b3e25ba63dc
   info:
     active: true
     purpose: Extract operational data from Food Production database
@@ -2051,12 +2051,12 @@
   provider:
     teamId: food-production-team
     outputPortId: "*"
-    dataProductId: urn:food-production:source:operational-db
+    dataProductId: b3d406b9-952f-5df4-8ab5-b10c1521d0ad
   consumer:
     teamId: food-production-team
-    dataProductId: urn:food-production:source-aligned:manufacturing-data
+    dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
 - dataUsageAgreementSpecification: 0.0.1
-  id: urn:dua:petstore-a-aligned-to-curated
+  id: e1ec2aef-1abc-52a2-97bf-b54b9dab32a0
   info:
     active: true
     purpose: Integrate Petstore A data into unified retail view
@@ -2065,12 +2065,12 @@
   provider:
     teamId: petstore-central-team
     outputPortId: "*"
-    dataProductId: urn:petstore-a:source-aligned:retail-data
+    dataProductId: 128a3c4b-71c6-5929-aa27-c98974544bf4
   consumer:
     teamId: petstore-analytics-team
-    dataProductId: urn:petstore:curated:unified-retail
+    dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
 - dataUsageAgreementSpecification: 0.0.1
-  id: urn:dua:petstore-b-aligned-to-curated
+  id: 71a525ab-1c9c-5422-89bc-89c0d1399c2c
   info:
     active: true
     purpose: Integrate Petstore B data into unified retail view
@@ -2079,12 +2079,12 @@
   provider:
     teamId: petstore-central-team
     outputPortId: "*"
-    dataProductId: urn:petstore-b:source-aligned:retail-data
+    dataProductId: 3297774a-3037-5b64-b0ff-41f6c075f1d6
   consumer:
     teamId: petstore-analytics-team
-    dataProductId: urn:petstore:curated:unified-retail
+    dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
 - dataUsageAgreementSpecification: 0.0.1
-  id: urn:dua:food-aligned-to-curated
+  id: 751bd3f9-6ab6-5b35-864c-4678fd1235c5
   info:
     active: true
     purpose: Enrich food production data with analytics
@@ -2093,12 +2093,12 @@
   provider:
     teamId: food-production-team
     outputPortId: "*"
-    dataProductId: urn:food-production:source-aligned:manufacturing-data
+    dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
   consumer:
     teamId: food-analytics-team
-    dataProductId: urn:food-production:curated:production-analytics
+    dataProductId: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
 - dataUsageAgreementSpecification: 0.0.1
-  id: urn:dua:petstore-curated-to-consumer
+  id: 4886a8ae-2227-54fb-b002-e9051543f95c
   info:
     active: true
     purpose: Aggregate unified retail data for business analytics
@@ -2107,12 +2107,12 @@
   provider:
     teamId: petstore-analytics-team
     outputPortId: "*"
-    dataProductId: urn:petstore:curated:unified-retail
+    dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
   consumer:
     teamId: business-intelligence-team
-    dataProductId: urn:petstore:consumer-aligned:business-analytics
+    dataProductId: deebe052-0a1d-5d2d-b7f6-53c74cb25282
 - dataUsageAgreementSpecification: 0.0.1
-  id: urn:dua:food-curated-to-consumer
+  id: a4297257-72b7-5118-b79e-7cc9e75df10b
   info:
     active: true
     purpose: Aggregate production data for operations analytics
@@ -2121,12 +2121,12 @@
   provider:
     teamId: food-analytics-team
     outputPortId: "*"
-    dataProductId: urn:food-production:curated:production-analytics
+    dataProductId: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
   consumer:
     teamId: operations-team
-    dataProductId: urn:food-production:consumer-aligned:operations-analytics
+    dataProductId: a0314893-7445-5a8f-b603-d8f07ac25380
 - dataUsageAgreementSpecification: 0.0.1
-  id: urn:dua:petstore-consumer-to-app
+  id: eaf9abb5-6d8b-5105-9bc9-9821a07765f3
   info:
     active: true
     purpose: Power BI visualization of petstore business metrics
@@ -2135,14 +2135,14 @@
   provider:
     teamId: business-intelligence-team
     outputPortId: "*"
-    dataProductId: urn:petstore:consumer-aligned:business-analytics
+    dataProductId: deebe052-0a1d-5d2d-b7f6-53c74cb25282
   consumer:
     teamId: app-dev-team
-    dataProductId: urn:petstore:application:analytics-powerbi
+    dataProductId: 0c2ab542-0864-5294-91ce-cb9614c36391
   custom:
     consumerApplicationClientId: "6779ef20e75817b79602"
 - dataUsageAgreementSpecification: 0.0.1
-  id: urn:dua:food-consumer-to-app
+  id: e8d54218-9274-58d8-9b07-56271130c8d2
   info:
     active: true
     purpose: Power BI visualization of food production metrics
@@ -2151,12 +2151,12 @@
   provider:
     teamId: operations-team
     outputPortId: "*"
-    dataProductId: urn:food-production:consumer-aligned:operations-analytics
+    dataProductId: a0314893-7445-5a8f-b603-d8f07ac25380
   consumer:
     teamId: app-dev-team
-    dataProductId: urn:food-production:application:analytics-powerbi
+    dataProductId: c80d0183-3468-5dbe-b7be-9950c7c89e78
 - dataUsageAgreementSpecification: 0.0.1
-  id: urn:dua:food-to-unified-retail
+  id: b60238f3-7ec3-5832-acf9-6dfd91c7b76e
   info:
     active: true
     purpose: Consume manufacturing data from Food Production to enrich Unified
@@ -2166,7 +2166,7 @@
   provider:
     teamId: food-production-team
     outputPortId: "*"
-    dataProductId: urn:food-production:source-aligned:manufacturing-data
+    dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
   consumer:
     teamId: petstore-analytics-team
-    dataProductId: urn:petstore:curated:unified-retail
+    dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
