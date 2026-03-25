@@ -1115,8 +1115,7 @@
   schema:
     - name: unified_customers
       physicalType: table
-      description:
-        Unified view of customers, orders, products, inventory, sales,
+      description: Unified view of customers, orders, products, inventory, sales,
         customer segments, and product categories data for unified_customers
       customProperties:
         - property: technology
@@ -1162,8 +1161,7 @@
               mustBe: 0
     - name: unified_orders
       physicalType: table
-      description:
-        Unified view of customers, orders, products, inventory, sales,
+      description: Unified view of customers, orders, products, inventory, sales,
         customer segments, and product categories data for unified_orders
       customProperties:
         - property: technology
@@ -1207,8 +1205,7 @@
             - 150
     - name: unified_products
       physicalType: table
-      description:
-        Unified view of customers, orders, products, inventory, sales,
+      description: Unified view of customers, orders, products, inventory, sales,
         customer segments, and product categories data for unified_products
       customProperties:
         - property: technology
@@ -1244,8 +1241,7 @@
               type: foreignKey
     - name: unified_inventory
       physicalType: table
-      description:
-        Unified view of customers, orders, products, inventory, sales,
+      description: Unified view of customers, orders, products, inventory, sales,
         customer segments, and product categories data for unified_inventory
       customProperties:
         - property: technology
@@ -1281,8 +1277,7 @@
             - 500
     - name: sales_facts
       physicalType: table
-      description:
-        Unified view of customers, orders, products, inventory, sales,
+      description: Unified view of customers, orders, products, inventory, sales,
         customer segments, and product categories data for sales_facts
       customProperties:
         - property: technology
@@ -1329,8 +1324,7 @@
             - 75
     - name: customer_segments
       physicalType: table
-      description:
-        Unified view of customers, orders, products, inventory, sales,
+      description: Unified view of customers, orders, products, inventory, sales,
         customer segments, and product categories data for customer_segments
       customProperties:
         - property: technology
@@ -1363,8 +1357,7 @@
             - 1000
     - name: product_categories
       physicalType: table
-      description:
-        Unified view of customers, orders, products, inventory, sales,
+      description: Unified view of customers, orders, products, inventory, sales,
         customer segments, and product categories data for product_categories
       customProperties:
         - property: technology
@@ -1395,7 +1388,8 @@
               value: deltalake
           examples:
             - CAT-000
-  slaDefaultElement: unified_customers, unified_orders, unified_products, unified_inventory, sales_facts, customer_segments, product_categories
+  slaDefaultElement: unified_customers, unified_orders, unified_products,
+    unified_inventory, sales_facts, customer_segments, product_categories
   slaProperties:
     - property: latency
       value: 4
@@ -1441,8 +1435,7 @@
   schema:
     - name: product_quality
       physicalType: table
-      description:
-        Production data with quality metrics, batch performance, inventory
+      description: Production data with quality metrics, batch performance, inventory
         levels, cost analysis, supplier ratings, and production schedules data
         for product_quality
       customProperties:
@@ -1476,8 +1469,7 @@
             - 97.5
     - name: batch_performance
       physicalType: table
-      description:
-        Production data with quality metrics, batch performance, inventory
+      description: Production data with quality metrics, batch performance, inventory
         levels, cost analysis, supplier ratings, and production schedules data
         for batch_performance
       customProperties:
@@ -1511,8 +1503,7 @@
             - 95
     - name: material_inventory
       physicalType: table
-      description:
-        Production data with quality metrics, batch performance, inventory
+      description: Production data with quality metrics, batch performance, inventory
         levels, cost analysis, supplier ratings, and production schedules data
         for material_inventory
       customProperties:
@@ -1546,8 +1537,7 @@
             - 5000
     - name: cost_analysis
       physicalType: table
-      description:
-        Production data with quality metrics, batch performance, inventory
+      description: Production data with quality metrics, batch performance, inventory
         levels, cost analysis, supplier ratings, and production schedules data
         for cost_analysis
       customProperties:
@@ -1581,8 +1571,7 @@
             - 8.5
     - name: supplier_performance
       physicalType: table
-      description:
-        Production data with quality metrics, batch performance, inventory
+      description: Production data with quality metrics, batch performance, inventory
         levels, cost analysis, supplier ratings, and production schedules data
         for supplier_performance
       customProperties:
@@ -1616,8 +1605,7 @@
             - 98.5
     - name: production_schedule
       physicalType: table
-      description:
-        Production data with quality metrics, batch performance, inventory
+      description: Production data with quality metrics, batch performance, inventory
         levels, cost analysis, supplier ratings, and production schedules data
         for production_schedule
       customProperties:
@@ -2410,202 +2398,20 @@
     - name: dpConsumerQueryCount
       type: metric
       measure:
-        value: 656
+        value: 1476
     - name: dpOutputPortDistinctConsumers
       type: metric
       measure:
-        value: 10
+        value: 6
     - name: dpOutputPortsResponseTimeCheck
       type: check
-      status: pass
+      status: fail
       severity: warning
       threshold:
         mustBeGreaterThan: 50
       measure:
-        value: 63
+        value: 40
         unit: percent
-    - name: dcOutputPortsResponseTimeMeanCheck
-      target:
-        resourceType: DataContract/schema
-        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_customers
-      type: check
-      status: pass
-      severity: warning
-      threshold:
-        mustBeLessOrEqualThan: 10
-      measure:
-        value: 5
-        unit: seconds
-    - name: dcConsumerQueryCount
-      target:
-        resourceType: DataContract/schema
-        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_customers
-      type: metric
-      measure:
-        value: 110
-    - name: dcOutputPortDistinctConsumers
-      target:
-        resourceType: DataContract/schema
-        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_customers
-      type: metric
-      measure:
-        value: 4
-    - name: dcOutputPortsResponseTimeMeanCheck
-      target:
-        resourceType: DataContract/schema
-        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_orders
-      type: check
-      status: pass
-      severity: warning
-      threshold:
-        mustBeLessOrEqualThan: 10
-      measure:
-        value: 4
-        unit: seconds
-    - name: dcConsumerQueryCount
-      target:
-        resourceType: DataContract/schema
-        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_orders
-      type: metric
-      measure:
-        value: 120
-    - name: dcOutputPortDistinctConsumers
-      target:
-        resourceType: DataContract/schema
-        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_orders
-      type: metric
-      measure:
-        value: 10
-    - name: dcOutputPortsResponseTimeMeanCheck
-      target:
-        resourceType: DataContract/schema
-        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_products
-      type: check
-      status: pass
-      severity: warning
-      threshold:
-        mustBeLessOrEqualThan: 10
-      measure:
-        value: 3
-        unit: seconds
-    - name: dcConsumerQueryCount
-      target:
-        resourceType: DataContract/schema
-        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_products
-      type: metric
-      measure:
-        value: 130
-    - name: dcOutputPortDistinctConsumers
-      target:
-        resourceType: DataContract/schema
-        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_products
-      type: metric
-      measure:
-        value: 4
-    - name: dcOutputPortsResponseTimeMeanCheck
-      target:
-        resourceType: DataContract/schema
-        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_inventory
-      type: check
-      status: pass
-      severity: warning
-      threshold:
-        mustBeLessOrEqualThan: 10
-      measure:
-        value: 4
-        unit: seconds
-    - name: dcConsumerQueryCount
-      target:
-        resourceType: DataContract/schema
-        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_inventory
-      type: metric
-      measure:
-        value: 140
-    - name: dcOutputPortDistinctConsumers
-      target:
-        resourceType: DataContract/schema
-        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_inventory
-      type: metric
-      measure:
-        value: 5
-    - name: dcOutputPortsResponseTimeMeanCheck
-      target:
-        resourceType: DataContract/schema
-        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/sales_facts
-      type: check
-      status: fail
-      severity: warning
-      threshold:
-        mustBeLessOrEqualThan: 10
-      measure:
-        value: 12
-        unit: seconds
-    - name: dcConsumerQueryCount
-      target:
-        resourceType: DataContract/schema
-        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/sales_facts
-      type: metric
-      measure:
-        value: 150
-    - name: dcOutputPortDistinctConsumers
-      target:
-        resourceType: DataContract/schema
-        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/sales_facts
-      type: metric
-      measure:
-        value: 8
-    - name: dcOutputPortsResponseTimeMeanCheck
-      target:
-        resourceType: DataContract/schema
-        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/customer_segments
-      type: check
-      status: fail
-      severity: warning
-      threshold:
-        mustBeLessOrEqualThan: 10
-      measure:
-        value: 15
-        unit: seconds
-    - name: dcConsumerQueryCount
-      target:
-        resourceType: DataContract/schema
-        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/customer_segments
-      type: metric
-      measure:
-        value: 2
-    - name: dcOutputPortDistinctConsumers
-      target:
-        resourceType: DataContract/schema
-        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/customer_segments
-      type: metric
-      measure:
-        value: 1
-    - name: dcOutputPortsResponseTimeMeanCheck
-      target:
-        resourceType: DataContract/schema
-        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/product_categories
-      type: check
-      status: fail
-      severity: warning
-      threshold:
-        mustBeLessOrEqualThan: 10
-      measure:
-        value: 30
-        unit: seconds
-    - name: dcConsumerQueryCount
-      target:
-        resourceType: DataContract/schema
-        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/product_categories
-      type: metric
-      measure:
-        value: 1
-    - name: dcOutputPortDistinctConsumers
-      target:
-        resourceType: DataContract/schema
-        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/product_categories
-      type: metric
-      measure:
-        value: 1
     - name: dpDataLatencyMaximumCheck
       type: check
       status: fail
@@ -2992,3 +2798,2867 @@
       type: metric
       measure:
         value: 66235
+- kind: DataProductObservability
+  schemaVersion: 0.1.0
+  id: 128a3c4b-71c6-5929-aa27-c98974544bf4
+  observedAt: 2026-03-24T06:29:44.968Z
+  period: P1D
+  health: degraded
+  source:
+    process: simulator
+  results:
+    - name: dpPipelineLastRanAt
+      type: metric
+      measure:
+        value: 2026-03-24T06:29:44.962Z
+    - name: dpPipelineRunDuration
+      type: metric
+      measure:
+        value: 3305
+        unit: seconds
+    - name: dpPipelineRecordsProcessed
+      type: metric
+      measure:
+        value: 75424
+    - name: dpPipelineLastRunStateCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        validValues:
+          - success
+      measure:
+        value: success
+    - name: dpPipelineMeanTimeBetweenFailuresCheck
+      type: check
+      status: fail
+      severity: warning
+      threshold:
+        mustBeGreaterThan: 5
+      measure:
+        value: 2
+        unit: days
+    - name: dpPipelineMeanTimeToRecoveryCheck
+      type: check
+      status: fail
+      severity: warning
+      threshold:
+        mustBeLessThan: 120
+      measure:
+        value: 125
+        unit: minutes
+    - name: dpConsumerQueryCount
+      type: metric
+      measure:
+        value: 3129
+    - name: dpOutputPortDistinctConsumers
+      type: metric
+      measure:
+        value: 2
+    - name: dpOutputPortsResponseTimeCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeGreaterThan: 50
+      measure:
+        value: 87
+        unit: percent
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/customers
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/orders
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/order_items
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/products
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/inventory
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/customers
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/orders
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/order_items
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/products
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/inventory
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/customers
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/orders
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/order_items
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/products
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/inventory
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/customers
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/orders
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/order_items
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/products
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/inventory
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/customers
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/orders
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/order_items
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/products
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: e87611c2-76b4-567a-8c61-c81b36e7831a/inventory
+    - name: dpDataLatencyMaximumCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+    - name: dpDataQualityRulesPassCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBe: 100
+      measure:
+        value: 100
+        unit: percent
+    - name: dcDataQualityRuleCount
+      type: metric
+      measure:
+        value: 10
+    - name: dpDataQualityRuleFailCount
+      type: metric
+      measure:
+        value: 0
+- kind: DataProductObservability
+  schemaVersion: 0.1.0
+  id: 3297774a-3037-5b64-b0ff-41f6c075f1d6
+  observedAt: 2026-03-24T06:29:44.968Z
+  period: P1D
+  health: healthy
+  source:
+    process: simulator
+  results:
+    - name: dpPipelineLastRanAt
+      type: metric
+      measure:
+        value: 2026-03-24T06:29:44.968Z
+    - name: dpPipelineRunDuration
+      type: metric
+      measure:
+        value: 2932
+        unit: seconds
+    - name: dpPipelineRecordsProcessed
+      type: metric
+      measure:
+        value: 41595
+    - name: dpPipelineLastRunStateCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        validValues:
+          - success
+      measure:
+        value: success
+    - name: dpPipelineMeanTimeBetweenFailuresCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeGreaterThan: 5
+      measure:
+        value: 24
+        unit: days
+    - name: dpPipelineMeanTimeToRecoveryCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessThan: 120
+      measure:
+        value: 62.6
+        unit: minutes
+    - name: dpConsumerQueryCount
+      type: metric
+      measure:
+        value: 2247
+    - name: dpOutputPortDistinctConsumers
+      type: metric
+      measure:
+        value: 4
+    - name: dpOutputPortsResponseTimeCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeGreaterThan: 50
+      measure:
+        value: 91
+        unit: percent
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/customers
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/orders
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/order_items
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/products
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/inventory
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/customers
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/orders
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/order_items
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/products
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/inventory
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/customers
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/orders
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/order_items
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/products
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/inventory
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/customers
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/orders
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/order_items
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/products
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/inventory
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/customers
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/orders
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/order_items
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/products
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 688de69e-651c-5bef-a503-bf2b68c7e7c1/inventory
+    - name: dpDataLatencyMaximumCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+    - name: dpDataQualityRulesPassCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBe: 100
+      measure:
+        value: 100
+        unit: percent
+    - name: dcDataQualityRuleCount
+      type: metric
+      measure:
+        value: 10
+    - name: dpDataQualityRuleFailCount
+      type: metric
+      measure:
+        value: 0
+- kind: DataProductObservability
+  schemaVersion: 0.1.0
+  id: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+  observedAt: 2026-03-24T06:29:44.968Z
+  period: P1D
+  health: healthy
+  source:
+    process: simulator
+  results:
+    - name: dpPipelineLastRanAt
+      type: metric
+      measure:
+        value: 2026-03-24T06:29:44.968Z
+    - name: dpPipelineRunDuration
+      type: metric
+      measure:
+        value: 2959
+        unit: seconds
+    - name: dpPipelineRecordsProcessed
+      type: metric
+      measure:
+        value: 18065
+    - name: dpPipelineLastRunStateCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        validValues:
+          - success
+      measure:
+        value: success
+    - name: dpPipelineMeanTimeBetweenFailuresCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeGreaterThan: 5
+      measure:
+        value: 19
+        unit: days
+    - name: dpPipelineMeanTimeToRecoveryCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessThan: 120
+      measure:
+        value: 29.7
+        unit: minutes
+    - name: dpConsumerQueryCount
+      type: metric
+      measure:
+        value: 3477
+    - name: dpOutputPortDistinctConsumers
+      type: metric
+      measure:
+        value: 6
+    - name: dpOutputPortsResponseTimeCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeGreaterThan: 50
+      measure:
+        value: 81
+        unit: percent
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/food_products
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/recipes
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/production_batches
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/raw_materials
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/suppliers
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/food_products
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/recipes
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/production_batches
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/raw_materials
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/suppliers
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/food_products
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/recipes
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/production_batches
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/raw_materials
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/suppliers
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/food_products
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/recipes
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/production_batches
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/raw_materials
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/suppliers
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/food_products
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/recipes
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/production_batches
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/raw_materials
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 35d5516c-6e77-5423-9f8f-e7e368d38642/suppliers
+    - name: dpDataLatencyMaximumCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+    - name: dpDataQualityRulesPassCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBe: 100
+      measure:
+        value: 100
+        unit: percent
+    - name: dcDataQualityRuleCount
+      type: metric
+      measure:
+        value: 10
+    - name: dpDataQualityRuleFailCount
+      type: metric
+      measure:
+        value: 0
+- kind: DataProductObservability
+  schemaVersion: 0.1.0
+  id: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+  observedAt: 2026-03-24T06:29:44.968Z
+  period: P1D
+  health: healthy
+  source:
+    process: simulator
+  results:
+    - name: dpPipelineLastRanAt
+      type: metric
+      measure:
+        value: 2026-03-24T06:29:44.968Z
+    - name: dpPipelineRunDuration
+      type: metric
+      measure:
+        value: 1469
+        unit: seconds
+    - name: dpPipelineRecordsProcessed
+      type: metric
+      measure:
+        value: 39481
+    - name: dpPipelineLastRunStateCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        validValues:
+          - success
+      measure:
+        value: success
+    - name: dpPipelineMeanTimeBetweenFailuresCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeGreaterThan: 5
+      measure:
+        value: 23
+        unit: days
+    - name: dpPipelineMeanTimeToRecoveryCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessThan: 120
+      measure:
+        value: 25.4
+        unit: minutes
+    - name: dpConsumerQueryCount
+      type: metric
+      measure:
+        value: 4402
+    - name: dpOutputPortDistinctConsumers
+      type: metric
+      measure:
+        value: 7
+    - name: dpOutputPortsResponseTimeCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeGreaterThan: 50
+      measure:
+        value: 82
+        unit: percent
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_customers
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_orders
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_products
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_inventory
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/sales_facts
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/customer_segments
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/product_categories
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_customers
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_orders
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_products
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_inventory
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/sales_facts
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/customer_segments
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/product_categories
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_customers
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_orders
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_products
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_inventory
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/sales_facts
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/customer_segments
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/product_categories
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_customers
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_orders
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_products
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_inventory
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/sales_facts
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/customer_segments
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/product_categories
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_customers
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_orders
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_products
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_inventory
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/sales_facts
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/customer_segments
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/product_categories
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_customers
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_orders
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_products
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_inventory
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/sales_facts
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/customer_segments
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/product_categories
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_customers
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_orders
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_products
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/unified_inventory
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/sales_facts
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/customer_segments
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: b636c282-7234-5728-b7a9-7ccaeab8d518/product_categories
+    - name: dpDataLatencyMaximumCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+    - name: dpDataQualityRulesPassCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBe: 100
+      measure:
+        value: 100
+        unit: percent
+    - name: dcDataQualityRuleCount
+      type: metric
+      measure:
+        value: 10
+    - name: dpDataQualityRuleFailCount
+      type: metric
+      measure:
+        value: 0
+- kind: DataProductObservability
+  schemaVersion: 0.1.0
+  id: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
+  observedAt: 2026-03-24T06:29:44.968Z
+  period: P1D
+  health: healthy
+  source:
+    process: simulator
+  results:
+    - name: dpPipelineLastRanAt
+      type: metric
+      measure:
+        value: 2026-03-24T06:29:44.968Z
+    - name: dpPipelineRunDuration
+      type: metric
+      measure:
+        value: 3474
+        unit: seconds
+    - name: dpPipelineRecordsProcessed
+      type: metric
+      measure:
+        value: 83854
+    - name: dpPipelineLastRunStateCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        validValues:
+          - success
+      measure:
+        value: success
+    - name: dpPipelineMeanTimeBetweenFailuresCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeGreaterThan: 5
+      measure:
+        value: 18
+        unit: days
+    - name: dpPipelineMeanTimeToRecoveryCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessThan: 120
+      measure:
+        value: 80.2
+        unit: minutes
+    - name: dpConsumerQueryCount
+      type: metric
+      measure:
+        value: 100
+    - name: dpOutputPortDistinctConsumers
+      type: metric
+      measure:
+        value: 11
+    - name: dpOutputPortsResponseTimeCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeGreaterThan: 50
+      measure:
+        value: 95
+        unit: percent
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/product_quality
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/batch_performance
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/material_inventory
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/cost_analysis
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/supplier_performance
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/production_schedule
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/product_quality
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/batch_performance
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/material_inventory
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/cost_analysis
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/supplier_performance
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/production_schedule
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/product_quality
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/batch_performance
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/material_inventory
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/cost_analysis
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/supplier_performance
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/production_schedule
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/product_quality
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/batch_performance
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/material_inventory
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/cost_analysis
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/supplier_performance
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/production_schedule
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/product_quality
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/batch_performance
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/material_inventory
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/cost_analysis
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/supplier_performance
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/production_schedule
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/product_quality
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/batch_performance
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/material_inventory
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/cost_analysis
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/supplier_performance
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5/production_schedule
+    - name: dpDataLatencyMaximumCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+    - name: dpDataQualityRulesPassCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBe: 100
+      measure:
+        value: 100
+        unit: percent
+    - name: dcDataQualityRuleCount
+      type: metric
+      measure:
+        value: 10
+    - name: dpDataQualityRuleFailCount
+      type: metric
+      measure:
+        value: 0
+- kind: DataProductObservability
+  schemaVersion: 0.1.0
+  id: deebe052-0a1d-5d2d-b7f6-53c74cb25282
+  observedAt: 2026-03-24T06:29:44.969Z
+  period: P1D
+  health: critical
+  source:
+    process: simulator
+  results:
+    - name: dpPipelineLastRanAt
+      type: metric
+      measure:
+        value: 2026-03-24T06:29:44.968Z
+    - name: dpPipelineRunDuration
+      type: metric
+      measure:
+        value: 2115
+        unit: seconds
+    - name: dpPipelineRecordsProcessed
+      type: metric
+      measure:
+        value: 27933
+    - name: dpPipelineLastRunStateCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        validValues:
+          - success
+      measure:
+        value: success
+    - name: dpPipelineMeanTimeBetweenFailuresCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeGreaterThan: 5
+      measure:
+        value: 17
+        unit: days
+    - name: dpPipelineMeanTimeToRecoveryCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessThan: 120
+      measure:
+        value: 50.7
+        unit: minutes
+    - name: dpConsumerQueryCount
+      type: metric
+      measure:
+        value: 3947
+    - name: dpOutputPortDistinctConsumers
+      type: metric
+      measure:
+        value: 6
+    - name: dpOutputPortsResponseTimeCheck
+      type: check
+      status: fail
+      severity: warning
+      threshold:
+        mustBeGreaterThan: 50
+      measure:
+        value: 30
+        unit: percent
+    - name: dcDataLatencyCheck
+      type: check
+      status: fail
+      severity: critical
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 7
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: edc38778-1856-5164-955c-e1069d62a986/sales_metrics
+    - name: dcDataLatencyCheck
+      type: check
+      status: fail
+      severity: critical
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 7
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: edc38778-1856-5164-955c-e1069d62a986/customer_metrics
+    - name: dcDataLatencyCheck
+      type: check
+      status: fail
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 6
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: edc38778-1856-5164-955c-e1069d62a986/inventory_metrics
+    - name: dcDataLatencyCheck
+      type: check
+      status: fail
+      severity: critical
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 7
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: edc38778-1856-5164-955c-e1069d62a986/product_performance_metrics
+    - name: dcDataLatencyCheck
+      type: check
+      status: fail
+      severity: critical
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 9
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: edc38778-1856-5164-955c-e1069d62a986/sales_metrics
+    - name: dcDataLatencyCheck
+      type: check
+      status: fail
+      severity: critical
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 10
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: edc38778-1856-5164-955c-e1069d62a986/customer_metrics
+    - name: dcDataLatencyCheck
+      type: check
+      status: fail
+      severity: critical
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 10
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: edc38778-1856-5164-955c-e1069d62a986/inventory_metrics
+    - name: dcDataLatencyCheck
+      type: check
+      status: fail
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 6
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: edc38778-1856-5164-955c-e1069d62a986/product_performance_metrics
+    - name: dcDataLatencyCheck
+      type: check
+      status: fail
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 6
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: edc38778-1856-5164-955c-e1069d62a986/sales_metrics
+    - name: dcDataLatencyCheck
+      type: check
+      status: fail
+      severity: critical
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 9
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: edc38778-1856-5164-955c-e1069d62a986/customer_metrics
+    - name: dcDataLatencyCheck
+      type: check
+      status: fail
+      severity: critical
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 7
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: edc38778-1856-5164-955c-e1069d62a986/inventory_metrics
+    - name: dcDataLatencyCheck
+      type: check
+      status: fail
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 6
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: edc38778-1856-5164-955c-e1069d62a986/product_performance_metrics
+    - name: dcDataLatencyCheck
+      type: check
+      status: fail
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 6
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: edc38778-1856-5164-955c-e1069d62a986/sales_metrics
+    - name: dcDataLatencyCheck
+      type: check
+      status: fail
+      severity: critical
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 9
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: edc38778-1856-5164-955c-e1069d62a986/customer_metrics
+    - name: dcDataLatencyCheck
+      type: check
+      status: fail
+      severity: critical
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 10
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: edc38778-1856-5164-955c-e1069d62a986/inventory_metrics
+    - name: dcDataLatencyCheck
+      type: check
+      status: fail
+      severity: critical
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 9
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: edc38778-1856-5164-955c-e1069d62a986/product_performance_metrics
+    - name: dpDataLatencyMaximumCheck
+      type: check
+      status: fail
+      severity: critical
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 10
+        unit: days
+    - name: dpDataQualityRulesPassCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBe: 100
+      measure:
+        value: 100
+        unit: percent
+    - name: dcDataQualityRuleCount
+      type: metric
+      measure:
+        value: 10
+    - name: dpDataQualityRuleFailCount
+      type: metric
+      measure:
+        value: 0
+- kind: DataProductObservability
+  schemaVersion: 0.1.0
+  id: a0314893-7445-5a8f-b603-d8f07ac25380
+  observedAt: 2026-03-24T06:29:44.969Z
+  period: P1D
+  health: healthy
+  source:
+    process: simulator
+  results:
+    - name: dpPipelineLastRanAt
+      type: metric
+      measure:
+        value: 2026-03-24T06:29:44.969Z
+    - name: dpPipelineRunDuration
+      type: metric
+      measure:
+        value: 1943
+        unit: seconds
+    - name: dpPipelineRecordsProcessed
+      type: metric
+      measure:
+        value: 96350
+    - name: dpPipelineLastRunStateCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        validValues:
+          - success
+      measure:
+        value: success
+    - name: dpPipelineMeanTimeBetweenFailuresCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeGreaterThan: 5
+      measure:
+        value: 24
+        unit: days
+    - name: dpPipelineMeanTimeToRecoveryCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessThan: 120
+      measure:
+        value: 41.7
+        unit: minutes
+    - name: dpConsumerQueryCount
+      type: metric
+      measure:
+        value: 2698
+    - name: dpOutputPortDistinctConsumers
+      type: metric
+      measure:
+        value: 15
+    - name: dpOutputPortsResponseTimeCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeGreaterThan: 50
+      measure:
+        value: 85
+        unit: percent
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 90752d80-7b05-5810-963c-62127c5bef06/production_efficiency
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 90752d80-7b05-5810-963c-62127c5bef06/quality_trends
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 90752d80-7b05-5810-963c-62127c5bef06/supply_chain_metrics
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 90752d80-7b05-5810-963c-62127c5bef06/production_efficiency
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 1
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 90752d80-7b05-5810-963c-62127c5bef06/quality_trends
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 3
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 90752d80-7b05-5810-963c-62127c5bef06/supply_chain_metrics
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 90752d80-7b05-5810-963c-62127c5bef06/production_efficiency
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 2
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 90752d80-7b05-5810-963c-62127c5bef06/quality_trends
+    - name: dcDataLatencyCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+      target:
+        resourceType: DataContract/schema
+        resourceIdentifier: 90752d80-7b05-5810-963c-62127c5bef06/supply_chain_metrics
+    - name: dpDataLatencyMaximumCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBeLessOrEqualThan: 4
+      measure:
+        value: 4
+        unit: days
+    - name: dpDataQualityRulesPassCheck
+      type: check
+      status: pass
+      severity: warning
+      threshold:
+        mustBe: 100
+      measure:
+        value: 100
+        unit: percent
+    - name: dcDataQualityRuleCount
+      type: metric
+      measure:
+        value: 10
+    - name: dpDataQualityRuleFailCount
+      type: metric
+      measure:
+        value: 0

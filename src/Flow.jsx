@@ -1109,10 +1109,10 @@ function Flow() {
             setSidePanelType(type);
             setSidePanelFilter(''); // Reset filter when opening new content
 
-            if (type === 'examples') {
-                // For examples, default to auto/fit-content
+            if (type === 'examples' || type === 'observability') {
+                // For examples and observability, default to auto/fit-content
                 setSidePanelWidth('auto');
-            } else if (e.detail.width) {
+            } else if (e.detail.width && e.detail.width !== 'auto') {
                 // Allow up to 1400px or 90% of screen width if I could, but simple max:
                 setSidePanelWidth(Math.min(1400, Math.max(300, e.detail.width)));
             } else if (['yaml', 'data-product-yaml', 'agreement-yaml', 'data-contract-yaml'].includes(type)) {
@@ -1211,7 +1211,7 @@ function Flow() {
                         id: node.id,
                         type: 'observability',
                         content: metrics,
-                        width: 550
+                        width: 'auto'
                     }
                 });
                 window.dispatchEvent(customEvent);

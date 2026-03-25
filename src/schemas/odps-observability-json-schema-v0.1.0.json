@@ -319,7 +319,7 @@
                     }
                 },
                 {
-                    "name": "dpDataLatencyCheck",
+                    "name": "dpDataLatencyMaximumCheck",
                     "type": "check",
                     "status": "pass",
                     "severity": "warning",
