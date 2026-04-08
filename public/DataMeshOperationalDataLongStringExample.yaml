@@ -90,7 +90,7 @@
     - server: "Petstore workspace"
       type: databricks
       environment: prod
-      host: https://github.com/joaovicente/data-mesh-viewer/blob/main/README.md
+      host: https://github.com/dmesh-zone/dmesh-viewer/blob/main/README.md
       catalog: this_is_the_longest_catalog_name_ever_no_doubt_about_it
       schema: this_is_the_longest_schema_name_ever_no_doubt_about_it
   roles:

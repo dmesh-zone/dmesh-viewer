@@ -1,8 +1,8 @@
-# Data Mesh Registry Visualizer
+# dmesh-viewer
 
 A React-based visualization tool for exploring Data Mesh registries, Data Products, Data Contracts, and Data Usage Agreements.
 
-Live demo: https://joaovicente.github.io/data-mesh-viewer
+Live demo: https://dmesh-zone.github.io/dmesh-viewer
 
 ## Features
 

@@ -78,19 +78,19 @@
     - server: "Petstore workspace"
       type: databricks
       environment: dev
-      host: https://github.com/joaovicente/data-mesh-viewer/blob/main/README.md
+      host: https://github.com/dmesh-zone/dmesh-viewer/blob/main/README.md
       catalog: petstore
       schema: retail_data
     - server: "Petstore workspace"
       type: databricks
       environment: qa
-      host: https://github.com/joaovicente/data-mesh-viewer/blob/main/README.md
+      host: https://github.com/dmesh-zone/dmesh-viewer/blob/main/README.md
       catalog: petstore
       schema: retail_data
     - server: "Petstore workspace"
       type: databricks
       environment: prod
-      host: https://github.com/joaovicente/data-mesh-viewer/blob/main/README.md
+      host: https://github.com/dmesh-zone/dmesh-viewer/blob/main/README.md
       catalog: petstore
       schema: retail_data
   roles:

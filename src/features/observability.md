@@ -12,19 +12,19 @@ date: March 2026
 
 ### 1.1 Purpose
 
-This specification defines the Observability feature for the Data Mesh Viewer project Platform 
+This specification defines the Observability feature for the dmesh-viewer project Platform 
 
 The Observability feature enables platform operators, data product owners, and consumers to monitor the health and fitness of individual data products in real time, directly within the mesh visualisation — without navigating away from the graph.
 
 ### 1.2 Background and Context
 
-Each data product node in the Data Mesh Viewer graph exposes the management port as defined by Bitol ODPS:
+Each data product node in the dmesh-viewer graph exposes the management port as defined by Bitol ODPS:
 
 - **observability** — runtime health and fitness metrics
 
 The observability management port points to a runtime /observe/metrics endpoint. This specification defines how the platform consumes that endpoint, surfaces results in the mesh graph, and provides drilldown access for operators and consumers.
 
-For runtime efficiency Data Mesh Viewer will expect the /observe/metrics for all data products as part of the DataMeshOperationalData payload, /observe/metrics entry indentified as an array element of kind:DataProductObservability
+For runtime efficiency dmesh-viewer will expect the /observe/metrics for all data products as part of the DataMeshOperationalData payload, /observe/metrics entry indentified as an array element of kind:DataProductObservability
 
 ### 1.3 Observability Model
 
@@ -172,7 +172,7 @@ Requirements are expressed as user stories following the standard format: As a [
 
 - The sub-menu offers up to five options: Any (default), Pipeline, Consumption, Freshness, Quality.
 
-- Show only dimensions for which there are observability metrics, at least for one data product. This allows for data-mesh-viewer users to add dimensions as they see fit, but not showing unprioritised metrics.
+- Show only dimensions for which there are observability metrics, at least for one data product. This allows for dmesh-viewer users to add dimensions as they see fit, but not showing unprioritised metrics.
 - If there is only one specific dimension showing (due to a lack of observability metrics on the others), then do not show the "Any" option.
 - Selecting a dimension re-shades all nodes to reflect that dimension's health only, within 200ms.
 

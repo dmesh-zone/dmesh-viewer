@@ -5,7 +5,7 @@ import yaml from '@rollup/plugin-yaml';
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/data-mesh-viewer/',
+  base: '/dmesh-viewer/',
   plugins: [
     react(),
     yaml()
