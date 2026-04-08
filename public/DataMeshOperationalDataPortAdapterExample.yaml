@@ -119,7 +119,7 @@
     - server: "OData server"
       type: api
       environment: dev
-      location: https://joaovicente.github.io/data-mesh-viewer/product_quality.json
+      location: https://dmesh-zone.github.io/data-mesh-viewer/product_quality.json
   schema:
     - name: product_quality
       physicalType: table

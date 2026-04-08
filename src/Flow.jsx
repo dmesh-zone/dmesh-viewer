@@ -86,66 +86,66 @@ function Flow() {
                 .then(res => res.ok ? res.text() : null)
                 .catch(() => null)
         ])
-        .then(([configText, customConfigText]) => {
-            if (!configText || configText.trim() === '') {
-                throw new Error('config.yaml is empty. Please add configuration settings to the file.');
-            }
-
-            let data;
-            try {
-                data = YAML.parse(configText);
-            } catch (yamlErr) {
-                throw new Error(`config.yaml contains invalid YAML syntax: ${yamlErr.message}. Please check the file format.`);
-            }
-
-            if (!data || typeof data !== 'object') {
-                throw new Error('config.yaml must contain a valid YAML document with configuration settings.');
-            }
-
-            if (customConfigText && customConfigText.trim() !== '') {
-                try {
-                    const customData = YAML.parse(customConfigText);
-                    if (customData && typeof customData === 'object') {
-                        Object.keys(customData).forEach(key => {
-                            if (customData[key] !== null && typeof customData[key] === 'object' && !Array.isArray(customData[key]) &&
-                                data[key] !== null && typeof data[key] === 'object' && !Array.isArray(data[key])) {
-                                data[key] = { ...data[key], ...customData[key] };
-                            } else {
-                                data[key] = customData[key];
-                            }
-                        });
-                    }
-                } catch (yamlErr) {
-                    console.warn(`customConfig.yaml contains invalid YAML syntax: ${yamlErr.message}. Ignoring custom config.`);
+            .then(([configText, customConfigText]) => {
+                if (!configText || configText.trim() === '') {
+                    throw new Error('config.yaml is empty. Please add configuration settings to the file.');
                 }
-            }
 
-            // Validate required fields
-            if (!data.defaultDataMeshOperationalDataUrl) {
-                setConfigError('config.yaml is missing required field "defaultDataMeshOperationalDataUrl". Please add this field with the path to your registry YAML file.');
-                return;
-            }
+                let data;
+                try {
+                    data = YAML.parse(configText);
+                } catch (yamlErr) {
+                    throw new Error(`config.yaml contains invalid YAML syntax: ${yamlErr.message}. Please check the file format.`);
+                }
 
-            const loadedConfig = {
-                iconMap: data.iconMap || {},
-                tiers: data.tiers || {},
-                domainPalette: data.domainPalette || ['#fee2e2', '#f3e8ff', '#fef3c7', '#ffedd5', '#e0e7ff', '#dbeafe', '#dcfce7'],
-                observability: data.observability || {},
-                defaultDataMeshOperationalDataUrl: normalizePath(data.defaultDataMeshOperationalDataUrl),
-                registries: (data.sampleDataMeshOperationalDataUrls || []).map(reg => ({
-                    original: reg,
-                    normalized: normalizePath(reg)
-                }))
-            };
-            setConfig(loadedConfig);
-            setConfigError(null);
-            // Set initial registry URL from config
-            setRegistryUrl(loadedConfig.defaultDataMeshOperationalDataUrl);
-        })
-        .catch(err => {
-            console.error("Failed to load config.yaml", err);
-            setConfigError(err.message);
-        });
+                if (!data || typeof data !== 'object') {
+                    throw new Error('config.yaml must contain a valid YAML document with configuration settings.');
+                }
+
+                if (customConfigText && customConfigText.trim() !== '') {
+                    try {
+                        const customData = YAML.parse(customConfigText);
+                        if (customData && typeof customData === 'object') {
+                            Object.keys(customData).forEach(key => {
+                                if (customData[key] !== null && typeof customData[key] === 'object' && !Array.isArray(customData[key]) &&
+                                    data[key] !== null && typeof data[key] === 'object' && !Array.isArray(data[key])) {
+                                    data[key] = { ...data[key], ...customData[key] };
+                                } else {
+                                    data[key] = customData[key];
+                                }
+                            });
+                        }
+                    } catch (yamlErr) {
+                        console.warn(`customConfig.yaml contains invalid YAML syntax: ${yamlErr.message}. Ignoring custom config.`);
+                    }
+                }
+
+                // Validate required fields
+                if (!data.defaultDataMeshOperationalDataUrl) {
+                    setConfigError('config.yaml is missing required field "defaultDataMeshOperationalDataUrl". Please add this field with the path to your registry YAML file.');
+                    return;
+                }
+
+                const loadedConfig = {
+                    iconMap: data.iconMap || {},
+                    tiers: data.tiers || {},
+                    domainPalette: data.domainPalette || ['#fee2e2', '#f3e8ff', '#fef3c7', '#ffedd5', '#e0e7ff', '#dbeafe', '#dcfce7'],
+                    observability: data.observability || {},
+                    defaultDataMeshOperationalDataUrl: normalizePath(data.defaultDataMeshOperationalDataUrl),
+                    registries: (data.sampleDataMeshOperationalDataUrls || []).map(reg => ({
+                        original: reg,
+                        normalized: normalizePath(reg)
+                    }))
+                };
+                setConfig(loadedConfig);
+                setConfigError(null);
+                // Set initial registry URL from config
+                setRegistryUrl(loadedConfig.defaultDataMeshOperationalDataUrl);
+            })
+            .catch(err => {
+                console.error("Failed to load config.yaml", err);
+                setConfigError(err.message);
+            });
     }, []);
 
     // React Flow State
@@ -199,7 +199,7 @@ function Flow() {
         const dimsConfig = config?.observability?.dimensions;
 
         if (!dimension || dimension === 'Any') {
-             return metrics.health || 'unknown';
+            return metrics.health || 'unknown';
         }
 
         if (!dimsConfig || !dimsConfig[dimension]) return 'unknown';
@@ -218,17 +218,17 @@ function Flow() {
 
         let worstStatus = 'healthy';
         activeChecks.forEach(checkResult => {
-             if (checkResult.status === 'fail') {
-                 let s = 'degraded';
-                 if (checkResult.severity === 'critical') s = 'critical';
-                 else if (checkResult.severity === 'error') s = 'degraded';
-                 else if (checkResult.severity === 'warning') s = 'degraded';
+            if (checkResult.status === 'fail') {
+                let s = 'degraded';
+                if (checkResult.severity === 'critical') s = 'critical';
+                else if (checkResult.severity === 'error') s = 'degraded';
+                else if (checkResult.severity === 'warning') s = 'degraded';
 
-                 if (worstStatus === 'healthy') worstStatus = s;
-                 else if (worstStatus === 'degraded' && s === 'critical') worstStatus = 'critical';
-             }
+                if (worstStatus === 'healthy') worstStatus = s;
+                else if (worstStatus === 'degraded' && s === 'critical') worstStatus = 'critical';
+            }
         });
-        
+
         return worstStatus;
     }, [metricsMap, config]);
 
@@ -251,7 +251,7 @@ function Flow() {
         if (availableDimensions.length > 0) {
             // Mapping current activeDimension back to labels to check existence
             const currentLabel = activeDimension === null ? 'Any' : activeDimension;
-            
+
             if (!availableDimensions.includes(currentLabel)) {
                 // If current selected dimension is invalid (e.g. 'Any' when only 1 dim exists)
                 // Default to the first available dimension
@@ -307,8 +307,8 @@ function Flow() {
         const timeOffset = (adjustMetricsTime && latestAsOf > 0 && isTestMode) ? (Date.now() - latestAsOf) : 0;
 
         const shiftTimeIso = (isoStr) => {
-             if (!isoStr) return isoStr;
-             return new Date(new Date(isoStr).getTime() + timeOffset).toISOString();
+            if (!isoStr) return isoStr;
+            return new Date(new Date(isoStr).getTime() + timeOffset).toISOString();
         }
 
         dataMeshRegistry.forEach(item => {
@@ -317,7 +317,7 @@ function Flow() {
                     // Deep clone to avoid mutating original registry
                     const clonedItem = JSON.parse(JSON.stringify(item));
                     if (clonedItem.observedAt) clonedItem.observedAt = shiftTimeIso(clonedItem.observedAt);
-                    
+
                     if (clonedItem.results) {
                         clonedItem.results.forEach(res => {
                             if (res.name && res.name.includes('At') && res.measure && res.measure.value) {
@@ -531,7 +531,7 @@ function Flow() {
                     pips = {};
                     availableDimensions.forEach(dim => {
                         if (dim !== 'Any') {
-                             pips[dim] = deriveStatus(node.id, dim);
+                            pips[dim] = deriveStatus(node.id, dim);
                         }
                     });
                 }
@@ -568,35 +568,35 @@ function Flow() {
         const initialEdges = dataMeshEdges
             .filter(edge => activeNodeIds.has(edge.provider.dataProductId) && activeNodeIds.has(edge.consumer.dataProductId))
             .map(edge => {
-            const sourceHealth = deriveStatus(edge.provider.dataProductId, activeDimension);
-            const targetHealth = deriveStatus(edge.consumer.dataProductId, activeDimension);
+                const sourceHealth = deriveStatus(edge.provider.dataProductId, activeDimension);
+                const targetHealth = deriveStatus(edge.consumer.dataProductId, activeDimension);
 
-            const getEdgeColor = (h1, h2) => {
-                if (!observeMode) return '#9ca3af';
-                if (h1 === 'critical' || h2 === 'critical') return '#EF444488';
-                if (h1 === 'degraded' || h2 === 'degraded') return '#F59E0B88';
-                if (h1 === 'healthy' && h2 === 'healthy') return '#22C55E88';
-                return '#9ca3af66';
-            };
+                const getEdgeColor = (h1, h2) => {
+                    if (!observeMode) return '#9ca3af';
+                    if (h1 === 'critical' || h2 === 'critical') return '#EF444488';
+                    if (h1 === 'degraded' || h2 === 'degraded') return '#F59E0B88';
+                    if (h1 === 'healthy' && h2 === 'healthy') return '#22C55E88';
+                    return '#9ca3af66';
+                };
 
-            const edgeColor = getEdgeColor(sourceHealth, targetHealth);
+                const edgeColor = getEdgeColor(sourceHealth, targetHealth);
 
-            return {
-                id: edge.id,
-                source: edge.provider.dataProductId,
-                target: edge.consumer.dataProductId,
-                animated: observeMode || true,
-                type: 'default',
-                markerEnd: { type: 'arrowclosed', color: observeMode ? edgeColor : undefined },
-                interactionWidth: 40,
-                style: {
-                    strokeWidth: hoveredEdgeId === edge.id ? 3 : 2,
-                    stroke: hoveredEdgeId === edge.id ? (observeMode ? edgeColor : '#2563eb') : (observeMode ? edgeColor : '#9ca3af'),
-                    zIndex: hoveredEdgeId === edge.id ? 10 : 0,
-                    transition: 'stroke 0.3s ease'
-                }
-            };
-        });
+                return {
+                    id: edge.id,
+                    source: edge.provider.dataProductId,
+                    target: edge.consumer.dataProductId,
+                    animated: observeMode || true,
+                    type: 'default',
+                    markerEnd: { type: 'arrowclosed', color: observeMode ? edgeColor : undefined },
+                    interactionWidth: 40,
+                    style: {
+                        strokeWidth: hoveredEdgeId === edge.id ? 3 : 2,
+                        stroke: hoveredEdgeId === edge.id ? (observeMode ? edgeColor : '#2563eb') : (observeMode ? edgeColor : '#9ca3af'),
+                        zIndex: hoveredEdgeId === edge.id ? 10 : 0,
+                        transition: 'stroke 0.3s ease'
+                    }
+                };
+            });
 
         setNodes(initialNodes);
         setEdges(initialEdges);
@@ -1300,7 +1300,7 @@ function Flow() {
 
     const kpiStats = React.useMemo(() => {
         if (!observeMode || selection.id || !config?.observability?.kpis) return null;
-        
+
         const kpisConfig = config.observability.kpis;
         const results = Object.keys(kpisConfig).map(k => ({ id: k, value: 0, config: kpisConfig[k] }));
 
@@ -1473,9 +1473,9 @@ function Flow() {
                         {/* Domain Selector */}
                         {!selection.id && (
                             <DomainSelector
-                                    domains={availableDomains}
-                                    selectedDomains={selectedDomains}
-                                    onChange={setSelectedDomains}
+                                domains={availableDomains}
+                                selectedDomains={selectedDomains}
+                                onChange={setSelectedDomains}
                             />
                         )}
 
@@ -1527,14 +1527,14 @@ function Flow() {
                             </button>
                         )}
                     </div>
-                    
+
                     {/* Mobile KPIs */}
                     {isMobile && !selection.id && !hideKpis && kpiStats && (
-                        <div style={{ 
-                            display: 'flex', 
-                            flexDirection: 'column', 
-                            gap: '8px', 
-                            animation: 'slideDown 0.3s ease-out', 
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '8px',
+                            animation: 'slideDown 0.3s ease-out',
                             paddingBottom: '4px',
                             maxHeight: 'calc(100vh - 120px)',
                             overflowY: 'auto',
@@ -1544,16 +1544,16 @@ function Flow() {
                             {renderKpiCards()}
                         </div>
                     )}
-                    
+
                     {/* Desktop KPIs */}
                     {!isMobile && !selection.id && !hideKpis && kpiStats && (
-                        <div 
-                            style={{ 
-                                display: 'flex', 
+                        <div
+                            style={{
+                                display: 'flex',
                                 flexWrap: 'nowrap',
-                                gap: '8px', 
-                                animation: 'slideDown 0.3s ease-out', 
-                                flexShrink: 1, 
+                                gap: '8px',
+                                animation: 'slideDown 0.3s ease-out',
+                                flexShrink: 1,
                                 minWidth: 0,
                                 overflowX: 'auto',
                                 scrollbarWidth: 'none',
@@ -1574,216 +1574,216 @@ function Flow() {
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end', flexShrink: 1, minWidth: 0, maxWidth: '100%' }}>
                         <button
-                        onClick={() => {
-                            setObserveMode(!observeMode);
-                            if (observeMode) {
-                                setActiveDimension(null);
-                                setDrillNodeId(null);
-                                setSidePanelContent(null);
-                            }
-                        }}
-                        style={{
-                            padding: '8px 20px',
-                            background: observeMode ? '#1e293b' : 'white',
-                            color: observeMode ? '#f8fafc' : '#1e293b',
-                            border: `2px solid ${observeMode ? '#3b82f6' : '#e2e8f0'}`,
-                            borderRadius: '24px',
-                            cursor: 'pointer',
-                            fontWeight: '700',
-                            fontSize: '13px',
-                            boxShadow: observeMode ? '0 0 15px rgba(59, 130, 246, 0.5)' : '0 2px 4px rgba(0,0,0,0.05)',
-                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px',
-                            letterSpacing: '0.5px'
-                        }}
-                    >
-                        <div style={{
-                            width: '8px',
-                            height: '8px',
-                            borderRadius: '50%',
-                            background: observeMode ? '#3b82f6' : '#94a3b8',
-                            boxShadow: observeMode ? '0 0 10px #3b82f6' : 'none',
-                            animation: observeMode ? 'pulse 2s infinite' : 'none'
-                        }}></div>
-                        {observeMode ? 'OBSERVING' : 'OBSERVE'}
-                    </button>
+                            onClick={() => {
+                                setObserveMode(!observeMode);
+                                if (observeMode) {
+                                    setActiveDimension(null);
+                                    setDrillNodeId(null);
+                                    setSidePanelContent(null);
+                                }
+                            }}
+                            style={{
+                                padding: '8px 20px',
+                                background: observeMode ? '#1e293b' : 'white',
+                                color: observeMode ? '#f8fafc' : '#1e293b',
+                                border: `2px solid ${observeMode ? '#3b82f6' : '#e2e8f0'}`,
+                                borderRadius: '24px',
+                                cursor: 'pointer',
+                                fontWeight: '700',
+                                fontSize: '13px',
+                                boxShadow: observeMode ? '0 0 15px rgba(59, 130, 246, 0.5)' : '0 2px 4px rgba(0,0,0,0.05)',
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                letterSpacing: '0.5px'
+                            }}
+                        >
+                            <div style={{
+                                width: '8px',
+                                height: '8px',
+                                borderRadius: '50%',
+                                background: observeMode ? '#3b82f6' : '#94a3b8',
+                                boxShadow: observeMode ? '0 0 10px #3b82f6' : 'none',
+                                animation: observeMode ? 'pulse 2s infinite' : 'none'
+                            }}></div>
+                            {observeMode ? 'OBSERVING' : 'OBSERVE'}
+                        </button>
 
-                    {observeMode && (
-                        <div style={{
-                            display: 'flex',
-                            background: 'white',
-                            padding: '4px',
-                            borderRadius: '20px',
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                            border: '1px solid #e2e8f0',
-                            animation: 'slideDown 0.3s ease-out',
-                            maxWidth: '100%'
-                        }}>
+                        {observeMode && (
                             <div style={{
                                 display: 'flex',
-                                overflowX: 'auto',
-                                scrollbarWidth: 'none',
-                                msOverflowStyle: 'none'
+                                background: 'white',
+                                padding: '4px',
+                                borderRadius: '20px',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                                border: '1px solid #e2e8f0',
+                                animation: 'slideDown 0.3s ease-out',
+                                maxWidth: '100%'
                             }}>
-                                {availableDimensions.map(dim => {
-                                    const dimKey = dim === 'Any' ? null : dim;
-                                    const isActive = activeDimension === dimKey;
-                                    return (
-                                        <button
-                                            key={dim}
-                                            onClick={() => setActiveDimension(dimKey)}
-                                            style={{
-                                                padding: '4px 12px',
-                                                fontSize: '11px',
-                                                fontWeight: '600',
-                                                background: isActive ? '#3b82f6' : 'transparent',
-                                                color: isActive ? 'white' : '#64748b',
-                                                border: 'none',
-                                                borderRadius: '16px',
-                                                cursor: 'pointer',
-                                                transition: 'all 0.2s',
-                                                whiteSpace: 'nowrap'
-                                            }}
-                                        >
-                                            {dim}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-
-                            {/* US-05: Configuration Cog */}
-                            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginLeft: '4px', paddingLeft: '4px', borderLeft: '1px solid #e2e8f0', flexShrink: 0 }}>
-                                <button
-                                    onClick={() => setShowConfig(!showConfig)}
-                                    style={{
-                                        background: 'transparent',
-                                        border: 'none',
-                                        cursor: 'pointer',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        color: showConfig ? '#3b82f6' : '#64748b',
-                                        padding: '4px'
-                                    }}
-                                    title="Observability Settings"
-                                >
-                                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
-                                </button>
-                                
-                                {showConfig && (
-                                    <div style={{
-                                        position: 'absolute',
-                                        top: '100%',
-                                        right: 0,
-                                        marginTop: '8px',
-                                        background: 'white',
-                                        borderRadius: '8px',
-                                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-                                        border: '1px solid #e2e8f0',
-                                        padding: '12px',
-                                        minWidth: '180px',
-                                        zIndex: 1000
-                                    }}>
-                                        <div 
-                                            style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', whiteSpace: 'nowrap' }} 
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setHideHealthy(!hideHealthy);
-                                            }}
-                                        >
-                                            <input 
-                                                type="checkbox" 
-                                                checked={hideHealthy} 
-                                                readOnly
-                                                style={{ cursor: 'pointer' }}
-                                            />
-                                            <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Hide Healthy Nodes</span>
-                                        </div>
-                                        <div 
-                                            style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', whiteSpace: 'nowrap', marginTop: '8px' }} 
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setHideKpis(!hideKpis);
-                                            }}
-                                        >
-                                            <input 
-                                                type="checkbox" 
-                                                checked={hideKpis} 
-                                                readOnly
-                                                style={{ cursor: 'pointer' }}
-                                            />
-                                            <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Hide KPIs</span>
-                                        </div>
-                                        {isTestMode && (
-                                            <div 
-                                                style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', whiteSpace: 'nowrap', marginTop: '8px' }} 
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setAdjustMetricsTime(!adjustMetricsTime);
+                                <div style={{
+                                    display: 'flex',
+                                    overflowX: 'auto',
+                                    scrollbarWidth: 'none',
+                                    msOverflowStyle: 'none'
+                                }}>
+                                    {availableDimensions.map(dim => {
+                                        const dimKey = dim === 'Any' ? null : dim;
+                                        const isActive = activeDimension === dimKey;
+                                        return (
+                                            <button
+                                                key={dim}
+                                                onClick={() => setActiveDimension(dimKey)}
+                                                style={{
+                                                    padding: '4px 12px',
+                                                    fontSize: '11px',
+                                                    fontWeight: '600',
+                                                    background: isActive ? '#3b82f6' : 'transparent',
+                                                    color: isActive ? 'white' : '#64748b',
+                                                    border: 'none',
+                                                    borderRadius: '16px',
+                                                    cursor: 'pointer',
+                                                    transition: 'all 0.2s',
+                                                    whiteSpace: 'nowrap'
                                                 }}
                                             >
-                                                <input 
-                                                    type="checkbox" 
-                                                    checked={adjustMetricsTime} 
+                                                {dim}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+
+                                {/* US-05: Configuration Cog */}
+                                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginLeft: '4px', paddingLeft: '4px', borderLeft: '1px solid #e2e8f0', flexShrink: 0 }}>
+                                    <button
+                                        onClick={() => setShowConfig(!showConfig)}
+                                        style={{
+                                            background: 'transparent',
+                                            border: 'none',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            color: showConfig ? '#3b82f6' : '#64748b',
+                                            padding: '4px'
+                                        }}
+                                        title="Observability Settings"
+                                    >
+                                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                    </button>
+
+                                    {showConfig && (
+                                        <div style={{
+                                            position: 'absolute',
+                                            top: '100%',
+                                            right: 0,
+                                            marginTop: '8px',
+                                            background: 'white',
+                                            borderRadius: '8px',
+                                            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                                            border: '1px solid #e2e8f0',
+                                            padding: '12px',
+                                            minWidth: '180px',
+                                            zIndex: 1000
+                                        }}>
+                                            <div
+                                                style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setHideHealthy(!hideHealthy);
+                                                }}
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    checked={hideHealthy}
                                                     readOnly
                                                     style={{ cursor: 'pointer' }}
                                                 />
-                                                <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Adjust metrics time</span>
+                                                <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Hide Healthy Nodes</span>
                                             </div>
-                                        )}
-                                        {isTestMode && (
-                                            <div style={{ borderTop: '1px solid #e2e8f0', marginTop: '12px', paddingTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                                <div style={{ fontSize: '10px', fontWeight: '700', color: '#64748b', textTransform: 'uppercase' }}>Simulation</div>
-                                                {Object.keys(config?.observability?.dimensions || {}).length > 0 ? Object.keys(config.observability.dimensions).map(dim => {
-                                                    const isSimulated = simulatedDims.has(dim);
-                                                    return (
-                                                        <div 
-                                                            key={dim}
-                                                            style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                const newSims = new Set(simulatedDims);
-                                                                if (isSimulated) newSims.delete(dim);
-                                                                else newSims.add(dim);
-                                                                setSimulatedDims(newSims);
-                                                            }}
-                                                        >
-                                                            <input type="checkbox" checked={isSimulated} readOnly style={{ cursor: 'pointer' }} />
-                                                            <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Simulate {dim}</span>
-                                                        </div>
-                                                    );
-                                                }) : <div style={{ fontSize: '12px', color: '#64748b' }}>No dimensions configured</div>}
+                                            <div
+                                                style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', whiteSpace: 'nowrap', marginTop: '8px' }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setHideKpis(!hideKpis);
+                                                }}
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    checked={hideKpis}
+                                                    readOnly
+                                                    style={{ cursor: 'pointer' }}
+                                                />
+                                                <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Hide KPIs</span>
                                             </div>
-                                        )}
-                                        {isTestMode && (
-                                            <div style={{ borderTop: '1px solid #e2e8f0', marginTop: '12px', paddingTop: '12px' }}>
-                                                <div 
-                                                    style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', whiteSpace: 'nowrap' }} 
+                                            {isTestMode && (
+                                                <div
+                                                    style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', whiteSpace: 'nowrap', marginTop: '8px' }}
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        setShowEventsTab(!showEventsTab);
+                                                        setAdjustMetricsTime(!adjustMetricsTime);
                                                     }}
                                                 >
-                                                    <input 
-                                                        type="checkbox" 
-                                                        checked={showEventsTab} 
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={adjustMetricsTime}
                                                         readOnly
                                                         style={{ cursor: 'pointer' }}
                                                     />
-                                                    <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Show Events tab</span>
+                                                    <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Adjust metrics time</span>
                                                 </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
+                                            )}
+                                            {isTestMode && (
+                                                <div style={{ borderTop: '1px solid #e2e8f0', marginTop: '12px', paddingTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                                    <div style={{ fontSize: '10px', fontWeight: '700', color: '#64748b', textTransform: 'uppercase' }}>Simulation</div>
+                                                    {Object.keys(config?.observability?.dimensions || {}).length > 0 ? Object.keys(config.observability.dimensions).map(dim => {
+                                                        const isSimulated = simulatedDims.has(dim);
+                                                        return (
+                                                            <div
+                                                                key={dim}
+                                                                style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    const newSims = new Set(simulatedDims);
+                                                                    if (isSimulated) newSims.delete(dim);
+                                                                    else newSims.add(dim);
+                                                                    setSimulatedDims(newSims);
+                                                                }}
+                                                            >
+                                                                <input type="checkbox" checked={isSimulated} readOnly style={{ cursor: 'pointer' }} />
+                                                                <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Simulate {dim}</span>
+                                                            </div>
+                                                        );
+                                                    }) : <div style={{ fontSize: '12px', color: '#64748b' }}>No dimensions configured</div>}
+                                                </div>
+                                            )}
+                                            {isTestMode && (
+                                                <div style={{ borderTop: '1px solid #e2e8f0', marginTop: '12px', paddingTop: '12px' }}>
+                                                    <div
+                                                        style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setShowEventsTab(!showEventsTab);
+                                                        }}
+                                                    >
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={showEventsTab}
+                                                            readOnly
+                                                            style={{ cursor: 'pointer' }}
+                                                        />
+                                                        <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Show Events tab</span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                    )}
+                        )}
                     </div>
                 </div>
             </div>
@@ -2025,7 +2025,7 @@ function Flow() {
                                     )}
                                     {sidePanelType === 'observability' && (
                                         <a
-                                            href="https://joaovicente.github.io/open-data-product-observability-standard/v0.1.0/"
+                                            href="https://dmesh-zone.github.io/open-data-product-observability-standard/v0.1.0/"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             style={{
@@ -2073,26 +2073,26 @@ function Flow() {
                                             ['metrics', 'events', 'yaml']
                                                 .filter(tab => tab !== 'events' || showEventsTab)
                                                 .map(tab => (
-                                                <button
-                                                    key={tab}
-                                                    onClick={() => setSidePanelTab(tab)}
-                                                    style={{
-                                                        padding: '10px 24px',
-                                                        fontSize: '14px',
-                                                        fontWeight: '600',
-                                                        color: sidePanelTab === tab ? 'var(--m3-primary)' : 'var(--m3-on-surface-variant)',
-                                                        background: sidePanelTab === tab ? 'var(--m3-primary-container)' : 'transparent',
-                                                        border: 'none',
-                                                        borderRadius: '20px',
-                                                        cursor: 'pointer',
-                                                        transition: 'all 0.2s ease',
-                                                        boxShadow: sidePanelTab === tab ? 'var(--m3-elevation-1)' : 'none',
-                                                        textTransform: 'capitalize'
-                                                    }}
-                                                >
-                                                    {tab}
-                                                </button>
-                                            ))
+                                                    <button
+                                                        key={tab}
+                                                        onClick={() => setSidePanelTab(tab)}
+                                                        style={{
+                                                            padding: '10px 24px',
+                                                            fontSize: '14px',
+                                                            fontWeight: '600',
+                                                            color: sidePanelTab === tab ? 'var(--m3-primary)' : 'var(--m3-on-surface-variant)',
+                                                            background: sidePanelTab === tab ? 'var(--m3-primary-container)' : 'transparent',
+                                                            border: 'none',
+                                                            borderRadius: '20px',
+                                                            cursor: 'pointer',
+                                                            transition: 'all 0.2s ease',
+                                                            boxShadow: sidePanelTab === tab ? 'var(--m3-elevation-1)' : 'none',
+                                                            textTransform: 'capitalize'
+                                                        }}
+                                                    >
+                                                        {tab}
+                                                    </button>
+                                                ))
                                         ) : (
                                             <>
                                                 <button
@@ -2173,44 +2173,44 @@ function Flow() {
                             )}
 
                             {/* Filter Input for YAML views - Only show in YAML tab */}
-                            {((['yaml', 'data-product-yaml', 'agreement-yaml', 'data-contract-yaml'].includes(sidePanelType) && sidePanelTab === 'yaml') || 
-                              (sidePanelType === 'observability' && sidePanelTab === 'yaml')) && (
-                                <div style={{ position: 'relative' }}>
-                                    <input
-                                        type="text"
-                                        placeholder="Filter YAML..."
-                                        value={sidePanelFilter}
-                                        onChange={(e) => setSidePanelFilter(e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '6px 10px',
-                                            paddingRight: '24px',
-                                            border: '1px solid #cbd5e1',
-                                            borderRadius: '4px',
-                                            fontSize: '13px'
-                                        }}
-                                    />
-                                    {sidePanelFilter && (
-                                        <button
-                                            onClick={() => setSidePanelFilter('')}
+                            {((['yaml', 'data-product-yaml', 'agreement-yaml', 'data-contract-yaml'].includes(sidePanelType) && sidePanelTab === 'yaml') ||
+                                (sidePanelType === 'observability' && sidePanelTab === 'yaml')) && (
+                                    <div style={{ position: 'relative' }}>
+                                        <input
+                                            type="text"
+                                            placeholder="Filter YAML..."
+                                            value={sidePanelFilter}
+                                            onChange={(e) => setSidePanelFilter(e.target.value)}
                                             style={{
-                                                position: 'absolute',
-                                                right: '8px',
-                                                top: '50%',
-                                                transform: 'translateY(-50%)',
-                                                background: 'none',
-                                                border: 'none',
-                                                cursor: 'pointer',
-                                                color: '#94a3b8',
-                                                fontSize: '14px',
-                                                padding: 0
+                                                width: '100%',
+                                                padding: '6px 10px',
+                                                paddingRight: '24px',
+                                                border: '1px solid #cbd5e1',
+                                                borderRadius: '4px',
+                                                fontSize: '13px'
                                             }}
-                                        >
-                                            &times;
-                                        </button>
-                                    )}
-                                </div>
-                            )}
+                                        />
+                                        {sidePanelFilter && (
+                                            <button
+                                                onClick={() => setSidePanelFilter('')}
+                                                style={{
+                                                    position: 'absolute',
+                                                    right: '8px',
+                                                    top: '50%',
+                                                    transform: 'translateY(-50%)',
+                                                    background: 'none',
+                                                    border: 'none',
+                                                    cursor: 'pointer',
+                                                    color: '#94a3b8',
+                                                    fontSize: '14px',
+                                                    padding: 0
+                                                }}
+                                            >
+                                                &times;
+                                            </button>
+                                        )}
+                                    </div>
+                                )}
                         </div>
                         <div style={{ flex: 1, overflow: 'auto', padding: '0px' }}>
                             {sidePanelType === 'examples' ? (
