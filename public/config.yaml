@@ -1,7 +1,7 @@
 defaultDataMeshOperationalDataUrl: /DataMeshOperationalDataPetsExample.yaml
 
 sampleDataMeshOperationalDataUrls:
-  - /dmesh/discover
+  - http://localhost:8000/dmesh/discover
   - /DataMeshOperationalDataPetsExample.yaml
   - /DataMeshOperationalDataLongStringExample.yaml
   - /DataMeshOperationalDataIconsExample.yaml

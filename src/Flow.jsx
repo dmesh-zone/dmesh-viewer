@@ -50,7 +50,18 @@ const BASE_URL = import.meta.env.BASE_URL;
 
 const normalizePath = (path) => {
     if (!path) return path;
+    
+    // If it's the absolute localhost backend, normalize it to the proxy path
+    if (path.startsWith('http://localhost:8000/dmesh')) {
+        const relativePath = path.replace('http://localhost:8000/', '');
+        return `${BASE_URL}${relativePath}`;
+    }
+
     if (path.startsWith('http')) return path;
+    
+    // If it already starts with BASE_URL, don't normalize again
+    if (path.startsWith(BASE_URL)) return path;
+
     // Prefix relative paths starting with / with BASE_URL
     if (path.startsWith('/')) {
         return `${BASE_URL}${path.slice(1)}`;
@@ -372,9 +383,10 @@ function Flow() {
             setIsLoading(true);
             setError(null);
             try {
-                const response = await fetch(registryUrl);
+                const normalizedUrl = normalizePath(registryUrl);
+                const response = await fetch(normalizedUrl);
                 if (!response.ok) {
-                    throw new Error(`Failed to fetch registry from "${registryUrl}" (${response.status} ${response.statusText}). Please check the URL in config.yaml.`);
+                    throw new Error(`Failed to fetch registry from "${registryUrl}" (normalized to "${normalizedUrl}") (${response.status} ${response.statusText}). Please check the URL in config.yaml.`);
                 }
                 const text = await response.text();
                 processRegistryText(text);

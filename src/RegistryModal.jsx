@@ -190,7 +190,7 @@ export default function RegistryModal({ isOpen, onClose, currentUrl, registries 
                                         key={index}
                                         onMouseDown={(e) => {
                                             e.preventDefault();
-                                            setUrl(reg.normalized);
+                                            setUrl(reg.original);
                                             setIsSearching(false);
                                             setShowOptions(false);
                                         }}
@@ -199,10 +199,10 @@ export default function RegistryModal({ isOpen, onClose, currentUrl, registries 
                                             fontSize: '13px',
                                             cursor: 'pointer',
                                             borderBottom: index < (filteredOptions.length - 1) ? '1px solid #f3f4f6' : 'none',
-                                            background: url === reg.normalized ? '#f3f4f6' : 'white'
+                                            background: url === reg.original ? '#f3f4f6' : 'white'
                                         }}
                                         onMouseEnter={(e) => e.currentTarget.style.background = '#f3f4f6'}
-                                        onMouseLeave={(e) => e.currentTarget.style.background = url === reg.normalized ? '#f3f4f6' : 'white'}
+                                        onMouseLeave={(e) => e.currentTarget.style.background = url === reg.original ? '#f3f4f6' : 'white'}
                                     >
                                         <div style={{ fontWeight: '500' }}>{reg.original}</div>
                                         <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '2px' }}>{reg.normalized}</div>
