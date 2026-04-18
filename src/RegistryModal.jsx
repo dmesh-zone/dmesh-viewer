@@ -103,12 +103,12 @@ export default function RegistryModal({ isOpen, onClose, currentUrl, registries 
                     }}
                 >
                     <h2 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: '600', color: '#1f2937' }}>
-                        Load Data Mesh Registry
+                        Load Data Mesh Operational Data
                     </h2>
 
                     <div style={{ marginBottom: '20px', position: 'relative' }} ref={dropdownRef}>
                         <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: '500', color: '#374151' }}>
-                            Registry URL
+                            Operational Data URL
                         </label>
                         <div style={{ position: 'relative' }}>
                             <input

@@ -1,6 +1,7 @@
 defaultDataMeshOperationalDataUrl: /DataMeshOperationalDataPetsExample.yaml
 
 sampleDataMeshOperationalDataUrls:
+  - /dmesh/discover
   - /DataMeshOperationalDataPetsExample.yaml
   - /DataMeshOperationalDataLongStringExample.yaml
   - /DataMeshOperationalDataIconsExample.yaml
@@ -96,7 +97,7 @@ observability:
       aggregation:
         type: count
         criteria:
-          dataProductTier: ["source", "dataSource"]
+          dataProductTier: [ "source", "dataSource" ]
     dataProducts:
       name: "Data Products"
       visible: true
@@ -104,7 +105,7 @@ observability:
       aggregation:
         type: count
         criteria:
-          dataProductTier: ["sourceAligned", "curated", "consumerAligned"]
+          dataProductTier: [ "sourceAligned", "curated", "consumerAligned" ]
     outputPorts:
       name: "Output ports"
       visible: true
@@ -120,7 +121,7 @@ observability:
         type: sumMetric
         metric: "dpPipelineRecordsProcessed"
         criteria:
-          dataProductTier: ["sourceAligned"]
+          dataProductTier: [ "sourceAligned" ]
     recordsProcessed:
       name: "Records Processed"
       visible: true
@@ -129,7 +130,7 @@ observability:
         type: sumMetric
         metric: "dpPipelineRecordsProcessed"
         criteria:
-          dataProductTier: ["curated", "consumerAligned"]
+          dataProductTier: [ "curated", "consumerAligned" ]
     consumingApplication:
       name: "Consuming applications"
       visible: true
@@ -137,7 +138,7 @@ observability:
       aggregation:
         type: count
         criteria:
-          dataProductTier: ["source", "application"]
+          dataProductTier: [ "source", "application" ]
   dimensions:
     Pipeline:
       icon: "▸"

@@ -10,5 +10,13 @@ export default defineConfig({
     react(),
     yaml()
   ],
-  // Forced reload
+  server: {
+    proxy: {
+      '/dmesh-viewer/dmesh': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/dmesh-viewer\/dmesh/, '/dmesh')
+      }
+    }
+  }
 })
