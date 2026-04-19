@@ -29,17 +29,24 @@ export default function DataProductVisual({ data }) {
         }
     };
 
-    const properties = data.customProperties || [];
-    const outputPorts = data.outputPorts || [];
+    const safeRender = (val) => {
+        if (val === null || val === undefined) return '';
+        if (typeof val === 'object') return JSON.stringify(val);
+        return val;
+    };
+
+    const properties = data?.customProperties || [];
+    const outputPorts = Array.isArray(data?.outputPorts) ? data.outputPorts : [];
 
     const formatLabel = (str) => {
         if (!str) return '';
-        const spaced = str.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ').trim();
-        return spaced.charAt(0).toUpperCase() + spaced.slice(1).toLowerCase();
+        const s = String(str);
+        const spaced = s.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ').trim();
+        return spaced.length > 0 ? spaced.charAt(0).toUpperCase() + spaced.slice(1).toLowerCase() : '';
     };
 
     const allPortCustomKeys = Array.from(new Set(
-        outputPorts.flatMap(port => (port.customProperties || []).map(p => p.property))
+        outputPorts.flatMap(port => (port?.customProperties || []).map(p => p.property))
     ));
 
     return (
@@ -53,7 +60,7 @@ export default function DataProductVisual({ data }) {
                     color: 'var(--m3-on-surface)',
                     letterSpacing: '0px'
                 }}>
-                    {data.name}
+                    {safeRender(data.name)}
                 </h2>
                 <div style={{
                     display: 'grid',
@@ -67,7 +74,7 @@ export default function DataProductVisual({ data }) {
                 }}>
                     <span style={{ color: 'var(--m3-on-surface-variant)', fontWeight: '600', display: 'flex', alignItems: 'center' }}>ID</span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ fontFamily: 'monospace', color: 'var(--m3-on-surface)' }}>{data.id}</span>
+                        <span style={{ fontFamily: 'monospace', color: 'var(--m3-on-surface)' }}>{safeRender(data.id)}</span>
                         <button
                             onClick={handleCopy}
                             title="Copy ID to clipboard"
@@ -100,7 +107,7 @@ export default function DataProductVisual({ data }) {
                     </div>
 
                     <span style={{ color: 'var(--m3-on-surface-variant)', fontWeight: '600' }}>Domain</span>
-                    <span>{data.domain}</span>
+                    <span>{safeRender(data.domain)}</span>
 
                     <span style={{ color: 'var(--m3-on-surface-variant)', fontWeight: '600' }}>Status</span>
                     <span>
@@ -114,12 +121,12 @@ export default function DataProductVisual({ data }) {
                             textTransform: 'capitalize',
                             letterSpacing: '0.5px'
                         }}>
-                            {data.status}
+                            {safeRender(data.status)}
                         </span>
                     </span>
 
                     <span style={{ color: 'var(--m3-on-surface-variant)', fontWeight: '600' }}>Version</span>
-                    <span style={{ fontWeight: '500' }}>{data.apiVersion}</span>
+                    <span style={{ fontWeight: '500' }}>{safeRender(data.apiVersion)}</span>
                 </div>
             </div>
 
@@ -149,7 +156,7 @@ export default function DataProductVisual({ data }) {
                                     {formatLabel(prop.property)}
                                 </div>
                                 <div style={{ fontSize: '15px', fontWeight: '500', color: 'var(--m3-on-surface)' }}>
-                                    {prop.value}
+                                    {typeof prop.value === 'object' ? JSON.stringify(prop.value) : prop.value}
                                 </div>
                             </div>
                         ))}
@@ -195,8 +202,8 @@ export default function DataProductVisual({ data }) {
                                         borderBottom: idx < outputPorts.length - 1 ? '1px solid var(--m3-outline-variant)' : 'none',
                                         transition: 'background 0.2s ease'
                                     }}>
-                                        <td style={{ padding: '14px 20px', color: 'var(--m3-on-surface)', fontWeight: '500' }}>{port.name}</td>
-                                        <td style={{ padding: '14px 20px', color: 'var(--m3-on-surface-variant)' }}>v{port.version}</td>
+                                        <td style={{ padding: '14px 20px', color: 'var(--m3-on-surface)', fontWeight: '500' }}>{safeRender(port.name)}</td>
+                                        <td style={{ padding: '14px 20px', color: 'var(--m3-on-surface-variant)' }}>v{safeRender(port.version)}</td>
                                         <td style={{ padding: '14px 20px' }}>
                                             <span style={{
                                                 fontFamily: 'monospace',
@@ -207,7 +214,7 @@ export default function DataProductVisual({ data }) {
                                                 fontSize: '12px',
                                                 fontWeight: '500'
                                             }}>
-                                                {port.contractId.split(':').pop()}
+                                                {port.contractId ? String(port.contractId).split(':').pop() : '-'}
                                             </span>
                                         </td>
                                         {allPortCustomKeys.map(key => {
@@ -216,7 +223,7 @@ export default function DataProductVisual({ data }) {
                                                 .map(p => p.value);
                                             return (
                                                 <td key={key} style={{ padding: '14px 20px', color: 'var(--m3-on-surface-variant)' }}>
-                                                    {values.length > 0 ? values.join(', ') : '-'}
+                                                    {values.length > 0 ? values.map(v => safeRender(v)).join(', ') : '-'}
                                                 </td>
                                             );
                                         })}

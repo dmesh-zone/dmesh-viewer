@@ -35,6 +35,7 @@ import DataContractVisual from './DataContractVisual';
 import DataUsageAgreementVisual from './DataUsageAgreementVisual';
 import RegistryModal from './RegistryModal';
 import ObservabilityDrilldown from './ObservabilityDrilldown';
+import ErrorBoundary from './ErrorBoundary';
 
 const nodeTypes = {
     selectorNode: DataProductNode,
@@ -52,7 +53,8 @@ const normalizePath = (path) => {
     if (!path) return path;
     
     // If it's the absolute localhost backend, normalize it to the proxy path
-    if (path.startsWith('http://localhost:8000/dmesh')) {
+    // ONLY in development mode where the Vite proxy is active.
+    if (import.meta.env.DEV && path.startsWith('http://localhost:8000/dmesh')) {
         const relativePath = path.replace('http://localhost:8000/', '');
         return `${BASE_URL}${relativePath}`;
     }
@@ -2239,7 +2241,9 @@ function Flow() {
                                     config={config}
                                 />
                             ) : sidePanelTab === 'visual' && sidePanelType === 'data-product-yaml' ? (
-                                <DataProductVisual data={sidePanelContent.originalData || sidePanelContent} />
+                                <ErrorBoundary>
+                                    <DataProductVisual data={sidePanelContent.originalData || sidePanelContent} />
+                                </ErrorBoundary>
                             ) : sidePanelTab === 'visual' && sidePanelType === 'data-contract-yaml' ? (
                                 <DataContractVisual
                                     data={sidePanelContent.originalData || sidePanelContent}
