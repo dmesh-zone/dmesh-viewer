@@ -1,4 +1,4 @@
-defaultDataMeshOperationalDataUrl: http://localhost:8000/dmesh/discover
+defaultDataMeshOperationalDataUrl: /DataMeshOperationalDataPetsExample.yaml
 
 sampleDataMeshOperationalDataUrls:
   - http://localhost:8000/dmesh/discover
