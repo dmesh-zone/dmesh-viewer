@@ -22,10 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.sfdx/
 sandbox/*
 
 # Environment variables
-.env
+.env*
 
 # Project specific
 customConfig.yaml
