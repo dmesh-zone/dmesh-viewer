@@ -24,5 +24,8 @@ dist-ssr
 *.sw?
 sandbox/*
 
+# Environment variables
+.env
+
 # Project specific
 customConfig.yaml
