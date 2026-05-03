@@ -101,47 +101,6 @@ export default function DataContractVisual({ data, anchor, filterByAnchor = fals
                     <span style={{ color: 'var(--m3-on-surface-variant)' }}>Version: <strong style={{ color: 'var(--m3-on-surface)' }}>{data.version}</strong></span>
                     <span style={{ color: 'var(--m3-on-surface-variant)' }}>API: <strong style={{ color: 'var(--m3-on-surface)' }}>{data.apiVersion}</strong></span>
 
-                    {/* Server Environment Pills */}
-                    {data.servers && Array.isArray(data.servers) && data.servers.map((s, idx) => (
-                        s.environment && (
-                            <a
-                                key={idx}
-                                href={s.host || s.location}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                title={s.server || `Server ${idx + 1}`}
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '6px',
-                                    background: '#e0f2fe',
-                                    color: '#0369a1',
-                                    padding: '4px 12px',
-                                    borderRadius: '20px',
-                                    fontWeight: '600',
-                                    fontSize: '11px',
-                                    textDecoration: 'none',
-                                    border: '1px solid #bae6fd',
-                                    transition: 'all 0.2s',
-                                    cursor: 'pointer',
-                                    marginLeft: idx === 0 ? '8px' : '0'
-                                }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.background = '#bae6fd';
-                                    e.currentTarget.style.borderColor = '#7dd3fc';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.background = '#e0f2fe';
-                                    e.currentTarget.style.borderColor = '#bae6fd';
-                                }}
-                            >
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M17.5 19c2.5 0 4.5-2 4.5-4.5 0-2.4-1.8-4.3-4.2-4.5C17.2 6.6 14.1 4 10.5 4 7.2 4 4.8 6.5 4.3 9.7 2.4 10.4 1 12.3 1 14.5 1 17 3 19 5.5 19"></path>
-                                </svg>
-                                {s.environment}
-                            </a>
-                        )
-                    ))}
                 </div>
                 {data.description && data.description.purpose && (
                     <div style={{
@@ -344,7 +303,7 @@ export default function DataContractVisual({ data, anchor, filterByAnchor = fals
                 </h3>
 
                 {schema.map((table, tIdx) => (
-                    <div key={tIdx} style={{
+                    <div key={tIdx} id={`table-${table.physicalName || table.name}`} style={{
                         marginBottom: '32px',
                         border: '1px solid var(--m3-outline-variant)',
                         borderRadius: '16px',
@@ -356,8 +315,15 @@ export default function DataContractVisual({ data, anchor, filterByAnchor = fals
                             background: 'var(--m3-surface-variant)',
                             borderBottom: '1px solid var(--m3-outline-variant)'
                         }}>
-                            <div style={{ fontWeight: '700', fontSize: '15px', color: 'var(--m3-on-surface)' }}>
-                                Table: <span style={{ fontFamily: 'monospace', color: 'var(--m3-primary)' }}>{table.name}</span>
+                            <div style={{ fontWeight: '700', fontSize: '15px', color: 'var(--m3-on-surface)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                {(() => {
+                                    const tableTech = table.customProperties?.find(p => p.property === 'technology')?.value;
+                                    const techIcon = tableTech && config?.iconMap?.[tableTech] ? normalizePath(config.iconMap[tableTech]) : null;
+                                    return techIcon ? (
+                                        <img src={techIcon} alt={tableTech} style={{ width: '16px', height: '16px', objectFit: 'contain' }} />
+                                    ) : null;
+                                })()}
+                                <span style={{ textTransform: 'lowercase' }}>{String(table.physicalType || 'table').toLowerCase()}</span>: <span style={{ fontFamily: 'monospace', color: 'var(--m3-primary)' }}>{table.physicalName || table.name}</span>
                             </div>
                             {table.description && (
                                 <div style={{ marginTop: '4px', fontSize: '13px', color: 'var(--m3-on-surface-variant)', lineHeight: '1.4' }}>

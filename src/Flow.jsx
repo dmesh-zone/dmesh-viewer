@@ -756,7 +756,7 @@ function Flow() {
                             schema: [schemaElement], // Pass only this schema element
                             description: schemaElement.description || "",
                             originalData: contractData, // Store full contract for side panel
-                            label: schemaElement.name || schemaElement.physicalName || `Schema ${index + 1}`,
+                            label: schemaElement.physicalName || schemaElement.name || `Schema ${index + 1}`,
                             banner: 'DATA CONTRACT',
                             bannerColor: '#e5e7eb',
                             icon: normalizePath(config.iconMap[tableTech] || config.iconMap['table'] || config.iconMap[tech] || config.iconMap['dataProduct']),
@@ -780,7 +780,7 @@ function Flow() {
                     ...contractData,
                     description: contractData.schema?.[0]?.description || "",
                     originalData: contractData,
-                    label: contractData.name || contractData.physicalName || String(selection.id),
+                    label: contractData.physicalName || contractData.name || String(selection.id),
                     banner: 'DATA CONTRACT',
                     bannerColor: '#e5e7eb',
                     icon: normalizePath(config.iconMap[firstSchemaTech] || config.iconMap['table'] || config.iconMap[tech] || config.iconMap['dataProduct']),
