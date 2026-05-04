@@ -808,6 +808,11 @@
   status: active
   version: "1"
   apiVersion: v3.0.1
+  roles:
+    - role: dataAnalyst
+      access: read
+    - role: dataEngineer
+      access: write
   schema:
     - name: food_products
       physicalType: table
@@ -1115,8 +1120,7 @@
   schema:
     - name: unified_customers
       physicalType: table
-      description:
-        Unified view of customers, orders, products, inventory, sales,
+      description: Unified view of customers, orders, products, inventory, sales,
         customer segments, and product categories data for unified_customers
       customProperties:
         - property: technology
@@ -1162,8 +1166,7 @@
               mustBe: 0
     - name: unified_orders
       physicalType: table
-      description:
-        Unified view of customers, orders, products, inventory, sales,
+      description: Unified view of customers, orders, products, inventory, sales,
         customer segments, and product categories data for unified_orders
       customProperties:
         - property: technology
@@ -1207,8 +1210,7 @@
             - 150
     - name: unified_products
       physicalType: table
-      description:
-        Unified view of customers, orders, products, inventory, sales,
+      description: Unified view of customers, orders, products, inventory, sales,
         customer segments, and product categories data for unified_products
       customProperties:
         - property: technology
@@ -1244,8 +1246,7 @@
               type: foreignKey
     - name: unified_inventory
       physicalType: table
-      description:
-        Unified view of customers, orders, products, inventory, sales,
+      description: Unified view of customers, orders, products, inventory, sales,
         customer segments, and product categories data for unified_inventory
       customProperties:
         - property: technology
@@ -1281,8 +1282,7 @@
             - 500
     - name: sales_facts
       physicalType: table
-      description:
-        Unified view of customers, orders, products, inventory, sales,
+      description: Unified view of customers, orders, products, inventory, sales,
         customer segments, and product categories data for sales_facts
       customProperties:
         - property: technology
@@ -1329,8 +1329,7 @@
             - 75
     - name: customer_segments
       physicalType: table
-      description:
-        Unified view of customers, orders, products, inventory, sales,
+      description: Unified view of customers, orders, products, inventory, sales,
         customer segments, and product categories data for customer_segments
       customProperties:
         - property: technology
@@ -1363,8 +1362,7 @@
             - 1000
     - name: product_categories
       physicalType: table
-      description:
-        Unified view of customers, orders, products, inventory, sales,
+      description: Unified view of customers, orders, products, inventory, sales,
         customer segments, and product categories data for product_categories
       customProperties:
         - property: technology
@@ -1436,8 +1434,7 @@
   schema:
     - name: product_quality
       physicalType: table
-      description:
-        Production data with quality metrics, batch performance, inventory
+      description: Production data with quality metrics, batch performance, inventory
         levels, cost analysis, supplier ratings, and production schedules data
         for product_quality
       customProperties:
@@ -1471,8 +1468,7 @@
             - 97.5
     - name: batch_performance
       physicalType: table
-      description:
-        Production data with quality metrics, batch performance, inventory
+      description: Production data with quality metrics, batch performance, inventory
         levels, cost analysis, supplier ratings, and production schedules data
         for batch_performance
       customProperties:
@@ -1506,8 +1502,7 @@
             - 95
     - name: material_inventory
       physicalType: table
-      description:
-        Production data with quality metrics, batch performance, inventory
+      description: Production data with quality metrics, batch performance, inventory
         levels, cost analysis, supplier ratings, and production schedules data
         for material_inventory
       customProperties:
@@ -1541,8 +1536,7 @@
             - 5000
     - name: cost_analysis
       physicalType: table
-      description:
-        Production data with quality metrics, batch performance, inventory
+      description: Production data with quality metrics, batch performance, inventory
         levels, cost analysis, supplier ratings, and production schedules data
         for cost_analysis
       customProperties:
@@ -1576,8 +1570,7 @@
             - 8.5
     - name: supplier_performance
       physicalType: table
-      description:
-        Production data with quality metrics, batch performance, inventory
+      description: Production data with quality metrics, batch performance, inventory
         levels, cost analysis, supplier ratings, and production schedules data
         for supplier_performance
       customProperties:
@@ -1611,8 +1604,7 @@
             - 98.5
     - name: production_schedule
       physicalType: table
-      description:
-        Production data with quality metrics, batch performance, inventory
+      description: Production data with quality metrics, batch performance, inventory
         levels, cost analysis, supplier ratings, and production schedules data
         for production_schedule
       customProperties:
