@@ -20,12 +20,22 @@ export default function DataProductVisual({ data }) {
     // data is the full YAML object for the Data Product
 
     const [copied, setCopied] = React.useState(false);
+    const [copiedPropIndex, setCopiedPropIndex] = React.useState(null);
 
     const handleCopy = () => {
         if (navigator.clipboard) {
             navigator.clipboard.writeText(data.id);
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
+        }
+    };
+
+    const handleCopyProp = (val, idx) => {
+        if (navigator.clipboard) {
+            const strVal = typeof val === 'object' ? JSON.stringify(val) : String(val);
+            navigator.clipboard.writeText(strVal);
+            setCopiedPropIndex(idx);
+            setTimeout(() => setCopiedPropIndex(null), 2000);
         }
     };
 
@@ -155,8 +165,40 @@ export default function DataProductVisual({ data }) {
                                 <div style={{ fontSize: '11px', color: 'var(--m3-on-surface-variant)', marginBottom: '6px', textTransform: 'none', fontWeight: 'bold' }}>
                                     {formatLabel(prop.property)}
                                 </div>
-                                <div style={{ fontSize: '15px', fontWeight: '500', color: 'var(--m3-on-surface)' }}>
-                                    {typeof prop.value === 'object' ? JSON.stringify(prop.value) : prop.value}
+                                <div style={{ fontSize: '15px', fontWeight: '500', color: 'var(--m3-on-surface)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                                    <span style={{ wordBreak: 'break-all' }}>
+                                        {typeof prop.value === 'object' ? JSON.stringify(prop.value) : prop.value}
+                                    </span>
+                                    <button
+                                        onClick={() => handleCopyProp(prop.value, idx)}
+                                        title="Copy value to clipboard"
+                                        style={{
+                                            background: 'transparent',
+                                            border: 'none',
+                                            cursor: 'pointer',
+                                            padding: '4px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            color: copiedPropIndex === idx ? '#10b981' : 'var(--m3-on-surface-variant)',
+                                            borderRadius: '4px',
+                                            transition: 'all 0.2s ease',
+                                            flexShrink: 0
+                                        }}
+                                        onMouseEnter={e => e.currentTarget.style.color = copiedPropIndex === idx ? '#10b981' : 'var(--m3-primary)'}
+                                        onMouseLeave={e => e.currentTarget.style.color = copiedPropIndex === idx ? '#10b981' : 'var(--m3-on-surface-variant)'}
+                                    >
+                                        {copiedPropIndex === idx ? (
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <polyline points="20 6 9 17 4 12"></polyline>
+                                            </svg>
+                                        ) : (
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                            </svg>
+                                        )}
+                                    </button>
                                 </div>
                             </div>
                         ))}
