@@ -152,7 +152,7 @@ export default memo(({ data, isConnectable }) => {
                                                     padding: '0 6px',
                                                     background: 'white'
                                                 }}>
-                                                    v{port.version}
+                                                    {port.version}
                                                 </span>
                                             )}
                                         </div>

@@ -6,10 +6,10 @@
   domain: "examples"
   outputPorts:
     - name: "quality_examples_port1"
-      version: "1"
+      version: "v1"
       contractId: "urn:bitol:contract:data-quality-example1"
     - name: "quality_examples_port2"
-      version: "1"
+      version: "v1"
       contractId: "urn:bitol:contract:data-quality-example2"
 
 - apiVersion: v3.1.0

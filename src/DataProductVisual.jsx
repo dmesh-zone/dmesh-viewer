@@ -203,7 +203,7 @@ export default function DataProductVisual({ data }) {
                                         transition: 'background 0.2s ease'
                                     }}>
                                         <td style={{ padding: '14px 20px', color: 'var(--m3-on-surface)', fontWeight: '500' }}>{safeRender(port.name)}</td>
-                                        <td style={{ padding: '14px 20px', color: 'var(--m3-on-surface-variant)' }}>v{safeRender(port.version)}</td>
+                                        <td style={{ padding: '14px 20px', color: 'var(--m3-on-surface-variant)' }}>{safeRender(port.version)}</td>
                                         <td style={{ padding: '14px 20px' }}>
                                             <span style={{
                                                 fontFamily: 'monospace',

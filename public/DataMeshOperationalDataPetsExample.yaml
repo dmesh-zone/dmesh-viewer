@@ -55,19 +55,19 @@
       value: databricks
   outputPorts:
     - name: customers
-      version: "1"
+      version: "v1"
       contractId: e87611c2-76b4-567a-8c61-c81b36e7831a
     - name: orders
-      version: "1"
+      version: "v1"
       contractId: e87611c2-76b4-567a-8c61-c81b36e7831a
     - name: order_items
-      version: "1"
+      version: "v1"
       contractId: e87611c2-76b4-567a-8c61-c81b36e7831a
     - name: products
-      version: "1"
+      version: "v1"
       contractId: e87611c2-76b4-567a-8c61-c81b36e7831a
     - name: inventory
-      version: "1"
+      version: "v1"
       contractId: e87611c2-76b4-567a-8c61-c81b36e7831a
 - kind: DataContract
   id: e87611c2-76b4-567a-8c61-c81b36e7831a
@@ -434,19 +434,19 @@
       value: databricks
   outputPorts:
     - name: customers
-      version: "1"
+      version: "v1"
       contractId: 688de69e-651c-5bef-a503-bf2b68c7e7c1
     - name: orders
-      version: "1"
+      version: "v1"
       contractId: 688de69e-651c-5bef-a503-bf2b68c7e7c1
     - name: order_items
-      version: "1"
+      version: "v1"
       contractId: 688de69e-651c-5bef-a503-bf2b68c7e7c1
     - name: products
-      version: "1"
+      version: "v1"
       contractId: 688de69e-651c-5bef-a503-bf2b68c7e7c1
     - name: inventory
-      version: "1"
+      version: "v1"
       contractId: 688de69e-651c-5bef-a503-bf2b68c7e7c1
 - kind: DataContract
   id: 688de69e-651c-5bef-a503-bf2b68c7e7c1
@@ -789,19 +789,19 @@
       value: databricks
   outputPorts:
     - name: food_products
-      version: "1"
+      version: "v1"
       contractId: 35d5516c-6e77-5423-9f8f-e7e368d38642
     - name: recipes
-      version: "1"
+      version: "v1"
       contractId: 35d5516c-6e77-5423-9f8f-e7e368d38642
     - name: production_batches
-      version: "1"
+      version: "v1"
       contractId: 35d5516c-6e77-5423-9f8f-e7e368d38642
     - name: raw_materials
-      version: "1"
+      version: "v1"
       contractId: 35d5516c-6e77-5423-9f8f-e7e368d38642
     - name: suppliers
-      version: "1"
+      version: "v1"
       contractId: 35d5516c-6e77-5423-9f8f-e7e368d38642
 - kind: DataContract
   id: 35d5516c-6e77-5423-9f8f-e7e368d38642
@@ -1087,25 +1087,25 @@
       value: databricks
   outputPorts:
     - name: unified_customers
-      version: "1"
+      version: "v1"
       contractId: b636c282-7234-5728-b7a9-7ccaeab8d518
     - name: unified_orders
-      version: "1"
+      version: "v1"
       contractId: b636c282-7234-5728-b7a9-7ccaeab8d518
     - name: unified_products
-      version: "1"
+      version: "v1"
       contractId: b636c282-7234-5728-b7a9-7ccaeab8d518
     - name: unified_inventory
-      version: "1"
+      version: "v1"
       contractId: b636c282-7234-5728-b7a9-7ccaeab8d518
     - name: sales_facts
-      version: "1"
+      version: "v1"
       contractId: b636c282-7234-5728-b7a9-7ccaeab8d518
     - name: customer_segments
-      version: "1"
+      version: "v1"
       contractId: b636c282-7234-5728-b7a9-7ccaeab8d518
     - name: product_categories
-      version: "1"
+      version: "v1"
       contractId: b636c282-7234-5728-b7a9-7ccaeab8d518
 - kind: DataContract
   id: b636c282-7234-5728-b7a9-7ccaeab8d518
@@ -1411,22 +1411,22 @@
       value: databricks
   outputPorts:
     - name: product_quality
-      version: "1"
+      version: "v1"
       contractId: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5
     - name: batch_performance
-      version: "1"
+      version: "v1"
       contractId: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5
     - name: material_inventory
-      version: "1"
+      version: "v1"
       contractId: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5
     - name: cost_analysis
-      version: "1"
+      version: "v1"
       contractId: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5
     - name: supplier_performance
-      version: "1"
+      version: "v1"
       contractId: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5
     - name: production_schedule
-      version: "1"
+      version: "v1"
       contractId: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5
 - kind: DataContract
   id: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5
@@ -1659,16 +1659,16 @@
       value: databricks
   outputPorts:
     - name: sales_metrics
-      version: "1"
+      version: "v1"
       contractId: edc38778-1856-5164-955c-e1069d62a986
     - name: customer_metrics
-      version: "1"
+      version: "v1"
       contractId: edc38778-1856-5164-955c-e1069d62a986
     - name: inventory_metrics
-      version: "1"
+      version: "v1"
       contractId: edc38778-1856-5164-955c-e1069d62a986
     - name: product_performance_metrics
-      version: "1"
+      version: "v1"
       contractId: edc38778-1856-5164-955c-e1069d62a986
 - kind: DataContract
   id: edc38778-1856-5164-955c-e1069d62a986
@@ -1851,13 +1851,13 @@
       value: databricks
   outputPorts:
     - name: production_efficiency
-      version: "1"
+      version: "v1"
       contractId: 90752d80-7b05-5810-963c-62127c5bef06
     - name: quality_trends
-      version: "1"
+      version: "v1"
       contractId: 90752d80-7b05-5810-963c-62127c5bef06
     - name: supply_chain_metrics
-      version: "1"
+      version: "v1"
       contractId: 90752d80-7b05-5810-963c-62127c5bef06
 - kind: DataContract
   id: 90752d80-7b05-5810-963c-62127c5bef06

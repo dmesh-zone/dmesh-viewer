@@ -12,7 +12,7 @@
   tags: ['customer']
   outputPorts:
   - name: "example"
-    version: 1.0.0
+    version: v1.0.0
     contractId: "1"
 
 - kind: DataContract

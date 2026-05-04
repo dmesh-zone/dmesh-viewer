@@ -14,13 +14,13 @@
       value: databricks
   outputPorts:
     - name: product_quality
-      version: "1"
+      version: "v1"
       contractId: dc3
       customProperties:
         - property: portAdapter
           value: odata
     - name: batch_performance
-      version: "1"
+      version: "v1"
       contractId: dc3
       customProperties:
         - property: portAdapter
@@ -28,10 +28,10 @@
         - property: portAdapter
           value: odata
     - name: batch_performance_iceberg
-      version: "1"
+      version: "v1"
       contractId: dc3
     - name: product_quality_odata
-      version: "1"
+      version: "v1"
       contractId: dc3
 
 - kind: DataContract
@@ -187,13 +187,13 @@
       value: databricks
   outputPorts:
     - name: product_quality
-      version: "1"
+      version: "v1"
       contractId: dc1
       customProperties:
         - property: portAdapter
           value: odata
     - name: batch_performance
-      version: "1"
+      version: "v1"
       contractId: dc1
       customProperties:
         - property: portAdapter
@@ -201,10 +201,10 @@
         - property: portAdapter
           value: odata
     - name: batch_performance_iceberg
-      version: "1"
+      version: "v1"
       contractId: dc1
     - name: product_quality
-      version: "1"
+      version: "v1"
       contractId: dc2
 
 - kind: DataContract
