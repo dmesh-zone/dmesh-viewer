@@ -370,4 +370,28 @@
     - property: technology
       value: application
   outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "tibco-data-source"
+  name: Tibco data source
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: tibco
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "tibco-dv-12n-data-source"
+  name: Tibco DV 12N data source
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: tibcodv12n
+  outputPorts: []
 

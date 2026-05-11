@@ -39,6 +39,8 @@ iconMap:
   deltalake: /icons/deltalake.svg
   odata: /icons/odata.svg
   snowflake: /icons/snowflake.svg
+  tibco: /icons/tibco.svg
+  tibcodv12n: /icons/tibco.svg
   api: /icons/api.svg
   iceberg: /icons/iceberg.svg
   kafka: /icons/kafka.svg
