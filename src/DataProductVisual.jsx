@@ -47,6 +47,7 @@ export default function DataProductVisual({ data }) {
 
     const properties = data?.customProperties || [];
     const outputPorts = Array.isArray(data?.outputPorts) ? data.outputPorts : [];
+    const businessName = properties.find(p => p.property === 'dataProductBusinessName')?.value;
 
     const formatLabel = (str) => {
         if (!str) return '';
@@ -70,7 +71,7 @@ export default function DataProductVisual({ data }) {
                     color: 'var(--m3-on-surface)',
                     letterSpacing: '0px'
                 }}>
-                    {safeRender(data.name)}
+                    {safeRender(businessName || data.name)}
                 </h2>
                 <div style={{
                     display: 'grid',

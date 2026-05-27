@@ -507,6 +507,7 @@ function Flow() {
             .map(node => {
                 const tier = node.customProperties?.find(p => p.property === 'dataProductTier')?.value;
                 const technology = node.customProperties?.find(p => p.property === 'technology')?.value;
+                const businessName = node.customProperties?.find(p => p.property === 'dataProductBusinessName')?.value;
 
                 // Get tier config
                 const tierConfig = config.tiers?.[tier] || {};
@@ -556,7 +557,7 @@ function Flow() {
                     data: {
                         id: node.id,
                         color: color,
-                        label: node.name,
+                        label: businessName || node.name,
                         banner: banner,
                         bannerColor: bannerColor,
                         backgroundColor: backgroundColor,
