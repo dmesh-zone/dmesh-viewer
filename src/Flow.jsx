@@ -177,8 +177,9 @@ function Flow() {
     const [sidePanelType, setSidePanelType] = React.useState('yaml'); // 'yaml' | 'examples'
     const [sidePanelWidth, setSidePanelWidth] = React.useState(500);
     const [sidePanelFilter, setSidePanelFilter] = React.useState(''); // New filter state
-    const [sidePanelTab, setSidePanelTab] = React.useState('visual'); // 'visual' | 'yaml'
+    const [sidePanelTab, setSidePanelTab] = React.useState('visual'); // 'visual' | 'yaml' | 'json'
     const [sidePanelAnchor, setSidePanelAnchor] = React.useState(null); // Table anchor
+    const [copiedFormat, setCopiedFormat] = React.useState(null); // For copy button
 
     // Mobile Responsiveness
     const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768 || window.innerHeight <= 500);
@@ -457,6 +458,28 @@ function Flow() {
             }
         }
     }, [dataMeshRegistry]);
+
+    // Auto-compact mode logic
+    const prevRegistryRef = React.useRef(null);
+    React.useEffect(() => {
+        if (dataMeshRegistry && dataMeshRegistry.length > 0 && dataMeshRegistry !== prevRegistryRef.current) {
+            prevRegistryRef.current = dataMeshRegistry;
+            const dataMeshNodes = dataMeshRegistry.filter(item => item.kind === 'DataProduct');
+            const columnCounts = {};
+            dataMeshNodes.forEach(node => {
+                const tier = node.customProperties?.find(p => p.property === 'dataProductTier')?.value;
+                const tierConfig = config.tiers?.[tier] || {};
+                const colNum = tierConfig.columnNumber !== undefined ? tierConfig.columnNumber : 1;
+                columnCounts[colNum] = (columnCounts[colNum] || 0) + 1;
+            });
+            const maxNodes = Math.max(0, ...Object.values(columnCounts));
+            if (maxNodes > 10) {
+                setCompactMode(true);
+            } else {
+                setCompactMode(false);
+            }
+        }
+    }, [dataMeshRegistry, config]);
 
     // Process Registry into Nodes/Edges
     React.useEffect(() => {
@@ -2169,6 +2192,23 @@ function Flow() {
                                                 >
                                                     YAML
                                                 </button>
+                                                <button
+                                                    onClick={() => setSidePanelTab('json')}
+                                                    style={{
+                                                        padding: '10px 24px',
+                                                        fontSize: '14px',
+                                                        fontWeight: '600',
+                                                        color: sidePanelTab === 'json' ? 'var(--m3-primary)' : 'var(--m3-on-surface-variant)',
+                                                        background: sidePanelTab === 'json' ? 'var(--m3-primary-container)' : 'transparent',
+                                                        border: 'none',
+                                                        borderRadius: '20px',
+                                                        cursor: 'pointer',
+                                                        transition: 'all 0.2s ease',
+                                                        boxShadow: sidePanelTab === 'json' ? 'var(--m3-elevation-1)' : 'none'
+                                                    }}
+                                                >
+                                                    JSON
+                                                </button>
                                             </>
                                         )}
                                     </div>
@@ -2285,23 +2325,134 @@ function Flow() {
                                     data={sidePanelContent.originalData || sidePanelContent}
                                     filterText={sidePanelFilter}
                                 />
+                            ) : sidePanelTab === 'json' ? (
+                                <div style={{ position: 'relative' }}>
+                                    <button
+                                        onClick={() => {
+                                            const rawData = sidePanelContent.originalData || sidePanelContent;
+                                            navigator.clipboard.writeText(JSON.stringify(rawData, null, 2));
+                                            setCopiedFormat('json');
+                                            setTimeout(() => setCopiedFormat(null), 2000);
+                                        }}
+                                        style={{
+                                            position: 'absolute',
+                                            top: '10px',
+                                            right: '10px',
+                                            background: copiedFormat === 'json' ? '#10b981' : 'var(--m3-surface-variant)',
+                                            color: copiedFormat === 'json' ? 'white' : 'var(--m3-on-surface)',
+                                            border: 'none',
+                                            borderRadius: '8px',
+                                            padding: '8px',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            zIndex: 10,
+                                            boxShadow: 'var(--m3-elevation-1)'
+                                        }}
+                                        title="Copy JSON"
+                                    >
+                                        {copiedFormat === 'json' ? (
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        ) : (
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                        )}
+                                    </button>
+                                    <div style={{
+                                        background: '#f8fafc',
+                                        padding: '16px 16px 16px 0',
+                                        borderRadius: '8px',
+                                        border: '1px solid #e2e8f0',
+                                        overflowX: 'auto',
+                                        fontFamily: "'JetBrains Mono', monospace",
+                                        fontSize: '13px',
+                                        lineHeight: '1.5',
+                                        color: '#334155',
+                                        margin: 0
+                                    }}>
+                                        {(() => {
+                                            const rawData = sidePanelContent.originalData || sidePanelContent;
+                                            const jsonStr = JSON.stringify(rawData, null, 2) || '';
+                                            return jsonStr.split('\n').map((line, idx) => {
+                                                const highlightedLine = line
+                                                    .replace(/&/g, '&amp;')
+                                                    .replace(/</g, '&lt;')
+                                                    .replace(/>/g, '&gt;')
+                                                    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                                                        let color = '#d97706'; // number
+                                                        if (/^"/.test(match)) {
+                                                            if (/:$/.test(match)) {
+                                                                color = '#0891b2'; // key
+                                                            } else {
+                                                                color = '#16a34a'; // string
+                                                            }
+                                                        } else if (/true|false/.test(match)) {
+                                                            color = '#9333ea'; // boolean
+                                                        } else if (/null/.test(match)) {
+                                                            color = '#94a3b8'; // null
+                                                        }
+                                                        return `<span style="color: ${color}">${match}</span>`;
+                                                    });
+
+                                                return (
+                                                    <div key={idx} style={{ display: 'flex', whiteSpace: 'pre' }}>
+                                                        <span style={{ width: '40px', color: '#94a3b8', textAlign: 'right', marginRight: '16px', userSelect: 'none', flexShrink: 0 }}>
+                                                            {idx + 1}
+                                                        </span>
+                                                        <span dangerouslySetInnerHTML={{ __html: highlightedLine || ' ' }} />
+                                                    </div>
+                                                );
+                                            });
+                                        })()}
+                                    </div>
+                                </div>
                             ) : (
                                 // Default YAML view
-                                <InteractiveYaml
-                                    data={(() => {
-                                        const rawData = sidePanelContent.originalData || sidePanelContent;
-                                        if (sidePanelType === 'data-contract-yaml' && sidePanelAnchor) {
-                                            const table = rawData.schema?.find(t => (t.physicalName || t.name) === sidePanelAnchor);
-                                            // Show only the schema for that table
-                                            // We return it wrapped in the schema array to maintain some structure, or just the object
-                                            // Returning just the object is cleaner for "focus"
-                                            return table || rawData;
-                                        }
-                                        return rawData;
-                                    })()}
-                                    type={sidePanelType}
-                                    filterText={sidePanelFilter}
-                                />
+                                <div style={{ position: 'relative' }}>
+                                    <button
+                                        onClick={() => {
+                                            const rawData = sidePanelContent.originalData || sidePanelContent;
+                                            navigator.clipboard.writeText(YAML.stringify(rawData));
+                                            setCopiedFormat('yaml');
+                                            setTimeout(() => setCopiedFormat(null), 2000);
+                                        }}
+                                        style={{
+                                            position: 'absolute',
+                                            top: '10px',
+                                            right: '10px',
+                                            background: copiedFormat === 'yaml' ? '#10b981' : 'var(--m3-surface-variant)',
+                                            color: copiedFormat === 'yaml' ? 'white' : 'var(--m3-on-surface)',
+                                            border: 'none',
+                                            borderRadius: '8px',
+                                            padding: '8px',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            zIndex: 10,
+                                            boxShadow: 'var(--m3-elevation-1)'
+                                        }}
+                                        title="Copy YAML"
+                                    >
+                                        {copiedFormat === 'yaml' ? (
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        ) : (
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                        )}
+                                    </button>
+                                    <InteractiveYaml
+                                        data={(() => {
+                                            const rawData = sidePanelContent.originalData || sidePanelContent;
+                                            if (sidePanelType === 'data-contract-yaml' && sidePanelAnchor) {
+                                                const table = rawData.schema?.find(t => (t.physicalName || t.name) === sidePanelAnchor);
+                                                return table || rawData;
+                                            }
+                                            return rawData;
+                                        })()}
+                                        type={sidePanelType}
+                                        filterText={sidePanelFilter}
+                                    />
+                                </div>
                             )}
                         </div>
                     </>
