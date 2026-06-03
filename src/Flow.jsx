@@ -37,10 +37,17 @@ import RegistryModal from './RegistryModal';
 import ObservabilityDrilldown from './ObservabilityDrilldown';
 import ErrorBoundary from './ErrorBoundary';
 
+const HeaderNode = ({ data }) => (
+    <div style={{ color: '#6b7280', fontSize: '14px', fontWeight: '600', width: 250, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'flex-start', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        {data.label}
+    </div>
+);
+
 const nodeTypes = {
     selectorNode: DataProductNode,
     lineageNode: DataProductDetailNode,
     dataContractNode: DataContractNode,
+    headerNode: HeaderNode
 };
 
 const edgeTypes = {
@@ -515,7 +522,7 @@ function Flow() {
             const tierConfig = config.tiers[tierKey];
             const colNum = tierConfig.columnNumber !== undefined ? tierConfig.columnNumber : 1;
             if (columnY[colNum] === undefined) {
-                columnY[colNum] = 0;
+                columnY[colNum] = compactMode ? 80 : 0;
             }
         });
 
@@ -638,7 +645,45 @@ function Flow() {
                 };
             });
 
-        setNodes(initialNodes);
+        // Header Nodes Logic for Compact Mode
+        const headerNodes = [];
+        if (compactMode) {
+            const activeTiers = new Map();
+            dataMeshNodes
+                .filter(node => node.kind === 'DataProduct')
+                .forEach(node => {
+                    const tier = node.customProperties?.find(p => p.property === 'dataProductTier')?.value;
+                    const tierConfig = config.tiers?.[tier] || {};
+                    const colNum = tierConfig.columnNumber !== undefined ? tierConfig.columnNumber : 1;
+                    if (!activeTiers.has(colNum)) {
+                        activeTiers.set(colNum, tier || 'Unknown Tier');
+                    }
+                });
+
+            const COLUMN_SPACING = 450;
+            activeTiers.forEach((tierId, colNum) => {
+                const x = (colNum - 1) * COLUMN_SPACING;
+                
+                // Human readable: e.g. consumerAligned -> Consumer Aligned
+                const formattedTier = tierId
+                    .replace(/([A-Z])/g, ' $1')
+                    .replace(/^./, str => str.toUpperCase())
+                    .trim();
+
+                headerNodes.push({
+                    id: `header-col-${colNum}`,
+                    type: 'headerNode',
+                    position: { x: x, y: 0 }, // Align perfectly with column X coordinate
+                    data: { label: formattedTier },
+                    width: 250,
+                    height: 60,
+                    selectable: false,
+                    draggable: false
+                });
+            });
+        }
+
+        setNodes([...initialNodes, ...headerNodes]);
         setEdges(initialEdges);
 
     }, [dataMeshRegistry, setNodes, setEdges, hoveredEdgeId, observeMode, compactMode, activeDimension, metricsMap, drillNodeId, config, hideHealthy]);
@@ -1066,7 +1111,7 @@ function Flow() {
 
         // 3. Union of Primary + Neighbors
         const finalIds = new Set([...primaryIds, ...neighborIds]);
-        const filteredNodes = nodes.filter(n => finalIds.has(n.id));
+        const filteredNodes = nodes.filter(n => finalIds.has(n.id) && n.type !== 'headerNode');
 
         // 4. Dynamic Relayout for Filtered View
         // Sort nodes by tier (columnNumber) then by domain then by label to ensure consistent vertical order
@@ -1091,14 +1136,19 @@ function Flow() {
         const NODE_HEIGHT = compactMode ? 40 : 120;
         const VERTICAL_GAP = compactMode ? (NODE_HEIGHT / 2) : 40;
         const VERTICAL_STEP = NODE_HEIGHT + VERTICAL_GAP;
+        const activeTiers = new Map();
 
-        return sortedNodes.map(node => {
+        const layoutedNodes = sortedNodes.map(node => {
             const tier = node.data.originalData?.customProperties?.find(p => p.property === 'dataProductTier')?.value;
             const tierConfig = config.tiers?.[tier] || {};
             const columnNumber = tierConfig.columnNumber !== undefined ? tierConfig.columnNumber : 1;
 
+            if (compactMode && !activeTiers.has(columnNumber)) {
+                activeTiers.set(columnNumber, tier || 'Unknown Tier');
+            }
+
             const x = (columnNumber - 1) * COLUMN_SPACING;
-            const y = columnY[columnNumber] || 0;
+            const y = columnY[columnNumber] || (compactMode ? 80 : 0);
             columnY[columnNumber] = y + VERTICAL_STEP;
 
             return {
@@ -1107,10 +1157,34 @@ function Flow() {
             };
         });
 
-    }, [nodes, selectedDomains, globalFilterText, dataMeshRegistry, selection.id, config.tiers, compactMode]);
+        if (compactMode) {
+            activeTiers.forEach((tierId, colNum) => {
+                const x = (colNum - 1) * COLUMN_SPACING;
+                const formattedTier = tierId.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
+                layoutedNodes.push({
+                    id: `header-col-${colNum}`,
+                    type: 'headerNode',
+                    position: { x: x, y: 0 }, // Align perfectly with column X coordinate
+                    data: { label: formattedTier },
+                    width: 250,
+                    height: 60,
+                    selectable: false,
+                    draggable: false
+                });
+            });
+        }
+
+        return layoutedNodes;
+
+    }, [selection, nodes, dataMeshNodes, dataMeshRegistry, selectedDomains, globalFilterText, compactMode, config.tiers]);
 
 
     const visibleNodes = contractViewNodes || lineageViewNodes || meshFilterNodes || nodes;
+    
+    // DEBUG LOG
+    console.log("visibleNodes count:", visibleNodes.length, "contains header:", visibleNodes.some(n => n.id.startsWith('header-col-')));
+    console.log("HEADERS:", visibleNodes.filter(n => n.id.startsWith('header-col-')));
+    console.log("compactMode is:", compactMode);
 
 
     // Side Panel Resizing
