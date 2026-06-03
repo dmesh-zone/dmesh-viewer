@@ -1175,7 +1175,7 @@ function Flow() {
                 rfInstance.fitView({ duration: 800, padding: 0.2 });
             });
         }
-    }, [selection.id, rfInstance, isLoading, visibleNodes.length, selectedDomains, globalFilterText]);
+    }, [selection.id, rfInstance, isLoading, visibleNodes.length, selectedDomains, globalFilterText, compactMode]);
 
     const visibleEdges = React.useMemo(() => {
         // If Contract View, show relationship edges
