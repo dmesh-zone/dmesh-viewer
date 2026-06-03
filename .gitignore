@@ -30,3 +30,4 @@ sandbox/*
 
 # Project specific
 customConfig.yaml
+scratch/*

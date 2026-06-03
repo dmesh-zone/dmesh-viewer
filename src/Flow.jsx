@@ -190,6 +190,7 @@ function Flow() {
 
     // Observability State
     const [observeMode, setObserveMode] = React.useState(false);
+    const [compactMode, setCompactMode] = React.useState(false);
     const [activeDimension, setActiveDimension] = React.useState(null); // null = 'any'
     const [metricsMap, setMetricsMap] = React.useState(new Map());
     const [drillNodeId, setDrillNodeId] = React.useState(null);
@@ -523,8 +524,8 @@ function Flow() {
                 // columnNumber starts at 1, so subtract 1 for 0-based positioning
                 const COLUMN_SPACING = 450;
                 const NODE_WIDTH = 320; // Consistent width for all nodes
-                const NODE_HEIGHT = 120; // Fixed height for consistency
-                const VERTICAL_GAP = 40; // Space between nodes
+                const NODE_HEIGHT = compactMode ? 40 : 120; // Fixed height for consistency
+                const VERTICAL_GAP = compactMode ? (NODE_HEIGHT / 2) : 40; // Space between nodes
                 const VERTICAL_STEP = NODE_HEIGHT + VERTICAL_GAP;
 
                 const columnNumber = tierConfig.columnNumber !== undefined ? tierConfig.columnNumber : 1;
@@ -568,6 +569,7 @@ function Flow() {
                         originalData: node, // Pass full source data for YAML view
                         // Observability props
                         observeMode,
+                        compactMode,
                         activeDimension,
                         healthStatus,
                         pips,
@@ -616,7 +618,7 @@ function Flow() {
         setNodes(initialNodes);
         setEdges(initialEdges);
 
-    }, [dataMeshRegistry, setNodes, setEdges, hoveredEdgeId, observeMode, activeDimension, metricsMap, drillNodeId, config, hideHealthy]);
+    }, [dataMeshRegistry, setNodes, setEdges, hoveredEdgeId, observeMode, compactMode, activeDimension, metricsMap, drillNodeId, config, hideHealthy]);
 
 
     // Validation Logic
@@ -1063,8 +1065,8 @@ function Flow() {
 
         const columnY = {};
         const COLUMN_SPACING = 450;
-        const NODE_HEIGHT = 120;
-        const VERTICAL_GAP = 40;
+        const NODE_HEIGHT = compactMode ? 40 : 120;
+        const VERTICAL_GAP = compactMode ? (NODE_HEIGHT / 2) : 40;
         const VERTICAL_STEP = NODE_HEIGHT + VERTICAL_GAP;
 
         return sortedNodes.map(node => {
@@ -1082,7 +1084,7 @@ function Flow() {
             };
         });
 
-    }, [nodes, selectedDomains, globalFilterText, dataMeshRegistry, selection.id, config.tiers]);
+    }, [nodes, selectedDomains, globalFilterText, dataMeshRegistry, selection.id, config.tiers, compactMode]);
 
 
     const visibleNodes = contractViewNodes || lineageViewNodes || meshFilterNodes || nodes;
@@ -1588,7 +1590,29 @@ function Flow() {
                 <div style={{ display: 'flex', gap: '16px', pointerEvents: 'auto', alignItems: 'flex-start', flexShrink: 1, minWidth: 0 }}>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end', flexShrink: 1, minWidth: 0, maxWidth: '100%' }}>
-                        <button
+                        <div style={{ display: 'flex', gap: '16px' }}>
+                            <button
+                                onClick={() => setCompactMode(!compactMode)}
+                                style={{
+                                    padding: '8px 20px',
+                                    background: compactMode ? '#f1f5f9' : 'white',
+                                    color: '#1e293b',
+                                    border: '2px solid #e2e8f0',
+                                    borderRadius: '24px',
+                                    cursor: 'pointer',
+                                    fontWeight: '700',
+                                    fontSize: '13px',
+                                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    letterSpacing: '0.5px'
+                                }}
+                            >
+                                {compactMode ? 'EXPAND' : 'COMPACT'}
+                            </button>
+                            <button
                             onClick={() => {
                                 setObserveMode(!observeMode);
                                 if (observeMode) {
@@ -1624,6 +1648,7 @@ function Flow() {
                             }}></div>
                             {observeMode ? 'OBSERVING' : 'OBSERVE'}
                         </button>
+                        </div>
 
                         {observeMode && (
                             <div style={{

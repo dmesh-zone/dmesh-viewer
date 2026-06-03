@@ -8,9 +8,17 @@ Live demo: https://dmesh-zone.github.io/dmesh-viewer
 
 - **Interactive Visualization**: Browse Data Products, their relationships, and contracts
 - **Domain Filtering**: Filter by domain and search by name
-- **Data Contract View**: Explore schema details with primary keys and foreign key relationships
 - **Data Quality Rules**: View quality rules and validation criteria
 - **Configurable**: Customize icons, colors, and tiers via `config.yaml`
+
+## Views and Drilldowns
+- **DataMesh View**: Default layout displaying all Data Products, Data Contracts, and Data Usage Agreements across domains.
+- **Data Product Detail View**: Triggered by clicking the "Ports" (output ports) pill on a Data Product node. This view centers the selected Data Product and displays its direct lineage (upstream producers and downstream consumers).
+- **Data Contract View**: Triggered when navigating to a Data Contract, displaying its internal tables, columns, and foreign key relationships.
+- **Observe Mode**: Opt-in view overlaying health metrics (Pipeline, Consumption, Freshness, Quality) onto the graph nodes, updating node shading based on status (healthy, warning, critical).
+- **YAML Drilldown**: Side panel displaying raw ODCS/ODPS YAML definitions, schema validation results, and allowing line-number mapping for errors (triggered via `open-side-panel`).
+- **Observability Drilldown**: Contextual side panel opened by clicking a node in Observe Mode. Shows detailed "Metrics" and "Events" tabs for the selected observability dimension.
+- **Details Panel**: Informational side panel providing tabular data, component structure, schemas, and examples for a selected node.
 
 ## Configuration
 

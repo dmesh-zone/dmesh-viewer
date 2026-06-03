@@ -18,7 +18,7 @@ import React, { memo } from 'react';
 import { Handle, Position } from '@xyflow/react';
 
 export default memo(({ data, isConnectable }) => {
-    const { observeMode, healthStatus, pips, isSelected, activeDimension, availableDimensions } = data;
+    const { observeMode, compactMode, healthStatus, pips, isSelected, activeDimension } = data;
 
     const getHealthColor = (status) => {
         switch (status) {
@@ -42,6 +42,100 @@ export default memo(({ data, isConnectable }) => {
     const nodeBg = observeMode ? getHealthBg(healthStatus) : (data.backgroundColor || 'white');
     const nodeTextColor = observeMode ? '#f8fafc' : '#1f2937';
     const nodeSubtitleColor = observeMode ? '#94a3b8' : '#6b7280';
+
+    if (compactMode) {
+        return (
+            <div 
+                className="nodrag health-transition"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    const event = new CustomEvent('navigate-to-node', {
+                        detail: { id: data.id, kind: 'DataProduct' }
+                    });
+                    window.dispatchEvent(event);
+                }}
+                onContextMenu={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const content = data.originalData || data;
+                    const event = new CustomEvent('open-side-panel', {
+                        detail: {
+                            id: data.id,
+                            type: 'data-product-yaml',
+                            content: content
+                        }
+                    });
+                    window.dispatchEvent(event);
+                }}
+                onDoubleClick={(e) => {
+                    e.stopPropagation();
+                    const content = data.originalData || data;
+                    const event = new CustomEvent('open-side-panel', {
+                        detail: {
+                            id: data.id,
+                            type: 'data-product-yaml',
+                            content: content
+                        }
+                    });
+                    window.dispatchEvent(event);
+                }}
+                style={{
+                    border: `2px solid ${nodeBorderColor}`,
+                    borderRadius: '8px',
+                    background: nodeBg,
+                    boxShadow: observeMode 
+                        ? `0 0 10px ${nodeBorderColor}33, var(--m3-elevation-1)` 
+                        : (isSelected ? '0 0 0 3px rgba(59, 130, 246, 0.4), var(--m3-elevation-1)' : 'var(--m3-elevation-1)'),
+                    padding: '8px 12px',
+                    fontFamily: 'Inter, sans-serif',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    cursor: 'pointer',
+                    minWidth: '160px',
+                    maxWidth: '220px'
+                }}
+            >
+                <Handle
+                    type="target"
+                    position={Position.Left}
+                    isConnectable={isConnectable}
+                    style={{ background: nodeBorderColor, border: '2px solid white', width: '8px', height: '8px' }}
+                />
+                
+                <div style={{
+                    width: '24px',
+                    height: '24px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: observeMode ? 'rgba(255,255,255,0.05)' : 'transparent',
+                    borderRadius: '4px'
+                }}>
+                    <img src={data.icon} alt="icon" style={{ width: '20px', height: '20px' }} />
+                </div>
+
+                <div style={{
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    color: nodeTextColor,
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    flex: 1
+                }}>
+                    {data.label}
+                </div>
+
+                <Handle
+                    type="source"
+                    position={Position.Right}
+                    isConnectable={isConnectable}
+                    style={{ background: nodeBorderColor, border: '2px solid white', width: '8px', height: '8px' }}
+                />
+            </div>
+        );
+    }
 
     return (
         <div 
