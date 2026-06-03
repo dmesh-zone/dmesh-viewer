@@ -16,7 +16,7 @@
 
 import React from 'react';
 
-export default function DataProductVisual({ data }) {
+export default function DataProductVisual({ data, registry = [] }) {
     // data is the full YAML object for the Data Product
 
     const [copied, setCopied] = React.useState(false);
@@ -155,7 +155,7 @@ export default function DataProductVisual({ data }) {
                         Extended Properties
                     </h3>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '16px' }}>
-                        {properties.map((prop, idx) => (
+                        {properties.filter(p => !p.property.toLowerCase().includes('datausageagreement')).map((prop, idx) => (
                             <div key={idx} style={{
                                 background: 'transparent',
                                 padding: '16px',
@@ -203,6 +203,84 @@ export default function DataProductVisual({ data }) {
                                 </div>
                             </div>
                         ))}
+                    </div>
+                </div>
+            )}
+
+            {/* Data Usage Agreements Section */}
+            {properties.some(p => p.property.toLowerCase().includes('datausageagreement')) && (
+                <div style={{ marginBottom: '32px' }}>
+                    <h3 style={{
+                        fontSize: '14px',
+                        fontWeight: '700',
+                        color: 'var(--m3-primary)',
+                        marginBottom: '16px',
+                        textTransform: 'none',
+                        letterSpacing: '1px'
+                    }}>
+                        Data Usage Agreements
+                    </h3>
+                    <div style={{
+                        border: '1px solid var(--m3-outline-variant)',
+                        borderRadius: '16px',
+                        overflowX: 'auto',
+                        background: 'var(--m3-surface)'
+                    }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px', textAlign: 'left' }}>
+                            <thead style={{ background: 'var(--m3-surface-variant)', borderBottom: '1px solid var(--m3-outline-variant)' }}>
+                                <tr>
+                                    <th style={{ padding: '12px 20px', fontWeight: '600', color: 'var(--m3-on-surface-variant)' }}>Domain</th>
+                                    <th style={{ padding: '12px 20px', fontWeight: '600', color: 'var(--m3-on-surface-variant)' }}>Tier</th>
+                                    <th style={{ padding: '12px 20px', fontWeight: '600', color: 'var(--m3-on-surface-variant)' }}>Name</th>
+                                    <th style={{ padding: '12px 20px', fontWeight: '600', color: 'var(--m3-on-surface-variant)' }}>Consumer ID</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {properties
+                                    .filter(p => p.property.toLowerCase().includes('datausageagreement'))
+                                    .flatMap(p => Array.isArray(p.value) ? p.value : [p.value])
+                                    .map((agreement, idx, arr) => {
+                                        const rawConsumerId = agreement?.consumer?.dataProductId || agreement?.consumer?.id || agreement?.id || agreement?.consumerId || agreement?.consumerDataProductId || '-';
+                                        
+                                        let consumerDomain = '-';
+                                        let consumerTier = '-';
+                                        let consumerName = agreement?.consumer?.name || agreement?.name || agreement?.consumerName || agreement?.consumerDataProductName || '-';
+                                        const consumerId = rawConsumerId;
+                                        
+                                        if (rawConsumerId !== '-' && registry) {
+                                            const consumerNode = registry.find(n => n.id === rawConsumerId);
+                                            if (consumerNode) {
+                                                consumerDomain = consumerNode.domain || '-';
+                                                
+                                                const consumerProps = consumerNode.customProperties || [];
+                                                const bpName = consumerProps.find(p => p.property === 'dataProductBusinessName')?.value;
+                                                if (bpName) {
+                                                    consumerName = bpName;
+                                                } else if (consumerNode.name) {
+                                                    consumerName = consumerNode.name;
+                                                }
+                                                
+                                                const tierProp = consumerProps.find(p => p.property === 'dataProductTier')?.value;
+                                                if (tierProp) {
+                                                    consumerTier = tierProp;
+                                                }
+                                            }
+                                        }
+
+                                        return (
+                                            <tr key={idx} style={{
+                                                borderBottom: idx < arr.length - 1 ? '1px solid var(--m3-outline-variant)' : 'none',
+                                                transition: 'background 0.2s ease'
+                                            }}>
+                                                <td style={{ padding: '14px 20px', color: 'var(--m3-on-surface-variant)' }}>{String(consumerDomain)}</td>
+                                                <td style={{ padding: '14px 20px', color: 'var(--m3-on-surface-variant)', textTransform: 'capitalize' }}>{String(consumerTier)}</td>
+                                                <td style={{ padding: '14px 20px', color: 'var(--m3-on-surface)', fontWeight: '500' }}>{String(consumerName)}</td>
+                                                <td style={{ padding: '14px 20px', color: 'var(--m3-on-surface-variant)', fontFamily: 'monospace', fontSize: '12px' }}>{String(consumerId).split(':').pop()}</td>
+                                            </tr>
+                                        );
+                                    })}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             )}

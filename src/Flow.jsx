@@ -2268,7 +2268,7 @@ function Flow() {
                                 />
                             ) : sidePanelTab === 'visual' && sidePanelType === 'data-product-yaml' ? (
                                 <ErrorBoundary>
-                                    <DataProductVisual data={sidePanelContent.originalData || sidePanelContent} />
+                                    <DataProductVisual data={sidePanelContent.originalData || sidePanelContent} registry={dataMeshRegistry} />
                                 </ErrorBoundary>
                             ) : sidePanelTab === 'visual' && sidePanelType === 'data-contract-yaml' ? (
                                 <DataContractVisual
