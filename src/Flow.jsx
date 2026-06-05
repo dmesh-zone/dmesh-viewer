@@ -173,6 +173,7 @@ function Flow() {
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [selection, setSelection] = React.useState({ id: null, kind: null });
     const [hoveredEdgeId, setHoveredEdgeId] = React.useState(null);
+    const [hoveredNodeId, setHoveredNodeId] = React.useState(null);
     const [rfInstance, setRfInstance] = React.useState(null);
 
     // Filter State
@@ -627,6 +628,25 @@ function Flow() {
                 };
 
                 const edgeColor = getEdgeColor(sourceHealth, targetHealth);
+                const isNodeHovered = hoveredNodeId === edge.provider.dataProductId || hoveredNodeId === edge.consumer.dataProductId;
+                const isFaint = hoveredNodeId && !isNodeHovered;
+
+                let strokeColor;
+                let markerEndColor;
+                
+                if (isNodeHovered) {
+                    strokeColor = '#22c55e';
+                    markerEndColor = '#22c55e';
+                } else if (hoveredEdgeId === edge.id) {
+                    strokeColor = observeMode ? edgeColor : '#2563eb';
+                    markerEndColor = observeMode ? edgeColor : '#2563eb';
+                } else if (isFaint) {
+                    strokeColor = '#9ca3af22';
+                    markerEndColor = '#9ca3af22';
+                } else {
+                    strokeColor = observeMode ? edgeColor : '#9ca3af';
+                    markerEndColor = observeMode ? edgeColor : undefined;
+                }
 
                 return {
                     id: edge.id,
@@ -634,13 +654,14 @@ function Flow() {
                     target: edge.consumer.dataProductId,
                     animated: observeMode || true,
                     type: 'default',
-                    markerEnd: { type: 'arrowclosed', color: observeMode ? edgeColor : undefined },
+                    markerEnd: { type: 'arrowclosed', color: markerEndColor },
                     interactionWidth: 40,
                     style: {
-                        strokeWidth: hoveredEdgeId === edge.id ? 3 : 2,
-                        stroke: hoveredEdgeId === edge.id ? (observeMode ? edgeColor : '#2563eb') : (observeMode ? edgeColor : '#9ca3af'),
-                        zIndex: hoveredEdgeId === edge.id ? 10 : 0,
-                        transition: 'stroke 0.3s ease'
+                        strokeWidth: (hoveredEdgeId === edge.id || isNodeHovered) ? 3 : 2,
+                        stroke: strokeColor,
+                        zIndex: (hoveredEdgeId === edge.id || isNodeHovered) ? 10 : 0,
+                        opacity: isFaint ? 0.15 : 1,
+                        transition: 'stroke 0.3s ease, opacity 0.3s ease'
                     }
                 };
             });
@@ -686,7 +707,7 @@ function Flow() {
         setNodes([...initialNodes, ...headerNodes]);
         setEdges(initialEdges);
 
-    }, [dataMeshRegistry, setNodes, setEdges, hoveredEdgeId, observeMode, compactMode, activeDimension, metricsMap, drillNodeId, config, hideHealthy]);
+    }, [dataMeshRegistry, setNodes, setEdges, hoveredEdgeId, hoveredNodeId, observeMode, compactMode, activeDimension, metricsMap, drillNodeId, config, hideHealthy]);
 
 
     // Validation Logic
@@ -2029,6 +2050,8 @@ function Flow() {
                 onEdgeClick={onEdgeClick}
                 onEdgeMouseEnter={onEdgeMouseEnter}
                 onEdgeMouseLeave={onEdgeMouseLeave}
+                onNodeMouseEnter={(_, node) => setHoveredNodeId(node.id)}
+                onNodeMouseLeave={() => setHoveredNodeId(null)}
                 onNodeDoubleClick={onNodeDoubleClick}
                 onInit={setRfInstance}
                 minZoom={0.1}
