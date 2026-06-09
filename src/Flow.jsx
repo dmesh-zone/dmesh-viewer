@@ -151,6 +151,7 @@ function Flow() {
                     tiers: data.tiers || {},
                     domainPalette: data.domainPalette || ['#fee2e2', '#f3e8ff', '#fef3c7', '#ffedd5', '#e0e7ff', '#dbeafe', '#dcfce7'],
                     observability: data.observability || {},
+                    connectorColors: data.connectorColors || {},
                     defaultDataMeshOperationalDataUrl: normalizePath(data.defaultDataMeshOperationalDataUrl),
                     registries: (data.sampleDataMeshOperationalDataUrls || []).map(reg => ({
                         original: reg,
@@ -620,7 +621,7 @@ function Flow() {
                 const targetHealth = deriveStatus(edge.consumer.dataProductId, activeDimension);
 
                 const getEdgeColor = (h1, h2) => {
-                    if (!observeMode) return '#9ca3af';
+                    if (!observeMode) return config.connectorColors?.default || '#9ca3af';
                     if (h1 === 'critical' || h2 === 'critical') return '#EF444488';
                     if (h1 === 'degraded' || h2 === 'degraded') return '#F59E0B88';
                     if (h1 === 'healthy' && h2 === 'healthy') return '#22C55E88';
@@ -635,17 +636,17 @@ function Flow() {
                 let markerEndColor;
                 
                 if (isNodeHovered) {
-                    strokeColor = '#22c55e';
-                    markerEndColor = '#22c55e';
+                    strokeColor = config.connectorColors?.hoveredNode || '#22c55e';
+                    markerEndColor = strokeColor;
                 } else if (hoveredEdgeId === edge.id) {
-                    strokeColor = observeMode ? edgeColor : '#2563eb';
-                    markerEndColor = observeMode ? edgeColor : '#2563eb';
+                    strokeColor = observeMode ? edgeColor : (config.connectorColors?.hoveredEdge || '#2563eb');
+                    markerEndColor = strokeColor;
                 } else if (isFaint) {
-                    strokeColor = '#9ca3af22';
-                    markerEndColor = '#9ca3af22';
+                    strokeColor = config.connectorColors?.faint || '#9ca3af22';
+                    markerEndColor = strokeColor;
                 } else {
-                    strokeColor = observeMode ? edgeColor : '#9ca3af';
-                    markerEndColor = observeMode ? edgeColor : undefined;
+                    strokeColor = observeMode ? edgeColor : (config.connectorColors?.default || '#9ca3af');
+                    markerEndColor = strokeColor;
                 }
 
                 return {
@@ -707,7 +708,50 @@ function Flow() {
         setNodes([...initialNodes, ...headerNodes]);
         setEdges(initialEdges);
 
-    }, [dataMeshRegistry, setNodes, setEdges, hoveredEdgeId, hoveredNodeId, observeMode, compactMode, activeDimension, metricsMap, drillNodeId, config, hideHealthy]);
+    }, [dataMeshRegistry, setNodes, setEdges, observeMode, compactMode, activeDimension, metricsMap, drillNodeId, config, hideHealthy]);
+
+    // Handle hover states separately to avoid recreating nodes
+    React.useEffect(() => {
+        setEdges(edges => edges.map(edge => {
+            const sourceHealth = deriveStatus(edge.source, activeDimension);
+            const targetHealth = deriveStatus(edge.target, activeDimension);
+
+            const getEdgeColor = (h1, h2) => {
+                if (!observeMode) return config.connectorColors?.default || '#9ca3af';
+                if (h1 === 'critical' || h2 === 'critical') return '#EF444488';
+                if (h1 === 'degraded' || h2 === 'degraded') return '#F59E0B88';
+                if (h1 === 'healthy' && h2 === 'healthy') return '#22C55E88';
+                return '#9ca3af66';
+            };
+
+            const edgeColor = getEdgeColor(sourceHealth, targetHealth);
+            const isNodeHovered = hoveredNodeId === edge.source || hoveredNodeId === edge.target;
+            const isFaint = hoveredNodeId && !isNodeHovered;
+
+            let strokeColor;
+            let markerEndColor;
+            
+            if (isNodeHovered) {
+                strokeColor = config.connectorColors?.hoveredNode || '#22c55e';
+                markerEndColor = strokeColor;
+            } else if (hoveredEdgeId === edge.id) {
+                strokeColor = observeMode ? edgeColor : (config.connectorColors?.hoveredEdge || '#2563eb');
+                markerEndColor = strokeColor;
+            } else if (isFaint) {
+                strokeColor = config.connectorColors?.faint || '#9ca3af22';
+                markerEndColor = strokeColor;
+            } else {
+                strokeColor = edgeColor;
+                markerEndColor = edgeColor;
+            }
+
+            return {
+                ...edge,
+                style: { ...edge.style, stroke: strokeColor, strokeWidth: isNodeHovered ? 2 : 1 },
+                markerEnd: { ...edge.markerEnd, color: markerEndColor }
+            };
+        }));
+    }, [hoveredNodeId, hoveredEdgeId, observeMode, activeDimension, setEdges, deriveStatus]);
 
 
     // Validation Logic
@@ -1202,12 +1246,6 @@ function Flow() {
 
     const visibleNodes = contractViewNodes || lineageViewNodes || meshFilterNodes || nodes;
     
-    // DEBUG LOG
-    console.log("visibleNodes count:", visibleNodes.length, "contains header:", visibleNodes.some(n => n.id.startsWith('header-col-')));
-    console.log("HEADERS:", visibleNodes.filter(n => n.id.startsWith('header-col-')));
-    console.log("compactMode is:", compactMode);
-
-
     // Side Panel Resizing
     const startResizing = React.useCallback((mouseDownEvent) => {
         mouseDownEvent.preventDefault();
@@ -1274,7 +1312,6 @@ function Flow() {
         };
         const handleNavigateToNode = (e) => {
             const { id, kind } = e.detail;
-            console.log('Navigating to:', kind, id);
             setSelection({ id, kind });
         };
 

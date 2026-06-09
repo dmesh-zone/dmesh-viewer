@@ -144,7 +144,6 @@ export default memo(({ data, isConnectable }) => {
                 border: `2px solid ${nodeBorderColor}`,
                 borderRadius: '8px',
                 background: nodeBg,
-                overflow: 'hidden',
                 boxShadow: observeMode 
                     ? `0 0 20px ${nodeBorderColor}33, var(--m3-elevation-2)` 
                     : (isSelected ? '0 0 0 3px rgba(59, 130, 246, 0.4), var(--m3-elevation-2)' : 'var(--m3-elevation-1)'),
@@ -160,6 +159,8 @@ export default memo(({ data, isConnectable }) => {
                 background: observeMode ? 'rgba(255, 255, 255, 0.05)' : (data.bannerColor || '#BFDBFE'),
                 padding: '8px 12px',
                 borderBottom: `1px solid ${observeMode ? 'rgba(255, 255, 255, 0.1)' : '#e5e7eb'}`,
+                borderTopLeftRadius: '6px',
+                borderTopRightRadius: '6px',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center'

@@ -59,6 +59,12 @@ domainPalette:
   - "#dbeafe"
   - "#dcfce7"
 
+connectorColors:
+  default: "#9ca3af" # Standard color of edges when nothing is hovered
+  hoveredNode: "#22c55e" # Color of edges connected to a node when hovering over that node
+  hoveredEdge: "#22c55e" # Color of a specific edge when hovering directly over it
+  faint: "#ffffff" # Color of unconnected edges when hovering a node (typically used to fade them out)
+
 tiers:
   dataSource:
     label: DATA SOURCE
@@ -100,7 +106,7 @@ observability:
       aggregation:
         type: count
         criteria:
-          dataProductTier: [ "source", "dataSource" ]
+          dataProductTier: ["source", "dataSource"]
     dataProducts:
       name: "Data Products"
       visible: true
@@ -108,7 +114,7 @@ observability:
       aggregation:
         type: count
         criteria:
-          dataProductTier: [ "sourceAligned", "curated", "consumerAligned" ]
+          dataProductTier: ["sourceAligned", "curated", "consumerAligned"]
     outputPorts:
       name: "Output ports"
       visible: true
@@ -124,7 +130,7 @@ observability:
         type: sumMetric
         metric: "dpPipelineRecordsProcessed"
         criteria:
-          dataProductTier: [ "sourceAligned" ]
+          dataProductTier: ["sourceAligned"]
     recordsProcessed:
       name: "Records Processed"
       visible: true
@@ -133,7 +139,7 @@ observability:
         type: sumMetric
         metric: "dpPipelineRecordsProcessed"
         criteria:
-          dataProductTier: [ "curated", "consumerAligned" ]
+          dataProductTier: ["curated", "consumerAligned"]
     consumingApplication:
       name: "Consuming applications"
       visible: true
@@ -141,7 +147,7 @@ observability:
       aggregation:
         type: count
         criteria:
-          dataProductTier: [ "source", "application" ]
+          dataProductTier: ["source", "application"]
   dimensions:
     Pipeline:
       icon: "▸"
