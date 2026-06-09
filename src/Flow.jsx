@@ -1749,7 +1749,7 @@ function Flow() {
                             <button
                                 onClick={() => setCompactMode(!compactMode)}
                                 style={{
-                                    padding: '8px 20px',
+                                    padding: isMobile ? '8px' : '8px 20px',
                                     background: compactMode ? '#f1f5f9' : 'white',
                                     color: '#1e293b',
                                     border: '2px solid #e2e8f0',
@@ -1761,11 +1761,33 @@ function Flow() {
                                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                     display: 'flex',
                                     alignItems: 'center',
+                                    justifyContent: 'center',
                                     gap: '8px',
-                                    letterSpacing: '0.5px'
+                                    letterSpacing: '0.5px',
+                                    width: isMobile ? '36px' : 'auto',
+                                    height: '36px'
                                 }}
+                                title={compactMode ? 'EXPAND' : 'COMPACT'}
                             >
-                                {compactMode ? 'EXPAND' : 'COMPACT'}
+                                {isMobile ? (
+                                    compactMode ? (
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <polyline points="15 3 21 3 21 9"></polyline>
+                                            <polyline points="9 21 3 21 3 15"></polyline>
+                                            <line x1="21" y1="3" x2="14" y2="10"></line>
+                                            <line x1="3" y1="21" x2="10" y2="14"></line>
+                                        </svg>
+                                    ) : (
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <polyline points="4 14 10 14 10 20"></polyline>
+                                            <polyline points="20 10 14 10 14 4"></polyline>
+                                            <line x1="14" y1="10" x2="21" y2="3"></line>
+                                            <line x1="3" y1="21" x2="10" y2="14"></line>
+                                        </svg>
+                                    )
+                                ) : (
+                                    compactMode ? 'EXPAND' : 'COMPACT'
+                                )}
                             </button>
                             <button
                             onClick={() => {
@@ -1777,7 +1799,7 @@ function Flow() {
                                 }
                             }}
                             style={{
-                                padding: '8px 20px',
+                                padding: isMobile ? '8px' : '8px 20px',
                                 background: observeMode ? '#1e293b' : 'white',
                                 color: observeMode ? '#f8fafc' : '#1e293b',
                                 border: `2px solid ${observeMode ? '#3b82f6' : '#e2e8f0'}`,
@@ -1789,19 +1811,32 @@ function Flow() {
                                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                 display: 'flex',
                                 alignItems: 'center',
+                                justifyContent: 'center',
                                 gap: '8px',
-                                letterSpacing: '0.5px'
+                                letterSpacing: '0.5px',
+                                width: isMobile ? '36px' : 'auto',
+                                height: '36px'
                             }}
+                            title={observeMode ? 'OBSERVING' : 'OBSERVE'}
                         >
-                            <div style={{
-                                width: '8px',
-                                height: '8px',
-                                borderRadius: '50%',
-                                background: observeMode ? '#3b82f6' : '#94a3b8',
-                                boxShadow: observeMode ? '0 0 10px #3b82f6' : 'none',
-                                animation: observeMode ? 'pulse 2s infinite' : 'none'
-                            }}></div>
-                            {observeMode ? 'OBSERVING' : 'OBSERVE'}
+                            {!isMobile && (
+                                <div style={{
+                                    width: '8px',
+                                    height: '8px',
+                                    borderRadius: '50%',
+                                    background: observeMode ? '#3b82f6' : '#94a3b8',
+                                    boxShadow: observeMode ? '0 0 10px #3b82f6' : 'none',
+                                    animation: observeMode ? 'pulse 2s infinite' : 'none'
+                                }}></div>
+                            )}
+                            {isMobile ? (
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            ) : (
+                                observeMode ? 'OBSERVING' : 'OBSERVE'
+                            )}
                         </button>
                         </div>
 
