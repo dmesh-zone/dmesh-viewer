@@ -59,6 +59,11 @@ domainPalette:
   - "#dbeafe"
   - "#dcfce7"
 
+domainLabelColors:
+  background: "#f3f4f6"
+  text: "#6b7280"
+  border: "#e5e7eb"
+
 connectorColors:
   default: "#9ca3af" # Standard color of edges when nothing is hovered
   hoveredNode: "#22c55e" # Color of edges connected to a node when hovering over that node

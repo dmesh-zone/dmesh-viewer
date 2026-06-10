@@ -150,6 +150,7 @@ function Flow() {
                     iconMap: data.iconMap || {},
                     tiers: data.tiers || {},
                     domainPalette: data.domainPalette || ['#fee2e2', '#f3e8ff', '#fef3c7', '#ffedd5', '#e0e7ff', '#dbeafe', '#dcfce7'],
+                    domainLabelColors: data.domainLabelColors || {},
                     observability: data.observability || {},
                     connectorColors: data.connectorColors || {},
                     defaultDataMeshOperationalDataUrl: normalizePath(data.defaultDataMeshOperationalDataUrl),
@@ -599,6 +600,7 @@ function Flow() {
                         hasOutputPorts: node.outputPorts && node.outputPorts.length > 0,
                         outputPortCount: node.outputPorts ? node.outputPorts.length : 0,
                         originalData: node, // Pass full source data for YAML view
+                        domainLabelColors: config.domainLabelColors,
                         // Observability props
                         observeMode,
                         compactMode,

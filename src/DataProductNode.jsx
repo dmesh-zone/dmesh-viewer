@@ -92,8 +92,7 @@ export default memo(({ data, isConnectable }) => {
                     alignItems: 'center',
                     gap: '8px',
                     cursor: 'pointer',
-                    minWidth: '160px',
-                    maxWidth: '220px'
+                    width: '320px'
                 }}
             >
                 <Handle
@@ -116,15 +115,39 @@ export default memo(({ data, isConnectable }) => {
                 </div>
 
                 <div style={{
-                    fontSize: '13px',
-                    fontWeight: '600',
-                    color: nodeTextColor,
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    flex: 1
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    flex: 1,
+                    minWidth: 0,
+                    overflow: 'hidden'
                 }}>
-                    {data.label}
+                    <div style={{
+                        fontSize: '13px',
+                        fontWeight: '600',
+                        color: nodeTextColor,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        flexShrink: 1
+                    }}>
+                        {data.label}
+                    </div>
+                    {data.subtitle && (
+                        <div style={{
+                            fontSize: '10px',
+                            fontWeight: '500',
+                            color: data.domainLabelColors?.text || nodeSubtitleColor,
+                            background: observeMode ? 'rgba(255,255,255,0.1)' : (data.domainLabelColors?.background || '#f3f4f6'),
+                            padding: '2px 6px',
+                            borderRadius: '12px',
+                            whiteSpace: 'nowrap',
+                            flexShrink: 0,
+                            border: `1px solid ${observeMode ? 'rgba(255,255,255,0.2)' : (data.domainLabelColors?.border || '#e5e7eb')}`
+                        }}>
+                            {data.subtitle}
+                        </div>
+                    )}
                 </div>
 
                 <Handle
