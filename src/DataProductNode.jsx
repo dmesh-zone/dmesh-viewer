@@ -122,15 +122,18 @@ export default memo(({ data, isConnectable }) => {
                     minWidth: 0,
                     overflow: 'hidden'
                 }}>
-                    <div style={{
-                        fontSize: '13px',
-                        fontWeight: '600',
-                        color: nodeTextColor,
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        flexShrink: 1
-                    }}>
+                    <div 
+                        title={data.label}
+                        style={{
+                            fontSize: '13px',
+                            fontWeight: '600',
+                            color: nodeTextColor,
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            flexShrink: 1
+                        }}
+                    >
                         {data.label}
                     </div>
                     {data.subtitle && (
