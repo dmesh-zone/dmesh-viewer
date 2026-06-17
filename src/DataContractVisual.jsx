@@ -80,7 +80,7 @@ export default function DataContractVisual({ data, anchor, filterByAnchor = fals
     };
 
     return (
-        <div ref={containerRef} style={{ padding: '24px', fontFamily: 'Inter, sans-serif', color: 'var(--m3-on-surface)' }}>
+        <div ref={containerRef} style={{ padding: '24px', fontFamily: 'var(--font-family, inherit)', color: 'var(--m3-on-surface)' }}>
             {/* Header Section */}
             <div style={{ marginBottom: '32px' }}>
                 {data.name && (

@@ -27,7 +27,7 @@ export default memo(({ data, isConnectable }) => {
             width: 'auto',
             minWidth: '280px',
             maxWidth: '500px',
-            fontFamily: 'Inter, sans-serif'
+            fontFamily: 'var(--font-family, inherit)'
         }}>
             <div style={{
                 background: data.bannerColor || '#BFDBFE',
@@ -141,7 +141,7 @@ export default memo(({ data, isConnectable }) => {
                                             <img src={port.icon} alt="tech" style={{ width: '20px', height: '20px', marginRight: '8px' }} />
                                         )}
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
-                                            <span style={{ fontSize: '13px', fontWeight: '500', color: '#374151', fontFamily: 'Inter, sans-serif', marginRight: '8px' }}>
+                                            <span style={{ fontSize: '13px', fontWeight: '500', color: '#374151', fontFamily: 'var(--font-family, inherit)', marginRight: '8px' }}>
                                                 {port.name}
                                             </span>
                                             {port.version && (

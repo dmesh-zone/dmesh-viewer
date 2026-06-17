@@ -153,6 +153,7 @@ function Flow() {
                     domainLabelColors: data.domainLabelColors || {},
                     observability: data.observability || {},
                     connectorColors: data.connectorColors || {},
+                    theme: data.theme || {},
                     defaultDataMeshOperationalDataUrl: normalizePath(data.defaultDataMeshOperationalDataUrl),
                     registries: (data.sampleDataMeshOperationalDataUrls || []).map(reg => ({
                         original: reg,
@@ -161,6 +162,12 @@ function Flow() {
                 };
                 setConfig(loadedConfig);
                 setConfigError(null);
+                
+                // Apply theme customisations
+                if (loadedConfig.theme.fontFamily) {
+                    document.documentElement.style.setProperty('--font-family', loadedConfig.theme.fontFamily);
+                }
+
                 // Set initial registry URL from config
                 setRegistryUrl(loadedConfig.defaultDataMeshOperationalDataUrl);
             })

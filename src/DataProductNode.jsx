@@ -87,7 +87,7 @@ export default memo(({ data, isConnectable }) => {
                         ? `0 0 10px ${nodeBorderColor}33, var(--m3-elevation-1)` 
                         : (isSelected ? '0 0 0 3px rgba(59, 130, 246, 0.4), var(--m3-elevation-1)' : 'var(--m3-elevation-1)'),
                     padding: '8px 12px',
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: 'var(--font-family, inherit)',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '8px',
@@ -175,7 +175,7 @@ export default memo(({ data, isConnectable }) => {
                     : (isSelected ? '0 0 0 3px rgba(59, 130, 246, 0.4), var(--m3-elevation-2)' : 'var(--m3-elevation-1)'),
                 width: '320px',
                 height: '120px',
-                fontFamily: 'Inter, sans-serif',
+                fontFamily: 'var(--font-family, inherit)',
                 position: 'relative',
                 display: 'flex',
                 flexDirection: 'column'

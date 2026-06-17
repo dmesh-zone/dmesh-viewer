@@ -273,7 +273,7 @@ const QualityTable = ({ schema }) => {
                 borderCollapse: 'separate',
                 borderSpacing: 0,
                 fontSize: '12px',
-                fontFamily: 'Inter, sans-serif',
+                fontFamily: 'var(--font-family, inherit)',
                 minWidth: '100%' // Ensure table takes full width
             }}>
                 <thead style={{ position: 'sticky', top: 0, zIndex: 20, background: '#f8fafc' }}>
