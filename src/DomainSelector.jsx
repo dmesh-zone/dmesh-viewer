@@ -16,7 +16,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 
-const DomainSelector = ({ domains, selectedDomains, onChange }) => {
+const DomainSelector = ({ domains, selectedDomains, onChange, formatDomain = (d) => d }) => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef(null);
 
@@ -53,18 +53,15 @@ const DomainSelector = ({ domains, selectedDomains, onChange }) => {
         <div ref={containerRef} style={{ position: 'relative' }}>
             {/* Trigger Button - Styled to match Flow.jsx inputs */}
             <div
+                className="input-container-style"
                 onClick={() => setIsOpen(!isOpen)}
                 style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: '8px',
-                    background: 'white',
                     padding: '6px 10px',
-                    borderRadius: '6px',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                     cursor: 'pointer',
                     minWidth: '150px',
-                    border: '1px solid white', // Match potential input border feel
                     userSelect: 'none'
                 }}
             >
@@ -113,20 +110,22 @@ const DomainSelector = ({ domains, selectedDomains, onChange }) => {
                                     onChange={() => toggleDomain(domain)}
                                     style={{ cursor: 'pointer' }}
                                 />
-                                {domain}
+                                {formatDomain(domain)}
                             </label>
                         ))}
                     </div>
                     <div style={{ display: 'flex', gap: '5px', marginTop: '8px', paddingTop: '8px', borderTop: '1px solid #f1f5f9' }}>
                         <button
+                            className="btn btn-secondary"
                             onClick={() => onChange(domains)}
-                            style={{ flex: 1, fontSize: '11px', padding: '4px 8px', border: '1px solid #e2e8f0', borderRadius: '4px', background: '#f8fafc', cursor: 'pointer', color: '#475569' }}
+                            style={{ flex: 1, fontSize: '11px', padding: '4px 8px' }}
                         >
                             Select All
                         </button>
                         <button
+                            className="btn btn-secondary"
                             onClick={() => onChange([])}
-                            style={{ flex: 1, fontSize: '11px', padding: '4px 8px', border: '1px solid #e2e8f0', borderRadius: '4px', background: '#f8fafc', cursor: 'pointer', color: '#475569' }}
+                            style={{ flex: 1, fontSize: '11px', padding: '4px 8px' }}
                         >
                             Clear
                         </button>

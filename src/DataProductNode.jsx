@@ -49,10 +49,22 @@ export default memo(({ data, isConnectable }) => {
                 className="nodrag health-transition"
                 onClick={(e) => {
                     e.stopPropagation();
-                    const event = new CustomEvent('navigate-to-node', {
-                        detail: { id: data.id, kind: 'DataProduct' }
-                    });
-                    window.dispatchEvent(event);
+                    if (data.observeMode && data.metrics) {
+                        const event = new CustomEvent('open-side-panel', {
+                            detail: {
+                                id: data.id,
+                                type: 'observability',
+                                content: data.metrics,
+                                width: 'auto'
+                            }
+                        });
+                        window.dispatchEvent(event);
+                    } else {
+                        const event = new CustomEvent('navigate-to-node', {
+                            detail: { id: data.id, kind: 'DataProduct' }
+                        });
+                        window.dispatchEvent(event);
+                    }
                 }}
                 onContextMenu={(e) => {
                     e.preventDefault();
@@ -137,16 +149,15 @@ export default memo(({ data, isConnectable }) => {
                         {data.label}
                     </div>
                     {data.subtitle && (
-                        <div style={{
+                        <div className="custom-chip" style={{
                             fontSize: '10px',
+                            padding: '2px 8px',
                             fontWeight: '500',
-                            color: data.domainLabelColors?.text || nodeSubtitleColor,
-                            background: observeMode ? 'rgba(255,255,255,0.1)' : (data.domainLabelColors?.background || '#f3f4f6'),
-                            padding: '2px 6px',
-                            borderRadius: '12px',
-                            whiteSpace: 'nowrap',
-                            flexShrink: 0,
-                            border: `1px solid ${observeMode ? 'rgba(255,255,255,0.2)' : (data.domainLabelColors?.border || '#e5e7eb')}`
+                            display: 'flex',
+                            alignItems: 'center',
+                            background: observeMode ? 'rgba(255,255,255,0.1)' : undefined,
+                            color: observeMode ? '#94a3b8' : undefined,
+                            borderColor: observeMode ? 'rgba(255,255,255,0.2)' : undefined,
                         }}>
                             {data.subtitle}
                         </div>
@@ -222,24 +233,19 @@ export default memo(({ data, isConnectable }) => {
                         </div>
                     )}
                     <div
-                        className="nodrag yaml-pill"
+                        className="nodrag custom-chip custom-chip-interactive"
                         style={{
-                            background: observeMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.5)',
-                            border: `1px solid ${observeMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.6)'}`,
-                            borderRadius: '4px',
-                            padding: '4px',
-                            cursor: 'pointer',
-                            color: observeMode ? '#f8fafc' : '#1e3a8a',
+                            padding: '2px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            transition: 'all 0.2s'
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.background = observeMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.8)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.background = observeMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.5)';
+                            width: '24px',
+                            height: '24px',
+                            ...(observeMode ? {
+                                background: 'rgba(255, 255, 255, 0.1)',
+                                borderColor: 'rgba(255, 255, 255, 0.2)',
+                                color: '#f8fafc'
+                            } : {})
                         }}
                         onClick={(e) => {
                             e.stopPropagation();
@@ -328,16 +334,12 @@ export default memo(({ data, isConnectable }) => {
                         )}
                         {!observeMode && data.hasOutputPorts && (
                             <div
-                                className="nodrag output-ports-pill"
+                                className="nodrag custom-chip custom-chip-interactive"
                                 style={{
-                                    background: '#dcfce7',
-                                    color: '#166534',
                                     padding: '2px 8px',
-                                    borderRadius: '12px',
                                     fontSize: '10px',
-                                    fontWeight: '700',
+                                    fontWeight: '500',
                                     cursor: 'pointer',
-                                    border: '1px solid #bbf7d0',
                                     whiteSpace: 'nowrap'
                                 }}
                                 onClick={(e) => {

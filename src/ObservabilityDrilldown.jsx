@@ -12,13 +12,8 @@ const MetricCard = ({ title, status, value, unit, nameText, expectedText, messag
     };
 
     return (
-        <div style={{
-            background: 'var(--m3-surface)',
-            border: `1px solid var(--m3-outline-variant)`,
-            borderRadius: '12px',
-            padding: '16px',
+        <div className="custom-card" style={{
             marginBottom: '12px',
-            boxShadow: 'var(--m3-elevation-1)',
             position: 'relative',
             overflow: 'hidden'
         }}>
@@ -34,7 +29,7 @@ const MetricCard = ({ title, status, value, unit, nameText, expectedText, messag
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span style={{ fontSize: '18px' }}>{icon}</span>
-                    <h4 style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: 'var(--m3-on-surface)' }}>{title}</h4>
+                    <h3 className="custom-card-title" style={{ margin: 0 }}>{title}</h3>
                 </div>
                 <div style={{
                     fontSize: '10px',
@@ -374,13 +369,8 @@ const ObservabilityDrilldown = ({ metrics, filterText, activeTab, availableDimen
         const activeDCName = activeDC.split('/').pop();
 
         return (
-            <div style={{
+            <div className="custom-card" style={{
                 width: '320px',
-                background: 'var(--m3-surface)',
-                border: '1px solid var(--m3-outline-variant)',
-                borderRadius: '12px',
-                padding: '16px',
-                boxShadow: 'var(--m3-elevation-1)',
                 position: 'sticky',
                 top: '0',
                 display: 'flex',
@@ -389,21 +379,15 @@ const ObservabilityDrilldown = ({ metrics, filterText, activeTab, availableDimen
                 flexShrink: 0
             }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h4 style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: 'var(--m3-on-surface)' }}>
+                    <h3 className="custom-card-title" style={{ margin: 0 }}>
                         Metrics: {activeDCName}
-                    </h4>
+                    </h3>
                     <button 
+                        className="btn btn-ghost"
                         onClick={() => setActiveDC(null)}
                         style={{
-                            background: 'none',
-                            border: 'none',
-                            cursor: 'pointer',
-                            color: 'var(--m3-on-surface-variant)',
                             padding: '4px',
                             borderRadius: '50%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
                         }}
                     >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -461,13 +445,8 @@ const ObservabilityDrilldown = ({ metrics, filterText, activeTab, availableDimen
 
         return (
             <React.Fragment>
-                <div style={{
+                <div className="custom-card" style={{
                     width: '320px',
-                    background: 'var(--m3-surface)',
-                    border: '1px solid var(--m3-outline-variant)',
-                    borderRadius: '12px',
-                    padding: '16px',
-                    boxShadow: 'var(--m3-elevation-1)',
                     position: 'sticky',
                     top: '0',
                     display: 'flex',
@@ -476,21 +455,15 @@ const ObservabilityDrilldown = ({ metrics, filterText, activeTab, availableDimen
                     flexShrink: 0
                 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <h4 style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: 'var(--m3-on-surface)' }}>
+                        <h3 className="custom-card-title" style={{ margin: 0 }}>
                             Data Contract Checks ({activeTooltipDim})
-                        </h4>
+                        </h3>
                         <button 
+                            className="btn btn-ghost"
                             onClick={() => handleSetDim(null)}
                             style={{
-                                background: 'none',
-                                border: 'none',
-                                cursor: 'pointer',
-                                color: 'var(--m3-on-surface-variant)',
                                 padding: '4px',
                                 borderRadius: '50%',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center'
                             }}
                         >
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

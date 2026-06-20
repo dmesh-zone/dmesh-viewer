@@ -1,0 +1,122 @@
+:root {
+  /* Typography */
+  --font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+  /* Domain Palette */
+  --domain-palette-01: #FFFFFF;
+  --domain-palette-02: #F1F5F5;
+  --domain-palette-03: #FCF5CA;
+  --domain-palette-04: #D5F5E9;
+  --domain-palette-05: #F8E7D0;
+  --domain-palette-06: #EBF6CD;
+  --domain-palette-07: #E5DBFA;
+  --domain-palette-08: #D0E3FF;
+  --domain-palette-09: #F4DBF9;
+  --domain-palette-10: #FBDAD8;
+  --domain-palette-11: #D3DBFA;
+  --domain-palette-12: #C6F5C9;
+  --domain-palette-13: #CAD9FA;
+
+  /* Domain Label Colors */
+  --domain-label-bg: #f3f4f6;
+  --domain-label-text: #6b7280;
+  --domain-label-border: #e5e7eb;
+
+  /* Connector Colors */
+  --connector-default: #9ca3af;
+  /* Standard color of edges when nothing is hovered */
+  --connector-hovered-node: #2563eb;
+  /* Color of edges connected to a node when hovering over that node */
+  --connector-hovered-edge: #2563eb;
+  /* Color of a specific edge when hovering directly over it */
+  --connector-faint: #ffffff;
+  /* Color of unconnected edges when hovering a node (typically used to fade them out) */
+
+  /* Tiers Colors */
+  --tier-dataSource-color: #e2e8f0;
+  --tier-dataSource-banner: #cbd5e1;
+  --tier-sourceAligned-color: #bfdbfe;
+  --tier-sourceAligned-banner: #93c5fd;
+  --tier-curated-color: #bfdbfe;
+  --tier-curated-banner: #93c5fd;
+  --tier-consumerAligned-color: #bfdbfe;
+  --tier-consumerAligned-banner: #93c5fd;
+  --tier-application-color: #e2e8f0;
+  --tier-application-banner: #cbd5e1;
+  --tier-agent-color: #e2e8f0;
+  --tier-agent-banner: #cbd5e1;
+
+  /* KPI Colors */
+  --kpi-dataSources-bg: #831843;
+  --kpi-dataProducts-bg: #1e3a8a;
+  --kpi-outputPorts-bg: #4c1d95;
+  --kpi-recordsIngested-bg: #064e3b;
+  --kpi-recordsProcessed-bg: #9a3412;
+  --kpi-consumingApplication-bg: #0f766e;
+
+  /* Controls: Checkboxes */
+  --checkbox-accent: #2563eb;
+  --checkbox-size: 16px;
+  --checkbox-radius: 4px;
+
+  /* Controls: Buttons Base */
+  --button-radius: 6px;
+  --button-padding: 8px 16px;
+  --button-font-weight: 500;
+
+  /* Button Variants */
+  --button-primary-bg: #2563eb;
+  --button-primary-text: #ffffff;
+  --button-primary-hover: #1d4ed8;
+
+  --button-secondary-bg: #ffffff;
+  --button-secondary-text: #1f2937;
+  --button-secondary-border: #e5e7eb;
+  --button-secondary-hover: #f3f4f6;
+
+  --button-danger-bg: #dc2626;
+  --button-danger-text: #ffffff;
+  --button-danger-hover: #b91c1c;
+
+  --button-ghost-text: #4b5563;
+  --button-ghost-hover-bg: rgba(0, 0, 0, 0.05);
+
+  /* Side Panel Layout */
+  --side-panel-bg: #f8fafc;
+  --side-panel-border: #e2e8f0;
+  --side-panel-text: #334155;
+  --side-panel-close-btn: #64748b;
+
+  --side-panel-tab-container-border: var(--m3-outline-variant);
+  --side-panel-tab-inactive-text: var(--m3-on-surface-variant);
+  --side-panel-tab-active-text: var(--m3-primary);
+  --side-panel-tab-active-border: var(--m3-primary);
+  --side-panel-tab-hover-bg: var(--m3-surface-variant);
+
+  --side-panel-btn-bg: #f0f9ff;
+  --side-panel-btn-border: #bae6fd;
+  --side-panel-btn-text: #0369a1;
+  --side-panel-btn-hover-bg: #e0f2fe;
+  --side-panel-btn-hover-border: #7dd3fc;
+
+  /* Chips */
+  --chip-bg: #ffffff;
+  --chip-text: #1f2937;
+  --chip-border: #e5e7eb;
+
+  --chip-hover-bg: #f3f4f6;
+  --chip-hover-text: #1f2937;
+  --chip-hover-border: #d1d5db;
+
+  --chip-focus-bg: #e5e7eb;
+  --chip-focus-text: #111111;
+  --chip-focus-border: #9ca3af;
+
+  --chip-active-bg: #c2efd3;
+  --chip-active-text: #064e3b;
+  --chip-active-border: #c2efd3;
+
+  --chip-inactive-bg: #f9dada;
+  --chip-inactive-text: #7f1d1d;
+  --chip-inactive-border: #f9dada;
+}

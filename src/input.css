@@ -1,0 +1,97 @@
+/* Material Design Outlined Input */
+.md-input-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.md-input-field {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #111111;
+  background-color: var(--input-bg, transparent);
+  border: 1px solid var(--input-border-default, #9ca3af);
+  border-radius: var(--input-radius, 4px);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.md-input-field:hover:not(:disabled) {
+  border-color: var(--input-border-hover, #111111);
+}
+
+.md-input-field:focus {
+  border-color: var(--input-border-focus, #111111);
+}
+
+.input-container-style {
+  border: 1px solid var(--input-border-default, #9ca3af);
+  border-radius: var(--input-radius, 4px);
+  background-color: white;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: none;
+}
+.input-container-style:hover {
+  border-color: var(--input-border-hover, #111111);
+}
+.input-container-style:focus-within {
+  border-color: var(--input-border-focus, #111111);
+}
+
+.md-input-field:disabled {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+  border-color: #e5e7eb;
+}
+
+.md-input-label {
+  position: absolute;
+  top: 14px;
+  left: 12px;
+  padding: 0 4px;
+  background-color: white;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 400;
+  pointer-events: none;
+  transition: all 0.2s ease-out;
+  transform-origin: left top;
+}
+
+/* Floating logic: when focused, or when NOT placeholder-shown (has value) */
+.md-input-field:focus ~ .md-input-label,
+.md-input-field:not(:placeholder-shown) ~ .md-input-label {
+  top: -8px;
+  font-size: 12px;
+  color: #111111;
+}
+
+.md-input-field:not(:focus):not(:placeholder-shown) ~ .md-input-label {
+  color: #6b7280; /* Return to grey if not focused but has value */
+}
+
+.md-input-field:disabled ~ .md-input-label {
+  background-color: transparent;
+  color: #9ca3af;
+}
+
+/* Error state (optional class .md-input-error on container) */
+.md-input-container.error .md-input-field {
+  border-color: #dc2626;
+}
+.md-input-container.error .md-input-label {
+  color: #dc2626;
+}
+.md-input-container.success .md-input-field {
+  border-color: #16a34a;
+}
+.md-input-container.success .md-input-label {
+  color: #16a34a;
+}

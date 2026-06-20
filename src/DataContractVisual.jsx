@@ -70,14 +70,7 @@ export default function DataContractVisual({ data, anchor, filterByAnchor = fals
         }
     }, [anchor, filterByAnchor]);
 
-    const headerLabelStyle = {
-        fontSize: '12px',
-        fontWeight: '700',
-        color: 'var(--m3-primary)',
-        marginBottom: '12px',
-        textTransform: 'none',
-        letterSpacing: '1px'
-    };
+
 
     return (
         <div ref={containerRef} style={{ padding: '24px', fontFamily: 'var(--font-family, inherit)', color: 'var(--m3-on-surface)' }}>
@@ -94,33 +87,21 @@ export default function DataContractVisual({ data, anchor, filterByAnchor = fals
                         {data.name}
                     </h2>
                 )}
-                <div style={{
+                <div className="custom-card" style={{
                     display: 'grid',
                     gridTemplateColumns: 'auto 1fr',
-                    gap: '12px 24px',
-                    fontSize: '14px',
-                    background: 'var(--m3-surface-variant)',
-                    padding: '20px',
-                    borderRadius: '16px',
-                    border: '1px solid var(--m3-outline-variant)'
+                    gap: '12px 24px'
                 }}>
                     <span style={{ color: 'var(--m3-on-surface-variant)', fontWeight: '600', display: 'flex', alignItems: 'center' }}>ID</span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <span style={{ fontFamily: 'monospace', color: 'var(--m3-on-surface)' }}>{data.id}</span>
                         <button
+                            className="btn btn-ghost"
                             onClick={handleCopy}
                             title="Copy ID to clipboard"
                             style={{
-                                background: 'transparent',
-                                border: 'none',
-                                cursor: 'pointer',
                                 padding: '4px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
                                 color: copied ? '#10b981' : 'var(--m3-on-surface-variant)',
-                                borderRadius: '4px',
-                                transition: 'all 0.2s ease',
                             }}
                             onMouseEnter={e => e.currentTarget.style.color = copied ? '#10b981' : 'var(--m3-primary)'}
                             onMouseLeave={e => e.currentTarget.style.color = copied ? '#10b981' : 'var(--m3-on-surface-variant)'}
@@ -140,16 +121,7 @@ export default function DataContractVisual({ data, anchor, filterByAnchor = fals
 
                     <span style={{ color: 'var(--m3-on-surface-variant)', fontWeight: '600', display: 'flex', alignItems: 'center' }}>Status</span>
                     <span>
-                        <span style={{
-                            background: data.status === 'active' ? '#c2efd3' : 'var(--m3-primary-container)',
-                            color: data.status === 'active' ? '#064e3b' : 'var(--m3-on-primary-container)',
-                            padding: '4px 12px',
-                            borderRadius: '8px',
-                            fontWeight: '600',
-                            textTransform: 'capitalize',
-                            fontSize: '12px',
-                            letterSpacing: '0.5px'
-                        }}>
+                        <span className="custom-chip" style={{ padding: '2px 8px', fontSize: '11px' }}>
                             {data.status}
                         </span>
                     </span>
@@ -176,22 +148,18 @@ export default function DataContractVisual({ data, anchor, filterByAnchor = fals
             {/* Servers Section */}
             {data.servers && data.servers.length > 0 && (
                 <div style={{ marginBottom: '32px' }}>
-                    <h3 style={headerLabelStyle}>Servers</h3>
+                    <h3 className="custom-card-title">Servers</h3>
                     <div style={{
                         display: 'grid',
                         gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
                         gap: '16px'
                     }}>
                         {data.servers.map((server, idx) => (
-                            <div key={idx} style={{
+                            <div key={idx} className="custom-card" style={{
                                 display: 'flex',
                                 alignItems: 'flex-start',
                                 gap: '16px',
-                                padding: '16px',
-                                background: 'white',
-                                borderRadius: '16px',
-                                border: '1px solid var(--m3-outline-variant)',
-                                boxShadow: 'var(--m3-elevation-1)'
+                                padding: '16px'
                             }}>
                                 <div style={{
                                     width: '40px',
@@ -258,13 +226,9 @@ export default function DataContractVisual({ data, anchor, filterByAnchor = fals
                                         {server.environment && (
                                             <div style={{ color: 'var(--m3-on-surface-variant)', display: 'flex', gap: '8px' }}>
                                                 <span style={{ fontWeight: '600', minWidth: '70px' }}>Env:</span>
-                                                <span style={{
-                                                    background: '#e0f2fe',
-                                                    color: '#0369a1',
+                                                <span className="custom-chip" style={{
                                                     padding: '2px 8px',
-                                                    borderRadius: '12px',
-                                                    fontSize: '11px',
-                                                    fontWeight: '700'
+                                                    fontSize: '11px'
                                                 }}>{server.environment}</span>
                                             </div>
                                         )}
@@ -291,22 +255,18 @@ export default function DataContractVisual({ data, anchor, filterByAnchor = fals
             {/* Roles Section */}
             {data.roles && data.roles.length > 0 && (
                 <div style={{ marginBottom: '32px' }}>
-                    <h3 style={headerLabelStyle}>Roles</h3>
+                    <h3 className="custom-card-title">Roles</h3>
                     <div style={{
                         display: 'grid',
                         gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
                         gap: '16px'
                     }}>
                         {data.roles.map((roleObj, idx) => (
-                            <div key={idx} style={{
+                            <div key={idx} className="custom-card" style={{
                                 display: 'flex',
                                 alignItems: 'flex-start',
                                 gap: '14px',
-                                padding: '16px',
-                                background: 'white',
-                                borderRadius: '16px',
-                                border: '1px solid var(--m3-outline-variant)',
-                                boxShadow: 'var(--m3-elevation-1)'
+                                padding: '16px'
                             }}>
                                 <div style={{
                                     width: '36px',
@@ -330,19 +290,12 @@ export default function DataContractVisual({ data, anchor, filterByAnchor = fals
                                     <div style={{ fontWeight: '700', fontSize: '15px', color: 'var(--m3-on-surface)', marginBottom: '4px', wordBreak: 'break-all', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
                                         <span>{roleObj.role || `Role ${idx + 1}`}</span>
                                         <button
+                                            className="btn btn-ghost"
                                             onClick={() => handleCopyRole(roleObj.role || `Role ${idx + 1}`, idx)}
                                             title="Copy role to clipboard"
                                             style={{
-                                                background: 'transparent',
-                                                border: 'none',
-                                                cursor: 'pointer',
                                                 padding: '4px',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
                                                 color: copiedRoleIndex === idx ? '#10b981' : 'var(--m3-on-surface-variant)',
-                                                borderRadius: '4px',
-                                                transition: 'all 0.2s ease',
                                                 flexShrink: 0
                                             }}
                                             onMouseEnter={e => e.currentTarget.style.color = copiedRoleIndex === idx ? '#10b981' : 'var(--m3-primary)'}
@@ -379,31 +332,18 @@ export default function DataContractVisual({ data, anchor, filterByAnchor = fals
 
             {/* Schema Section */}
             <div>
-                <h3 style={{
-                    fontSize: '14px',
-                    fontWeight: '700',
-                    color: 'var(--m3-primary)',
-                    marginBottom: '20px',
-                    textTransform: 'none',
-                    letterSpacing: '1px'
-                }}>
+                <h3 className="custom-card-title">
                     Schema Elements
                 </h3>
 
                 {schema.map((table, tIdx) => (
                     <div key={tIdx} id={`table-${table.physicalName || table.name}`} style={{
-                        marginBottom: '32px',
-                        border: '1px solid var(--m3-outline-variant)',
-                        borderRadius: '16px',
-                        overflow: 'hidden',
-                        background: 'var(--m3-surface)'
+                        marginBottom: '32px'
                     }}>
                         <div style={{
-                            padding: '16px 20px',
-                            background: 'var(--m3-surface-variant)',
-                            borderBottom: '1px solid var(--m3-outline-variant)'
+                            marginBottom: '16px'
                         }}>
-                            <div style={{ fontWeight: '700', fontSize: '15px', color: 'var(--m3-on-surface)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <h4 style={{ fontWeight: '700', fontSize: '15px', color: 'var(--side-panel-text, #111111)', display: 'flex', alignItems: 'center', gap: '6px', margin: 0 }}>
                                 {(() => {
                                     const tableTech = table.customProperties?.find(p => p.property === 'technology')?.value;
                                     const techIcon = tableTech && config?.iconMap?.[tableTech] ? normalizePath(config.iconMap[tableTech]) : null;
@@ -411,32 +351,29 @@ export default function DataContractVisual({ data, anchor, filterByAnchor = fals
                                         <img src={techIcon} alt={tableTech} style={{ width: '16px', height: '16px', objectFit: 'contain' }} />
                                     ) : null;
                                 })()}
-                                <span style={{ textTransform: 'lowercase' }}>{String(table.physicalType || 'table').toLowerCase()}</span>: <span style={{ fontFamily: 'monospace', color: 'var(--m3-primary)' }}>{table.physicalName || table.name}</span>
-                            </div>
+                                <span>{table.physicalName || table.name}</span>
+                            </h4>
                             {table.description && (
-                                <div style={{ marginTop: '4px', fontSize: '13px', color: 'var(--m3-on-surface-variant)', lineHeight: '1.4' }}>
+                                <div style={{ marginTop: '4px', fontSize: '13px', color: 'var(--side-panel-text, #111111)', opacity: 0.8, lineHeight: '1.4' }}>
                                     {table.description}
                                 </div>
                             )}
                         </div>
 
-                        <div style={{ overflowX: 'auto' }}>
-                            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px', textAlign: 'left' }}>
-                                <thead style={{ background: 'var(--m3-surface)', borderBottom: '1px solid var(--m3-outline-variant)' }}>
+                        <div className="custom-table-container" style={{ overflowX: 'auto' }}>
+                            <table className="custom-table">
+                                <thead>
                                     <tr>
-                                        <th style={{ padding: '12px 20px', fontWeight: '600', color: 'var(--m3-on-surface-variant)' }}>Column</th>
-                                        <th style={{ padding: '12px 20px', fontWeight: '600', color: 'var(--m3-on-surface-variant)' }}>Logical</th>
-                                        <th style={{ padding: '12px 20px', fontWeight: '600', color: 'var(--m3-on-surface-variant)' }}>Physical</th>
-                                        <th style={{ padding: '12px 20px', fontWeight: '600', color: 'var(--m3-on-surface-variant)' }}>Examples</th>
+                                        <th>Column</th>
+                                        <th>Logical</th>
+                                        <th>Physical</th>
+                                        <th>Examples</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {table.properties && table.properties.map((col, cIdx) => (
-                                        <tr key={cIdx} style={{
-                                            borderBottom: cIdx < table.properties.length - 1 ? '1px solid var(--m3-outline-variant)' : 'none',
-                                            background: 'transparent'
-                                        }}>
-                                            <td style={{ padding: '14px 20px', fontWeight: '500', color: 'var(--m3-on-surface)', fontFamily: 'monospace' }}>
+                                        <tr key={cIdx}>
+                                            <td style={{ fontWeight: '500', fontFamily: 'monospace' }}>
                                                 {col.name}
                                                 {col.primaryKey && (
                                                     <span style={{
@@ -451,11 +388,9 @@ export default function DataContractVisual({ data, anchor, filterByAnchor = fals
                                                     }}>PK</span>
                                                 )}
                                             </td>
-                                            <td style={{ padding: '14px 20px', color: 'var(--m3-on-surface)' }}>{col.logicalType}</td>
-                                            <td style={{ padding: '14px 20px', color: 'var(--m3-on-surface-variant)', fontSize: '13px' }}>{col.physicalType}</td>
+                                            <td>{col.logicalType}</td>
+                                            <td style={{ fontSize: '13px' }}>{col.physicalType}</td>
                                             <td style={{
-                                                padding: '14px 20px',
-                                                color: 'var(--m3-on-surface-variant)',
                                                 fontStyle: 'italic',
                                                 maxWidth: '200px',
                                                 overflow: 'hidden',

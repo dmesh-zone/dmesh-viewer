@@ -306,7 +306,7 @@ const InteractiveYaml = ({ data, filterText }) => {
         }
 
         return (
-            <div className="yaml-container" style={{ padding: '10px', background: '#f8fafc', borderRadius: '4px', border: '1px solid #e2e8f0', fontFamily: "'JetBrains Mono', monospace", fontSize: '13px', lineHeight: '1.5' }}>
+            <div className="yaml-container" style={{ padding: '16px', background: 'var(--side-panel-bg, #f8fafc)', borderRadius: '0px', border: '1px solid var(--side-panel-container-border, #e5e7eb)', fontFamily: "'JetBrains Mono', monospace", fontSize: '13px', lineHeight: '1.5' }}>
                 {filteredContent.map((item, idx) => (
                     <div key={idx} style={{ display: 'flex', background: item.highlight ? '#fef08a' : 'transparent' }}>
                         {item.type === 'line' ? (
@@ -324,7 +324,7 @@ const InteractiveYaml = ({ data, filterText }) => {
     }
 
     return (
-        <div className="yaml-container" style={{ padding: '10px 10px 10px 0', background: '#f8fafc', borderRadius: '4px', border: '1px solid #e2e8f0' }}>
+        <div className="yaml-container" style={{ padding: '16px 16px 16px 0', background: 'var(--side-panel-bg, #f8fafc)', borderRadius: '0px', border: '1px solid var(--side-panel-container-border, #e5e7eb)' }}>
             {typeof data === 'object' && data !== null && !Array.isArray(data) ? (
                 Object.entries(data).map(([key, value]) => (
                     <YamlItem key={key} label={key} value={value} level={0} />

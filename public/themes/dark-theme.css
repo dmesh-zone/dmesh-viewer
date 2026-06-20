@@ -1,0 +1,137 @@
+/* Work in progress */
+
+:root {
+  /* Typography */
+  --font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+  /* Domain Palette - Dark Muted Jewel Tones */
+  --domain-palette-01: #1E293B;
+  /* Slate 800 */
+  --domain-palette-02: #111827;
+  /* Gray 900 */
+  --domain-palette-03: #374151;
+  /* Gray 700 */
+  --domain-palette-04: #0F172A;
+  /* Slate 900 */
+  --domain-palette-05: #312E81;
+  /* Indigo 900 */
+  --domain-palette-06: #1E3A8A;
+  /* Blue 900 */
+  --domain-palette-07: #172554;
+  /* Blue 950 */
+  --domain-palette-08: #064E3B;
+  /* Emerald 900 */
+  --domain-palette-09: #14532D;
+  /* Green 900 */
+  --domain-palette-10: #4A044E;
+  /* Fuchsia 950 */
+  --domain-palette-11: #701A75;
+  /* Fuchsia 900 */
+  --domain-palette-12: #4C1D95;
+  /* Violet 900 */
+  --domain-palette-13: #3B0764;
+  /* Purple 900 */
+  --domain-palette-14: #831843;
+  /* Pink 900 */
+  --domain-palette-15: #7F1D1D;
+  /* Red 900 */
+
+  /* Domain Label Colors */
+  --domain-label-bg: #1f2937;
+  --domain-label-text: #d1d5db;
+  --domain-label-border: #374151;
+
+  /* Connector Colors */
+  --connector-default: #4b5563;
+  --connector-hovered-node: #60a5fa;
+  --connector-hovered-edge: #34d399;
+  --connector-faint: #111827;
+
+  /* Tiers Colors */
+  --tier-dataSource-color: #1e293b;
+  --tier-dataSource-banner: #334155;
+  --tier-sourceAligned-color: #1e3a8a;
+  --tier-sourceAligned-banner: #1e40af;
+  --tier-curated-color: #1e3a8a;
+  --tier-curated-banner: #1e40af;
+  --tier-consumerAligned-color: #1e3a8a;
+  --tier-consumerAligned-banner: #1e40af;
+  --tier-application-color: #1e293b;
+  --tier-application-banner: #334155;
+  --tier-agent-color: #1e293b;
+  --tier-agent-banner: #334155;
+
+  /* KPI Colors */
+  --kpi-dataSources-bg: #be185d;
+  --kpi-dataProducts-bg: #2563eb;
+  --kpi-outputPorts-bg: #7c3aed;
+  --kpi-recordsIngested-bg: #059669;
+  --kpi-recordsProcessed-bg: #ea580c;
+  --kpi-consumingApplication-bg: #0d9488;
+
+  /* Controls: Checkboxes */
+  --checkbox-accent: #3b82f6;
+  --checkbox-size: 16px;
+  --checkbox-radius: 4px;
+
+  /* Controls: Buttons Base */
+  --button-radius: 6px;
+  --button-padding: 8px 16px;
+  --button-font-weight: 500;
+
+  /* Button Variants */
+  --button-primary-bg: #3b82f6;
+  --button-primary-text: #ffffff;
+  --button-primary-hover: #60a5fa;
+
+  --button-secondary-bg: #1f2937;
+  --button-secondary-text: #f3f4f6;
+  --button-secondary-border: #374151;
+  --button-secondary-hover: #374151;
+
+  --button-danger-bg: #dc2626;
+  --button-danger-text: #ffffff;
+  --button-danger-hover: #ef4444;
+
+  --button-ghost-text: #9ca3af;
+  --button-ghost-hover-bg: rgba(255, 255, 255, 0.1);
+
+  /* Side Panel Layout */
+  --side-panel-bg: #0f172a;
+  --side-panel-border: #1e293b;
+  --side-panel-text: #e2e8f0;
+  --side-panel-close-btn: #94a3b8;
+
+  --side-panel-tab-container-border: var(--m3-outline-variant);
+  --side-panel-tab-inactive-text: var(--m3-on-surface-variant);
+  --side-panel-tab-active-text: var(--m3-primary);
+  --side-panel-tab-active-border: var(--m3-primary);
+  --side-panel-tab-hover-bg: var(--m3-surface-variant);
+
+  --side-panel-btn-bg: #1e293b;
+  --side-panel-btn-border: #334155;
+  --side-panel-btn-text: #38bdf8;
+  --side-panel-btn-hover-bg: #0f172a;
+  --side-panel-btn-hover-border: #0ea5e9;
+
+  /* Chips */
+  --chip-bg: #1f2937;
+  --chip-text: #f3f4f6;
+  --chip-border: #374151;
+
+  --chip-hover-bg: #374151;
+  --chip-hover-text: #ffffff;
+  --chip-hover-border: #4b5563;
+
+  --chip-focus-bg: #4b5563;
+  --chip-focus-text: #ffffff;
+  --chip-focus-border: #6b7280;
+
+  --chip-active-bg: #064e3b;
+  --chip-active-text: #a7f3d0;
+  --chip-active-border: #059669;
+
+  --chip-inactive-bg: #7f1d1d;
+  --chip-inactive-text: #fecaca;
+  --chip-inactive-border: #b91c1c;
+}

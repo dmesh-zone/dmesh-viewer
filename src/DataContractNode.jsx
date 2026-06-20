@@ -194,31 +194,14 @@ export default memo(({ data, isConnectable }) => {
                     <div
                         key={`table-pill-${i}`}
                         style={{
-                            background: '#e0f2fe',
-                            border: '1px solid #7dd3fc',
-                            borderRadius: '12px',
-                            padding: '4px',
-                            cursor: 'pointer',
-                            color: '#0284c7',
-                            fontSize: '11px',
-                            fontWeight: '600',
+                            padding: '2px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            gap: '6px',
-                            transition: 'all 0.2s',
-                            boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
-                            width: '22px',
-                            height: '22px'
+                            width: '24px',
+                            height: '24px'
                         }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.background = '#bae6fd';
-                            e.currentTarget.style.borderColor = '#38bdf8';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.background = '#e0f2fe';
-                            e.currentTarget.style.borderColor = '#7dd3fc';
-                        }}
+                        className="custom-chip custom-chip-interactive"
                         onClick={(e) => {
                             e.stopPropagation();
                             const event = new CustomEvent('open-side-panel', {
@@ -246,28 +229,13 @@ export default memo(({ data, isConnectable }) => {
                 {(dqCount > 0) && (
                     <div
                         style={{
-                            background: '#e0f2fe',
-                            border: '1px solid #7dd3fc',
-                            borderRadius: '12px',
-                            padding: '4px 12px',
-                            cursor: 'pointer',
-                            color: '#0284c7',
                             fontSize: '11px',
-                            fontWeight: '600',
+                            padding: '2px 8px',
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '6px',
-                            transition: 'all 0.2s',
-                            boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                            gap: '6px'
                         }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.background = '#bae6fd';
-                            e.currentTarget.style.borderColor = '#38bdf8';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.background = '#e0f2fe';
-                            e.currentTarget.style.borderColor = '#7dd3fc';
-                        }}
+                        className="custom-chip custom-chip-interactive"
                         onClick={(e) => {
                             e.stopPropagation();
                             // Dispatch event to open side panel with DQ content
@@ -292,28 +260,13 @@ export default memo(({ data, isConnectable }) => {
 
                 <div
                     style={{
-                        background: '#e0f2fe',
-                        border: '1px solid #7dd3fc',
-                        borderRadius: '12px',
-                        padding: '4px 12px',
-                        cursor: 'pointer',
-                        color: '#0284c7',
                         fontSize: '11px',
-                        fontWeight: '600',
+                        padding: '2px 8px',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '6px',
-                        transition: 'all 0.2s',
-                        boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                        gap: '6px'
                     }}
-                    onMouseEnter={(e) => {
-                        e.currentTarget.style.background = '#bae6fd';
-                        e.currentTarget.style.borderColor = '#38bdf8';
-                    }}
-                    onMouseLeave={(e) => {
-                        e.currentTarget.style.background = '#e0f2fe';
-                        e.currentTarget.style.borderColor = '#7dd3fc';
-                    }}
+                    className="custom-chip custom-chip-interactive"
                     onClick={(e) => {
                         e.stopPropagation();
                         // Dispatch event to open side panel with Examples content

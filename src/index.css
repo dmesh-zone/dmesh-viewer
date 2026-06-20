@@ -1,3 +1,5 @@
+@import './input.css';
+
 :root {
   --font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   font-family: var(--font-family);
@@ -71,4 +73,271 @@ body,
 
 button, input, select, textarea {
   font-family: inherit;
+}
+
+/* Checkboxes */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: var(--checkbox-size, 16px);
+  height: var(--checkbox-size, 16px);
+  border: 1px solid var(--checkbox-border, #9ca3af);
+  border-radius: var(--checkbox-radius, 4px);
+  background-color: var(--checkbox-bg, #ffffff);
+  cursor: pointer;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+
+input[type="checkbox"]:checked {
+  background-color: var(--checkbox-checked-bg, #2563eb);
+  border-color: var(--checkbox-checked-border, #2563eb);
+}
+
+input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 8px;
+  border: solid var(--checkbox-check-color, #ffffff);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  margin-top: -2px;
+}
+
+/* Button Base */
+.btn {
+  border-radius: var(--button-radius, 6px);
+  padding: var(--button-padding, 8px 16px);
+  font-weight: var(--button-font-weight, 500);
+  font-family: inherit;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Primary */
+.btn-primary {
+  background: var(--button-primary-bg, #2563eb);
+  color: var(--button-primary-text, #ffffff);
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--button-primary-hover, #1d4ed8);
+}
+
+/* Secondary */
+.btn-secondary {
+  background: var(--button-secondary-bg, #ffffff);
+  color: var(--button-secondary-text, #1f2937);
+  border-color: var(--button-secondary-border, #e5e7eb);
+}
+.btn-secondary:hover:not(:disabled) {
+  background: var(--button-secondary-hover-bg, var(--button-secondary-hover, #f3f4f6));
+  color: var(--button-secondary-hover-text, var(--button-secondary-text, #1f2937));
+  border-color: var(--button-secondary-hover-border, var(--button-secondary-border, #e5e7eb));
+}
+
+/* Danger */
+.btn-danger {
+  background: var(--button-danger-bg, #dc2626);
+  color: var(--button-danger-text, #ffffff);
+}
+.btn-danger:hover:not(:disabled) {
+  background: var(--button-danger-hover, #b91c1c);
+}
+
+/* Ghost */
+.btn-ghost {
+  background: transparent;
+  color: var(--button-ghost-text, #4b5563);
+}
+.btn-ghost:hover:not(:disabled) {
+  background: var(--button-ghost-hover-bg, rgba(0, 0, 0, 0.05));
+}
+
+/* Side Panel Tabs */
+.side-panel-tab-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--side-panel-tab-container-border, #e2e8f0);
+  width: 100%;
+}
+
+.side-panel-tab {
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--side-panel-tab-inactive-text, #4b5563);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: -1px; /* Overlap container border */
+}
+
+.side-panel-tab:hover {
+  background: var(--side-panel-tab-hover-bg, #f1f5f9);
+}
+
+.side-panel-tab.active {
+  color: var(--side-panel-tab-active-text, #005ac1);
+  border-bottom: 3px solid var(--side-panel-tab-active-border, #005ac1);
+  font-weight: bold;
+}
+
+/* Custom Table (from Table.pdf) */
+.custom-table-container {
+  border: 1px solid var(--side-panel-container-border, #e5e7eb);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--side-panel-bg, #ffffff);
+  width: 100%;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  text-align: left;
+  color: var(--side-panel-text, #111111);
+}
+
+.custom-table th {
+  background: var(--side-panel-tab-hover-bg, #f3f4f6);
+  padding: 16px;
+  font-size: 14px;
+  font-weight: bold;
+  border-bottom: 1px solid var(--side-panel-container-border, #e5e7eb);
+  color: var(--side-panel-text, #111111);
+}
+
+.custom-table td {
+  padding: 16px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--side-panel-container-border, #e5e7eb);
+}
+
+.custom-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.custom-table.alternate tbody tr:nth-child(even) {
+  background: var(--side-panel-tab-hover-bg, #f9fafb);
+}
+
+/* Custom Cards (from Cards.pdf) */
+.custom-card {
+  border: 1px solid var(--side-panel-container-border, #e5e7eb);
+  border-radius: 4px;
+  background: var(--side-panel-bg, #ffffff);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.custom-card-small {
+  padding: 16px;
+}
+
+.custom-card-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--side-panel-text, #111111);
+  margin: 0 0 16px 0;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.custom-card-subtitle {
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--side-panel-tab-inactive-text, #6b7280);
+  margin: 0 0 4px 0;
+}
+
+/* Custom Chips */
+.custom-chip {
+  padding: 4px 12px;
+  border-radius: 9999px; /* Pill shape */
+  font-size: 14px;
+  font-weight: 400;
+  text-transform: capitalize;
+  display: inline-block;
+  text-align: center;
+  background: var(--chip-bg, #ffffff);
+  color: var(--chip-text, #111111);
+  border: 1px solid var(--chip-border, #cccccc);
+}
+
+.custom-chip-icon {
+  padding: 4px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--chip-text, #111111);
+  border: 1px solid transparent;
+}
+
+.custom-chip-interactive {
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.custom-chip-interactive:hover {
+  background: var(--chip-hover-bg, #6b7280);
+  color: var(--chip-hover-text, #ffffff);
+  border-color: var(--chip-hover-border, #6b7280);
+}
+
+.custom-chip-interactive:active,
+.custom-chip-interactive:focus,
+.custom-chip-selected {
+  background: var(--chip-focus-bg, #111111);
+  color: var(--chip-focus-text, #ffffff);
+  border-color: var(--chip-focus-border, #111111);
+}
+
+.custom-chip-active {
+  background: var(--chip-active-bg, #c2efd3);
+  color: var(--chip-active-text, #064e3b);
+  border-color: var(--chip-active-border, #c2efd3);
+}
+
+.custom-chip-inactive {
+  background: var(--chip-inactive-bg, #f9dada);
+  color: var(--chip-inactive-text, #7f1d1d);
+  border-color: var(--chip-inactive-border, #f9dada);
+}
+/* Input Fields */
+.custom-input {
+  background: var(--input-bg, transparent);
+  border: 1px solid var(--input-border-default, #9ca3af);
+  border-radius: var(--input-radius, 4px);
+  padding: 6px 10px;
+  font-size: 13px;
+  width: 100%;
+  color: var(--side-panel-text, #111111);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.custom-input:hover {
+  border-color: var(--input-border-hover, #111111);
+}
+.custom-input:focus {
+  border-color: var(--input-border-focus, #2563eb);
 }

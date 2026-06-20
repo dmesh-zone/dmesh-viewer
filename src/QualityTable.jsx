@@ -268,28 +268,15 @@ const QualityTable = ({ schema }) => {
     }, [rules]);
 
     return (
-        <div style={{ overflow: 'auto', height: '100%', width: '100%', background: 'white' }}>
-            <table style={{
-                borderCollapse: 'separate',
-                borderSpacing: 0,
-                fontSize: '12px',
-                fontFamily: 'var(--font-family, inherit)',
-                minWidth: '100%' // Ensure table takes full width
-            }}>
-                <thead style={{ position: 'sticky', top: 0, zIndex: 20, background: '#f8fafc' }}>
+        <div className="custom-table-container" style={{ overflow: 'auto', height: '100%', width: '100%' }}>
+            <table className="custom-table" style={{ minWidth: '100%' }}>
+                <thead style={{ position: 'sticky', top: 0, zIndex: 20 }}>
                     <tr>
                         {visibleColumns.map((col, index) => (
                             <th key={index} style={{
-                                padding: '8px 12px', // Reduce padding slightly for compactness
-                                borderBottom: '1px solid #e2e8f0',
-                                borderRight: '1px solid #e2e8f0',
-                                textAlign: 'left',
-                                color: '#475569',
-                                fontWeight: '600',
-                                whiteSpace: 'nowrap', // Prevent header wrapping
+                                whiteSpace: 'nowrap',
                                 position: col.sticky ? 'sticky' : 'relative',
                                 left: col.sticky ? 0 : 'auto',
-                                background: '#f8fafc',
                                 zIndex: col.sticky ? 30 : 20,
                                 boxShadow: col.sticky ? '2px 0 4px -2px rgba(0,0,0,0.1)' : 'none'
                             }}>
@@ -303,14 +290,10 @@ const QualityTable = ({ schema }) => {
                         <tr key={rowIndex}>
                             {visibleColumns.map((col, colIndex) => (
                                 <td key={colIndex} style={{
-                                    padding: '12px 16px',
-                                    borderBottom: '1px solid #f1f5f9',
-                                    borderRight: '1px solid #f1f5f9',
-                                    color: '#334155',
                                     verticalAlign: 'top',
                                     position: col.sticky ? 'sticky' : 'relative',
                                     left: col.sticky ? 0 : 'auto',
-                                    background: col.sticky ? 'white' : 'transparent',
+                                    background: col.sticky ? 'var(--side-panel-bg, #ffffff)' : 'transparent',
                                     zIndex: col.sticky ? 10 : 'auto',
                                     boxShadow: col.sticky ? '2px 0 4px -2px rgba(0,0,0,0.1)' : 'none'
                                 }}>

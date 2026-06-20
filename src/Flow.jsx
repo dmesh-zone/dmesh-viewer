@@ -88,21 +88,21 @@ function Flow() {
     const [dataMeshRegistryRaw, setDataMeshOperationalDataRaw] = React.useState('');
     const [isLoading, setIsLoading] = React.useState(true);
     const [error, setError] = React.useState(null);
-    const [config, setConfig] = React.useState({ iconMap: {}, tiers: {}, domainPalette: [], defaultDataMeshOperationalDataUrl: '', registries: [] }); // Config state
+    const [config, setConfig] = React.useState({ iconMap: {}, tiers: {}, domainPalette: [], defaultDataMeshOperationalDataUrl: '', registries: [], 'single-domain-default-filter': false, 'zoom-to-fit-columns': true }); // Config state
     const [configError, setConfigError] = React.useState(null); // Track config loading errors
     const [showRegistryModal, setShowRegistryModal] = React.useState(false);
 
     // Load Config
     React.useEffect(() => {
         Promise.all([
-            fetch(normalizePath('/config.yaml'))
+            fetch(normalizePath(`/config.yaml?t=${Date.now()}`))
                 .then(res => {
                     if (!res.ok) {
                         throw new Error(`Failed to load config.yaml (${res.status} ${res.statusText}). Make sure the file exists in the public directory.`);
                     }
                     return res.text();
                 }),
-            fetch(normalizePath('/customConfig.yaml'))
+            fetch(normalizePath(`/customConfig.yaml?t=${Date.now()}`))
                 .then(res => res.ok ? res.text() : null)
                 .catch(() => null)
         ])
@@ -147,13 +147,10 @@ function Flow() {
                 }
 
                 const loadedConfig = {
+                    ...data,
                     iconMap: data.iconMap || {},
                     tiers: data.tiers || {},
-                    domainPalette: data.domainPalette || ['#fee2e2', '#f3e8ff', '#fef3c7', '#ffedd5', '#e0e7ff', '#dbeafe', '#dcfce7'],
-                    domainLabelColors: data.domainLabelColors || {},
                     observability: data.observability || {},
-                    connectorColors: data.connectorColors || {},
-                    theme: data.theme || {},
                     defaultDataMeshOperationalDataUrl: normalizePath(data.defaultDataMeshOperationalDataUrl),
                     registries: (data.sampleDataMeshOperationalDataUrls || []).map(reg => ({
                         original: reg,
@@ -162,10 +159,16 @@ function Flow() {
                 };
                 setConfig(loadedConfig);
                 setConfigError(null);
-                
-                // Apply theme customisations
-                if (loadedConfig.theme.fontFamily) {
-                    document.documentElement.style.setProperty('--font-family', loadedConfig.theme.fontFamily);
+
+                // Dynamically load theme
+                const themeName = loadedConfig.theme || 'light';
+                const themeLink = document.getElementById('theme-link');
+                if (themeLink) {
+                    const baseUrl = import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL;
+                    const themeUrl = `${baseUrl}/themes/${themeName}-theme.css`.replace('//', '/');
+                    themeLink.href = import.meta.env.DEV ? `${themeUrl}?t=${Date.now()}` : themeUrl;
+                    // Force the link to the end of head to override Vite injected styles
+                    document.head.appendChild(themeLink);
                 }
 
                 // Set initial registry URL from config
@@ -453,9 +456,13 @@ function Flow() {
                     return;
                 }
             }
-            setSelectedDomains(availableDomains);
+            if (config && config['single-domain-default-filter']) {
+                setSelectedDomains([availableDomains[0]]);
+            } else {
+                setSelectedDomains(availableDomains);
+            }
         }
-    }, [availableDomains]);
+    }, [availableDomains, config]);
 
     // Auto-select node if ID is provided in URL (?id=...)
     React.useEffect(() => {
@@ -521,7 +528,7 @@ function Flow() {
             uniqueDomains.forEach(d => domainColorMap[d] = 'white');
         } else {
             uniqueDomains.forEach((domain, index) => {
-                domainColorMap[domain] = config.domainPalette[index % config.domainPalette.length];
+                domainColorMap[domain] = `var(--domain-palette-${String((index % 15) + 1).padStart(2, '0')})`;
             });
         }
 
@@ -552,9 +559,10 @@ function Flow() {
 
                 // Get tier config
                 const tierConfig = config.tiers?.[tier] || {};
-                const color = tierConfig.color || '#bfdbfe';
+                const safeTier = tier || 'default';
+                const color = tierConfig.color || `var(--tier-${safeTier}-color, #bfdbfe)`;
                 const banner = tierConfig.label || 'DATA PRODUCT';
-                const bannerColor = tierConfig.bannerColor || tierConfig.color || '#93c5fd';
+                const bannerColor = tierConfig.bannerColor || `var(--tier-${safeTier}-banner, #93c5fd)`;
 
                 // Background Color Logic (Domain based)
                 const backgroundColor = domainColorMap[node.domain] || 'white';
@@ -602,12 +610,11 @@ function Flow() {
                         banner: banner,
                         bannerColor: bannerColor,
                         backgroundColor: backgroundColor,
-                        subtitle: node.domain,
+                        subtitle: config?.domainNameCustomisation?.[node.domain] || node.domain,
                         icon: normalizePath(config.iconMap[technology] || (node.kind === 'DataContract' ? config.iconMap['table'] : config.iconMap['dataproduct'])),
                         hasOutputPorts: node.outputPorts && node.outputPorts.length > 0,
                         outputPortCount: node.outputPorts ? node.outputPorts.length : 0,
                         originalData: node, // Pass full source data for YAML view
-                        domainLabelColors: config.domainLabelColors,
                         // Observability props
                         observeMode,
                         compactMode,
@@ -623,6 +630,44 @@ function Flow() {
             });
 
         const activeNodeIds = new Set(initialNodes.map(n => n.id));
+        
+        // Find full upstream and downstream chains for hover highlighting
+        const connectedEdgeIds = new Set();
+        if (hoveredNodeId) {
+            const adjUp = {};
+            const adjDown = {};
+            dataMeshEdges.forEach(e => {
+                const p = e.provider.dataProductId;
+                const c = e.consumer.dataProductId;
+                if (!adjDown[p]) adjDown[p] = [];
+                adjDown[p].push({ eId: e.id, t: c });
+                if (!adjUp[c]) adjUp[c] = [];
+                adjUp[c].push({ eId: e.id, t: p });
+            });
+            
+            const visitedUp = new Set();
+            let queue = [hoveredNodeId];
+            visitedUp.add(hoveredNodeId);
+            while(queue.length) {
+                const curr = queue.shift();
+                (adjUp[curr] || []).forEach(({eId, t}) => {
+                    connectedEdgeIds.add(eId);
+                    if (!visitedUp.has(t)) { visitedUp.add(t); queue.push(t); }
+                });
+            }
+            
+            const visitedDown = new Set();
+            queue = [hoveredNodeId];
+            visitedDown.add(hoveredNodeId);
+            while(queue.length) {
+                const curr = queue.shift();
+                (adjDown[curr] || []).forEach(({eId, t}) => {
+                    connectedEdgeIds.add(eId);
+                    if (!visitedDown.has(t)) { visitedDown.add(t); queue.push(t); }
+                });
+            }
+        }
+
         const initialEdges = dataMeshEdges
             .filter(edge => activeNodeIds.has(edge.provider.dataProductId) && activeNodeIds.has(edge.consumer.dataProductId))
             .map(edge => {
@@ -630,7 +675,7 @@ function Flow() {
                 const targetHealth = deriveStatus(edge.consumer.dataProductId, activeDimension);
 
                 const getEdgeColor = (h1, h2) => {
-                    if (!observeMode) return config.connectorColors?.default || '#9ca3af';
+                    if (!observeMode) return 'var(--connector-default, #9ca3af)';
                     if (h1 === 'critical' || h2 === 'critical') return '#EF444488';
                     if (h1 === 'degraded' || h2 === 'degraded') return '#F59E0B88';
                     if (h1 === 'healthy' && h2 === 'healthy') return '#22C55E88';
@@ -638,24 +683,24 @@ function Flow() {
                 };
 
                 const edgeColor = getEdgeColor(sourceHealth, targetHealth);
-                const isNodeHovered = hoveredNodeId === edge.provider.dataProductId || hoveredNodeId === edge.consumer.dataProductId;
-                const isFaint = hoveredNodeId && !isNodeHovered;
+                const isEdgeInChain = hoveredNodeId ? connectedEdgeIds.has(edge.id) : false;
+                const isFaint = hoveredNodeId && !isEdgeInChain;
 
                 let strokeColor;
-                let markerEndColor;
+                let markerEndProps;
                 
-                if (isNodeHovered) {
-                    strokeColor = config.connectorColors?.hoveredNode || '#22c55e';
-                    markerEndColor = strokeColor;
+                if (isEdgeInChain) {
+                    strokeColor = 'var(--connector-hovered-node, #22c55e)';
+                    markerEndProps = 'custom-arrow-hovered-node';
                 } else if (hoveredEdgeId === edge.id) {
-                    strokeColor = observeMode ? edgeColor : (config.connectorColors?.hoveredEdge || '#2563eb');
-                    markerEndColor = strokeColor;
+                    strokeColor = observeMode ? edgeColor : 'var(--connector-hovered-edge, #2563eb)';
+                    markerEndProps = observeMode ? { type: 'arrowclosed', color: edgeColor } : 'custom-arrow-hovered-edge';
                 } else if (isFaint) {
-                    strokeColor = config.connectorColors?.faint || '#9ca3af22';
-                    markerEndColor = strokeColor;
+                    strokeColor = 'var(--connector-faint, #ffffff)';
+                    markerEndProps = 'custom-arrow-faint';
                 } else {
-                    strokeColor = observeMode ? edgeColor : (config.connectorColors?.default || '#9ca3af');
-                    markerEndColor = strokeColor;
+                    strokeColor = observeMode ? edgeColor : 'var(--connector-default, #9ca3af)';
+                    markerEndProps = observeMode ? { type: 'arrowclosed', color: edgeColor } : 'custom-arrow-default';
                 }
 
                 return {
@@ -664,12 +709,12 @@ function Flow() {
                     target: edge.consumer.dataProductId,
                     animated: observeMode || true,
                     type: 'default',
-                    markerEnd: { type: 'arrowclosed', color: markerEndColor },
+                    markerEnd: markerEndProps,
                     interactionWidth: 40,
                     style: {
-                        strokeWidth: (hoveredEdgeId === edge.id || isNodeHovered) ? 3 : 2,
+                        strokeWidth: (hoveredEdgeId === edge.id || isEdgeInChain) ? 3 : 2,
                         stroke: strokeColor,
-                        zIndex: (hoveredEdgeId === edge.id || isNodeHovered) ? 10 : 0,
+                        zIndex: (hoveredEdgeId === edge.id || isEdgeInChain) ? 10 : 0,
                         opacity: isFaint ? 0.15 : 1,
                         transition: 'stroke 0.3s ease, opacity 0.3s ease'
                     }
@@ -721,46 +766,85 @@ function Flow() {
 
     // Handle hover states separately to avoid recreating nodes
     React.useEffect(() => {
-        setEdges(edges => edges.map(edge => {
-            const sourceHealth = deriveStatus(edge.source, activeDimension);
-            const targetHealth = deriveStatus(edge.target, activeDimension);
+        setEdges(edges => {
+            // Find full upstream and downstream chains for hover highlighting
+            const connectedEdgeIds = new Set();
+            if (hoveredNodeId) {
+                const adjUp = {};
+                const adjDown = {};
+                edges.forEach(e => {
+                    const p = e.source;
+                    const c = e.target;
+                    if (!adjDown[p]) adjDown[p] = [];
+                    adjDown[p].push({ eId: e.id, t: c });
+                    if (!adjUp[c]) adjUp[c] = [];
+                    adjUp[c].push({ eId: e.id, t: p });
+                });
+                
+                const visitedUp = new Set();
+                let queue = [hoveredNodeId];
+                visitedUp.add(hoveredNodeId);
+                while(queue.length) {
+                    const curr = queue.shift();
+                    (adjUp[curr] || []).forEach(({eId, t}) => {
+                        connectedEdgeIds.add(eId);
+                        if (!visitedUp.has(t)) { visitedUp.add(t); queue.push(t); }
+                    });
+                }
+                
+                const visitedDown = new Set();
+                queue = [hoveredNodeId];
+                visitedDown.add(hoveredNodeId);
+                while(queue.length) {
+                    const curr = queue.shift();
+                    (adjDown[curr] || []).forEach(({eId, t}) => {
+                        connectedEdgeIds.add(eId);
+                        if (!visitedDown.has(t)) { visitedDown.add(t); queue.push(t); }
+                    });
+                }
+            }
 
-            const getEdgeColor = (h1, h2) => {
-                if (!observeMode) return config.connectorColors?.default || '#9ca3af';
-                if (h1 === 'critical' || h2 === 'critical') return '#EF444488';
-                if (h1 === 'degraded' || h2 === 'degraded') return '#F59E0B88';
-                if (h1 === 'healthy' && h2 === 'healthy') return '#22C55E88';
-                return '#9ca3af66';
-            };
+            return edges.map(edge => {
+                const sourceHealth = deriveStatus(edge.source, activeDimension);
+                const targetHealth = deriveStatus(edge.target, activeDimension);
 
-            const edgeColor = getEdgeColor(sourceHealth, targetHealth);
-            const isNodeHovered = hoveredNodeId === edge.source || hoveredNodeId === edge.target;
-            const isFaint = hoveredNodeId && !isNodeHovered;
+                const getEdgeColor = (h1, h2) => {
+                    if (!observeMode) return 'var(--connector-default, #9ca3af)';
+                    if (h1 === 'critical' || h2 === 'critical') return '#EF444488';
+                    if (h1 === 'degraded' || h2 === 'degraded') return '#F59E0B88';
+                    if (h1 === 'healthy' && h2 === 'healthy') return '#22C55E88';
+                    return '#9ca3af66';
+                };
+
+                const edgeColor = getEdgeColor(sourceHealth, targetHealth);
+                const isEdgeInChain = hoveredNodeId ? connectedEdgeIds.has(edge.id) : false;
+                const isFaint = hoveredNodeId && !isEdgeInChain;
 
             let strokeColor;
-            let markerEndColor;
+            let markerEndProps;
             
-            if (isNodeHovered) {
-                strokeColor = config.connectorColors?.hoveredNode || '#22c55e';
-                markerEndColor = strokeColor;
+            if (isEdgeInChain) {
+                strokeColor = 'var(--connector-hovered-node, #22c55e)';
+                markerEndProps = 'custom-arrow-hovered-node';
             } else if (hoveredEdgeId === edge.id) {
-                strokeColor = observeMode ? edgeColor : (config.connectorColors?.hoveredEdge || '#2563eb');
-                markerEndColor = strokeColor;
+                strokeColor = observeMode ? edgeColor : 'var(--connector-hovered-edge, #2563eb)';
+                markerEndProps = observeMode ? { type: 'arrowclosed', color: edgeColor } : 'custom-arrow-hovered-edge';
             } else if (isFaint) {
-                strokeColor = config.connectorColors?.faint || '#9ca3af22';
-                markerEndColor = strokeColor;
+                strokeColor = 'var(--connector-faint, #ffffff)';
+                markerEndProps = 'custom-arrow-faint';
             } else {
                 strokeColor = edgeColor;
-                markerEndColor = edgeColor;
+                markerEndProps = { type: 'arrowclosed', color: edgeColor };
             }
 
             return {
                 ...edge,
-                style: { ...edge.style, stroke: strokeColor, strokeWidth: isNodeHovered ? 2 : 1 },
-                markerEnd: { ...edge.markerEnd, color: markerEndColor }
+                style: { ...edge.style, stroke: strokeColor, strokeWidth: isEdgeInChain ? 2 : 1 },
+                markerEnd: markerEndProps
             };
-        }));
-    }, [hoveredNodeId, hoveredEdgeId, observeMode, activeDimension, setEdges, deriveStatus]);
+        });
+    });
+}, [hoveredNodeId, hoveredEdgeId, observeMode, activeDimension, setEdges, deriveStatus]);
 
 
     // Validation Logic
@@ -1150,7 +1234,7 @@ function Flow() {
 
         // 1. Identify "Primary Matches" based on filters
         const primaryMatches = nodes.filter(node => {
-            const matchesDomain = selectedDomains.length === 0 || selectedDomains.includes(node.data.subtitle); // subtitle stores domain
+            const matchesDomain = selectedDomains.length === 0 || selectedDomains.includes(node.data?.originalData?.domain); // Use originalData to avoid ReactFlow stripping custom top-level props
             const matchesSearch = globalFilterText === '' ||
                 node.data.label.toLowerCase().includes(globalFilterText.toLowerCase()) ||
                 String(node.id).toLowerCase().includes(globalFilterText.toLowerCase());
@@ -1197,12 +1281,16 @@ function Flow() {
             if (colA !== colB) return colA - colB;
 
             // Secondary sort by domain
-            if (a.data.subtitle !== b.data.subtitle) {
-                return a.data.subtitle.localeCompare(b.data.subtitle);
+            const subA = a.data?.subtitle || '';
+            const subB = b.data?.subtitle || '';
+            if (subA !== subB) {
+                return subA.localeCompare(subB);
             }
 
             // Tertiary sort by label
-            return a.data.label.localeCompare(b.data.label);
+            const labelA = a.data?.label || '';
+            const labelB = b.data?.label || '';
+            return labelA.localeCompare(labelB);
         });
 
         const columnY = {};
@@ -1298,7 +1386,7 @@ function Flow() {
                 // Allow up to 1400px or 90% of screen width if I could, but simple max:
                 setSidePanelWidth(Math.min(1400, Math.max(300, e.detail.width)));
             } else if (['yaml', 'data-product-yaml', 'agreement-yaml', 'data-contract-yaml'].includes(type)) {
-                setSidePanelWidth(500);
+                setSidePanelWidth(Math.floor(window.innerWidth / 2));
             }
 
             // Set default tab based on type
@@ -1336,10 +1424,51 @@ function Flow() {
     React.useEffect(() => {
         if (rfInstance && !isLoading && visibleNodes.length > 0) {
             window.requestAnimationFrame(() => {
-                rfInstance.fitView({ duration: 800, padding: 0.2 });
+                console.log("FIT_VIEW_LOGIC running. Config value:", config?.['zoom-to-fit-columns']);
+                if (config && config['zoom-to-fit-columns'] !== false) {
+                    let minX = Infinity, maxX = -Infinity, minY = Infinity;
+                    visibleNodes.forEach(n => {
+                        if (n.position && typeof n.position.x === 'number') {
+                            if (n.position.x < minX) minX = n.position.x;
+                            if (n.position.x > maxX) maxX = n.position.x;
+                            if (n.position.y < minY) minY = n.position.y;
+                        }
+                    });
+                    
+                    if (minX === Infinity) {
+                        rfInstance.fitView({ duration: 800, padding: 0.2 });
+                        return;
+                    }
+
+                    const nodeWidth = 350; // Approximate width of a node
+                    const graphWidth = (maxX - minX) + nodeWidth;
+                    
+                    // We want the graph width to take up 90% of the screen width
+                    const screenWidth = window.innerWidth;
+                    let targetZoom = (screenWidth * 0.90) / graphWidth;
+                    
+                    // Clamp zoom between 0.1 and 1.5
+                    if (targetZoom < 0.1) targetZoom = 0.1;
+                    if (targetZoom > 1.5) targetZoom = 1.5;
+                    
+                    // Center the graph horizontally
+                    const xOffset = (screenWidth - (graphWidth * targetZoom)) / 2;
+                    const viewX = xOffset - (minX * targetZoom);
+                    
+                    // Position minY near the top of the canvas, since the canvas top is already offset by the UI height
+                    const viewY = 16 - (minY * targetZoom);
+                    
+                    if (!isNaN(viewX) && !isNaN(viewY) && !isNaN(targetZoom)) {
+                        rfInstance.setViewport({ x: viewX, y: viewY, zoom: targetZoom }, { duration: 800 });
+                    } else {
+                        rfInstance.fitView({ duration: 800, padding: 0.02 });
+                    }
+                } else {
+                    rfInstance.fitView({ duration: 800, padding: 0.02 });
+                }
             });
         }
-    }, [selection.id, rfInstance, isLoading, visibleNodes.length, selectedDomains, globalFilterText, compactMode]);
+    }, [selection.id, rfInstance, isLoading, visibleNodes.length, selectedDomains, globalFilterText, compactMode, config]);
 
     const visibleEdges = React.useMemo(() => {
         // If Contract View, show relationship edges
@@ -1529,14 +1658,14 @@ function Flow() {
         return (
             <React.Fragment>
                 {kpiStats.filter(k => k.config.visible).map(kpi => (
-                    <KpiCard key={kpi.id} title={kpi.config.name} value={formatKpiNumber(kpi.value)} bgColor={kpi.config.bgColor} />
+                    <KpiCard key={kpi.id} title={kpi.config.name} value={formatKpiNumber(kpi.value)} bgColor={kpi.config.bgColor || `var(--kpi-${kpi.id}-bg, #4c1d95)`} />
                 ))}
             </React.Fragment>
         );
     };
 
     return (
-        <div style={{ height: '100%', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ height: '100%', position: 'relative', overflow: 'hidden', background: 'var(--m3-surface, #ffffff)' }}>
 
             {/* Configuration Error Banner */}
             {configError && (
@@ -1567,16 +1696,11 @@ function Flow() {
                                 {configError}
                             </p>
                             <button
+                                className="btn btn-danger"
                                 onClick={() => window.location.reload()}
                                 style={{
                                     padding: '6px 12px',
-                                    background: '#dc2626',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '4px',
-                                    fontSize: '13px',
-                                    fontWeight: '500',
-                                    cursor: 'pointer'
+                                    fontSize: '13px'
                                 }}
                             >
                                 Retry
@@ -1615,16 +1739,11 @@ function Flow() {
                                 {error}
                             </p>
                             <button
+                                className="btn btn-danger"
                                 onClick={() => window.location.reload()}
                                 style={{
                                     padding: '6px 12px',
-                                    background: '#dc2626',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '4px',
-                                    fontSize: '13px',
-                                    fontWeight: '500',
-                                    cursor: 'pointer'
+                                    fontSize: '13px'
                                 }}
                             >
                                 Retry
@@ -1657,6 +1776,7 @@ function Flow() {
                                 domains={availableDomains}
                                 selectedDomains={selectedDomains}
                                 onChange={setSelectedDomains}
+                                formatDomain={(d) => config?.domainNameCustomisation?.[d] || d}
                             />
                         )}
 
@@ -1671,17 +1791,11 @@ function Flow() {
                         {/* Validate Button */}
                         {!selection.id && validationResults?.length > 0 && (
                             <button
+                                className="btn btn-danger"
                                 onClick={handleValidateRegistry}
                                 disabled={isLoading || error}
                                 style={{
                                     padding: '8px 16px',
-                                    background: '#dc2626',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '4px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
-                                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                                     height: '32px' // Match input height roughly
                                 }}
                             >
@@ -1692,15 +1806,10 @@ function Flow() {
                         {/* Back Button */}
                         {selection.id && (
                             <button
+                                className="btn btn-primary"
                                 onClick={handleBack}
                                 style={{
                                     padding: '8px 16px',
-                                    background: '#2563eb',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '4px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600',
                                     boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
                                 }}
                             >
@@ -1756,107 +1865,55 @@ function Flow() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end', flexShrink: 1, minWidth: 0, maxWidth: '100%' }}>
                         <div style={{ display: 'flex', gap: '16px' }}>
                             <button
+                                className="btn btn-secondary"
                                 onClick={() => setCompactMode(!compactMode)}
-                                style={{
-                                    padding: isMobile ? '8px' : '8px 20px',
-                                    background: compactMode ? '#f1f5f9' : 'white',
-                                    color: '#1e293b',
-                                    border: '2px solid #e2e8f0',
-                                    borderRadius: '24px',
-                                    cursor: 'pointer',
-                                    fontWeight: '700',
-                                    fontSize: '13px',
-                                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '8px',
-                                    letterSpacing: '0.5px',
-                                    width: isMobile ? '36px' : 'auto',
-                                    height: '36px'
-                                }}
                                 title={compactMode ? 'EXPAND' : 'COMPACT'}
                             >
-                                {isMobile ? (
-                                    compactMode ? (
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                            <polyline points="15 3 21 3 21 9"></polyline>
-                                            <polyline points="9 21 3 21 3 15"></polyline>
-                                            <line x1="21" y1="3" x2="14" y2="10"></line>
-                                            <line x1="3" y1="21" x2="10" y2="14"></line>
-                                        </svg>
-                                    ) : (
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                            <polyline points="4 14 10 14 10 20"></polyline>
-                                            <polyline points="20 10 14 10 14 4"></polyline>
-                                            <line x1="14" y1="10" x2="21" y2="3"></line>
-                                            <line x1="3" y1="21" x2="10" y2="14"></line>
-                                        </svg>
-                                    )
+                                {compactMode ? (
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <polyline points="15 3 21 3 21 9"></polyline>
+                                        <polyline points="9 21 3 21 3 15"></polyline>
+                                        <line x1="21" y1="3" x2="14" y2="10"></line>
+                                        <line x1="3" y1="21" x2="10" y2="14"></line>
+                                    </svg>
                                 ) : (
-                                    compactMode ? 'EXPAND' : 'COMPACT'
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <polyline points="4 14 10 14 10 20"></polyline>
+                                        <polyline points="20 10 14 10 14 4"></polyline>
+                                        <line x1="14" y1="10" x2="21" y2="3"></line>
+                                        <line x1="3" y1="21" x2="10" y2="14"></line>
+                                    </svg>
                                 )}
+                                {!isMobile && (compactMode ? 'EXPAND' : 'COMPACT')}
                             </button>
                             <button
-                            onClick={() => {
-                                setObserveMode(!observeMode);
-                                if (observeMode) {
-                                    setActiveDimension(null);
-                                    setDrillNodeId(null);
-                                    setSidePanelContent(null);
-                                }
-                            }}
-                            style={{
-                                padding: isMobile ? '8px' : '8px 20px',
-                                background: observeMode ? '#1e293b' : 'white',
-                                color: observeMode ? '#f8fafc' : '#1e293b',
-                                border: `2px solid ${observeMode ? '#3b82f6' : '#e2e8f0'}`,
-                                borderRadius: '24px',
-                                cursor: 'pointer',
-                                fontWeight: '700',
-                                fontSize: '13px',
-                                boxShadow: observeMode ? '0 0 15px rgba(59, 130, 246, 0.5)' : '0 2px 4px rgba(0,0,0,0.05)',
-                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '8px',
-                                letterSpacing: '0.5px',
-                                width: isMobile ? '36px' : 'auto',
-                                height: '36px'
-                            }}
-                            title={observeMode ? 'OBSERVING' : 'OBSERVE'}
-                        >
-                            {!isMobile && (
-                                <div style={{
-                                    width: '8px',
-                                    height: '8px',
-                                    borderRadius: '50%',
-                                    background: observeMode ? '#3b82f6' : '#94a3b8',
-                                    boxShadow: observeMode ? '0 0 10px #3b82f6' : 'none',
-                                    animation: observeMode ? 'pulse 2s infinite' : 'none'
-                                }}></div>
-                            )}
-                            {isMobile ? (
+                                className="btn btn-secondary"
+                                onClick={() => {
+                                    setObserveMode(!observeMode);
+                                    if (observeMode) {
+                                        setActiveDimension(null);
+                                        setDrillNodeId(null);
+                                        setSidePanelContent(null);
+                                    }
+                                }}
+                                title={observeMode ? 'OBSERVING' : 'OBSERVE'}
+                            >
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                     <circle cx="12" cy="12" r="3"></circle>
                                 </svg>
-                            ) : (
-                                observeMode ? 'OBSERVING' : 'OBSERVE'
-                            )}
-                        </button>
+                                {!isMobile && (observeMode ? 'OBSERVING' : 'OBSERVE')}
+                            </button>
                         </div>
 
                         {observeMode && (
                             <div style={{
                                 display: 'flex',
-                                background: 'white',
+                                background: 'var(--m3-surface, #ffffff)',
                                 padding: '4px',
                                 borderRadius: '20px',
-                                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                                border: '1px solid #e2e8f0',
+                                boxShadow: 'var(--m3-elevation-2, 0 4px 12px rgba(0,0,0,0.1))',
+                                border: '1px solid var(--m3-outline-variant, #e2e8f0)',
                                 animation: 'slideDown 0.3s ease-out',
                                 maxWidth: '100%'
                             }}>
@@ -1873,17 +1930,10 @@ function Flow() {
                                             <button
                                                 key={dim}
                                                 onClick={() => setActiveDimension(dimKey)}
+                                                className={`custom-chip custom-chip-interactive ${isActive ? 'custom-chip-selected' : ''}`}
                                                 style={{
-                                                    padding: '4px 12px',
-                                                    fontSize: '11px',
-                                                    fontWeight: '600',
-                                                    background: isActive ? '#3b82f6' : 'transparent',
-                                                    color: isActive ? 'white' : '#64748b',
                                                     border: 'none',
-                                                    borderRadius: '16px',
-                                                    cursor: 'pointer',
-                                                    transition: 'all 0.2s',
-                                                    whiteSpace: 'nowrap'
+                                                    margin: '0 2px',
                                                 }}
                                             >
                                                 {dim}
@@ -1893,19 +1943,11 @@ function Flow() {
                                 </div>
 
                                 {/* US-05: Configuration Cog */}
-                                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginLeft: '4px', paddingLeft: '4px', borderLeft: '1px solid #e2e8f0', flexShrink: 0 }}>
+                                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginLeft: '4px', paddingLeft: '4px', borderLeft: '1px solid var(--m3-outline-variant, #e2e8f0)', flexShrink: 0 }}>
                                     <button
                                         onClick={() => setShowConfig(!showConfig)}
-                                        style={{
-                                            background: 'transparent',
-                                            border: 'none',
-                                            cursor: 'pointer',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            color: showConfig ? '#3b82f6' : '#64748b',
-                                            padding: '4px'
-                                        }}
+                                        className={`custom-chip-icon custom-chip-interactive ${showConfig ? 'custom-chip-selected' : ''}`}
+                                        style={{ border: 'none' }}
                                         title="Observability Settings"
                                     >
                                         <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1939,7 +1981,6 @@ function Flow() {
                                                     type="checkbox"
                                                     checked={hideHealthy}
                                                     readOnly
-                                                    style={{ cursor: 'pointer' }}
                                                 />
                                                 <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Hide Healthy Nodes</span>
                                             </div>
@@ -1954,7 +1995,6 @@ function Flow() {
                                                     type="checkbox"
                                                     checked={hideKpis}
                                                     readOnly
-                                                    style={{ cursor: 'pointer' }}
                                                 />
                                                 <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Hide KPIs</span>
                                             </div>
@@ -1970,7 +2010,6 @@ function Flow() {
                                                         type="checkbox"
                                                         checked={adjustMetricsTime}
                                                         readOnly
-                                                        style={{ cursor: 'pointer' }}
                                                     />
                                                     <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Adjust metrics time</span>
                                                 </div>
@@ -1992,7 +2031,7 @@ function Flow() {
                                                                     setSimulatedDims(newSims);
                                                                 }}
                                                             >
-                                                                <input type="checkbox" checked={isSimulated} readOnly style={{ cursor: 'pointer' }} />
+                                                                <input type="checkbox" checked={isSimulated} readOnly />
                                                                 <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Simulate {dim}</span>
                                                             </div>
                                                         );
@@ -2012,7 +2051,6 @@ function Flow() {
                                                             type="checkbox"
                                                             checked={showEventsTab}
                                                             readOnly
-                                                            style={{ cursor: 'pointer' }}
                                                         />
                                                         <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Show Events tab</span>
                                                     </div>
@@ -2102,16 +2140,11 @@ function Flow() {
                         </div>
 
                         <button
+                            className="btn btn-secondary"
                             onClick={() => setShowValidationModal(false)}
                             style={{
                                 alignSelf: 'flex-end',
                                 padding: '8px 16px',
-                                background: '#e5e7eb',
-                                color: '#374151',
-                                border: 'none',
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                                fontWeight: '500'
                             }}
                         >
                             Close
@@ -2120,7 +2153,14 @@ function Flow() {
                 </div>
             )}
 
-            <ReactFlow
+            <div style={{
+                position: 'absolute',
+                top: (!isMobile && !selection.id && !hideKpis && kpiStats) ? '170px' : '68px',
+                bottom: 0,
+                left: 0,
+                right: 0
+            }}>
+                <ReactFlow
                 nodeTypes={nodeTypes}
                 edgeTypes={edgeTypes}
                 nodes={visibleNodes}
@@ -2136,22 +2176,38 @@ function Flow() {
                 onNodeDoubleClick={onNodeDoubleClick}
                 onInit={setRfInstance}
                 minZoom={0.1}
-                fitView
+                nodesDraggable={false}
+                nodesConnectable={false}
+                elementsSelectable={false}
             >
                 <Background />
                 <Controls />
+                <svg style={{ position: 'absolute', top: 0, left: 0 }}>
+                    <defs>
+                        <marker id="custom-arrow-default" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--connector-default, #9ca3af)" />
+                        </marker>
+                        <marker id="custom-arrow-hovered-node" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--connector-hovered-node, #ff5500)" />
+                        </marker>
+                        <marker id="custom-arrow-hovered-edge" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--connector-hovered-edge, #ff5500)" />
+                        </marker>
+                        <marker id="custom-arrow-faint" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--connector-faint, #ffffff)" />
+                        </marker>
+                    </defs>
+                </svg>
             </ReactFlow>
+            </div>
 
             {/* Side Panel */}
             <div style={{
                 position: 'absolute',
                 top: 0,
-                right: 0, // Anchor to right
-                bottom: 0, // Full height
-                // Use 'fit-content' for 'examples' type unless manually resized (which sets sidePanelWidth to a number)
-                // We'll interpret sidePanelWidth='auto' as fit-content.
+                right: 0,
+                bottom: 0,
                 width: sidePanelWidth === 'auto' ? 'fit-content' : `${sidePanelWidth}px`,
-                maxWidth: '90%', // Prevent taking full screen
                 minWidth: '300px', // Minimum width
                 borderRadius: '24px 0 0 24px', // M3 Large Corner
                 background: 'var(--m3-surface)',
@@ -2209,17 +2265,8 @@ function Flow() {
                                             href="https://bitol-io.github.io/open-data-product-standard/v1.0.0"
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            style={{
-                                                fontSize: '11px',
-                                                padding: '2px 8px',
-                                                background: '#f3e8ff', // purple-100
-                                                color: '#6b21a8', // purple-800
-                                                border: '1px solid #d8b4fe', // purple-300
-                                                borderRadius: '12px',
-                                                textDecoration: 'none',
-                                                fontWeight: '500',
-                                                whiteSpace: 'nowrap'
-                                            }}
+                                            className="custom-chip custom-chip-interactive"
+                                            style={{ textDecoration: 'none' }}
                                         >
                                             Open Data Product Standard v1.0.0
                                         </a>
@@ -2229,17 +2276,8 @@ function Flow() {
                                             href="https://bitol-io.github.io/open-data-contract-standard/v3.0.1"
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            style={{
-                                                fontSize: '11px',
-                                                padding: '2px 8px',
-                                                background: '#f3e8ff',
-                                                color: '#6b21a8',
-                                                border: '1px solid #d8b4fe',
-                                                borderRadius: '12px',
-                                                textDecoration: 'none',
-                                                fontWeight: '500',
-                                                whiteSpace: 'nowrap'
-                                            }}
+                                            className="custom-chip custom-chip-interactive"
+                                            style={{ textDecoration: 'none' }}
                                         >
                                             Open Data Contract Standard v3.0.1
                                         </a>
@@ -2249,17 +2287,8 @@ function Flow() {
                                             href="https://datausageagreement.com/"
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            style={{
-                                                fontSize: '11px',
-                                                padding: '2px 8px',
-                                                background: '#f3e8ff',
-                                                color: '#6b21a8',
-                                                border: '1px solid #d8b4fe',
-                                                borderRadius: '12px',
-                                                textDecoration: 'none',
-                                                fontWeight: '500',
-                                                whiteSpace: 'nowrap'
-                                            }}
+                                            className="custom-chip custom-chip-interactive"
+                                            style={{ textDecoration: 'none' }}
                                         >
                                             Data Usage Agreement Specification v0.0.1
                                         </a>
@@ -2269,17 +2298,8 @@ function Flow() {
                                             href="https://dmesh-zone.github.io/open-data-product-observability-standard/v0.1.0/"
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            style={{
-                                                fontSize: '11px',
-                                                padding: '2px 8px',
-                                                background: '#f3e8ff',
-                                                color: '#6b21a8',
-                                                border: '1px solid #d8b4fe',
-                                                borderRadius: '12px',
-                                                textDecoration: 'none',
-                                                fontWeight: '500',
-                                                whiteSpace: 'nowrap'
-                                            }}
+                                            className="custom-chip custom-chip-interactive"
+                                            style={{ textDecoration: 'none' }}
                                         >
                                             Open Data Product Observability Standard v0.1.0
                                         </a>
@@ -2293,7 +2313,7 @@ function Flow() {
                                         border: 'none',
                                         cursor: 'pointer',
                                         fontSize: '20px',
-                                        color: '#64748b'
+                                        color: 'var(--side-panel-close-btn, #64748b)'
                                     }}
                                 >
                                     &times;
@@ -2302,14 +2322,8 @@ function Flow() {
 
                             {/* Tab Selector */}
                             {['data-product-yaml', 'data-contract-yaml', 'agreement-yaml', 'observability'].includes(sidePanelType) && (
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                                    <div style={{
-                                        display: 'flex',
-                                        background: 'var(--m3-surface-variant)',
-                                        padding: '4px',
-                                        borderRadius: '24px',
-                                        width: 'fit-content'
-                                    }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', width: '100%', padding: '0 8px' }}>
+                                    <div className="side-panel-tab-container">
                                         {sidePanelType === 'observability' ? (
                                             ['metrics', 'events', 'yaml']
                                                 .filter(tab => tab !== 'events' || showEventsTab)
@@ -2317,73 +2331,28 @@ function Flow() {
                                                     <button
                                                         key={tab}
                                                         onClick={() => setSidePanelTab(tab)}
-                                                        style={{
-                                                            padding: '10px 24px',
-                                                            fontSize: '14px',
-                                                            fontWeight: '600',
-                                                            color: sidePanelTab === tab ? 'var(--m3-primary)' : 'var(--m3-on-surface-variant)',
-                                                            background: sidePanelTab === tab ? 'var(--m3-primary-container)' : 'transparent',
-                                                            border: 'none',
-                                                            borderRadius: '20px',
-                                                            cursor: 'pointer',
-                                                            transition: 'all 0.2s ease',
-                                                            boxShadow: sidePanelTab === tab ? 'var(--m3-elevation-1)' : 'none',
-                                                            textTransform: 'capitalize'
-                                                        }}
+                                                        className={`side-panel-tab ${sidePanelTab === tab ? 'active' : ''}`}
                                                     >
-                                                        {tab}
+                                                        {tab === 'yaml' ? 'YAML' : tab.charAt(0).toUpperCase() + tab.slice(1)}
                                                     </button>
                                                 ))
                                         ) : (
                                             <>
                                                 <button
                                                     onClick={() => setSidePanelTab('visual')}
-                                                    style={{
-                                                        padding: '10px 24px',
-                                                        fontSize: '14px',
-                                                        fontWeight: '600',
-                                                        color: sidePanelTab === 'visual' ? 'var(--m3-on-secondary-container)' : 'var(--m3-on-surface-variant)',
-                                                        background: sidePanelTab === 'visual' ? 'var(--m3-secondary-container)' : 'transparent',
-                                                        border: 'none',
-                                                        borderRadius: '20px',
-                                                        cursor: 'pointer',
-                                                        transition: 'all 0.2s ease',
-                                                        boxShadow: sidePanelTab === 'visual' ? 'var(--m3-elevation-1)' : 'none'
-                                                    }}
+                                                    className={`side-panel-tab ${sidePanelTab === 'visual' ? 'active' : ''}`}
                                                 >
                                                     Visual
                                                 </button>
                                                 <button
                                                     onClick={() => setSidePanelTab('yaml')}
-                                                    style={{
-                                                        padding: '10px 24px',
-                                                        fontSize: '14px',
-                                                        fontWeight: '600',
-                                                        color: sidePanelTab === 'yaml' ? 'var(--m3-primary)' : 'var(--m3-on-surface-variant)',
-                                                        background: sidePanelTab === 'yaml' ? 'var(--m3-primary-container)' : 'transparent',
-                                                        border: 'none',
-                                                        borderRadius: '20px',
-                                                        cursor: 'pointer',
-                                                        transition: 'all 0.2s ease',
-                                                        boxShadow: sidePanelTab === 'yaml' ? 'var(--m3-elevation-1)' : 'none'
-                                                    }}
+                                                    className={`side-panel-tab ${sidePanelTab === 'yaml' ? 'active' : ''}`}
                                                 >
                                                     YAML
                                                 </button>
                                                 <button
                                                     onClick={() => setSidePanelTab('json')}
-                                                    style={{
-                                                        padding: '10px 24px',
-                                                        fontSize: '14px',
-                                                        fontWeight: '600',
-                                                        color: sidePanelTab === 'json' ? 'var(--m3-primary)' : 'var(--m3-on-surface-variant)',
-                                                        background: sidePanelTab === 'json' ? 'var(--m3-primary-container)' : 'transparent',
-                                                        border: 'none',
-                                                        borderRadius: '20px',
-                                                        cursor: 'pointer',
-                                                        transition: 'all 0.2s ease',
-                                                        boxShadow: sidePanelTab === 'json' ? 'var(--m3-elevation-1)' : 'none'
-                                                    }}
+                                                    className={`side-panel-tab ${sidePanelTab === 'json' ? 'active' : ''}`}
                                                 >
                                                     JSON
                                                 </button>
@@ -2393,29 +2362,8 @@ function Flow() {
 
                                     {sidePanelType === 'data-contract-yaml' && sidePanelAnchor && (
                                         <button
+                                            className="btn btn-secondary"
                                             onClick={() => setSidePanelAnchor(null)}
-                                            style={{
-                                                background: '#f0f9ff',
-                                                color: '#0369a1',
-                                                border: '1px solid #bae6fd',
-                                                padding: '8px 16px',
-                                                borderRadius: '20px',
-                                                fontWeight: '600',
-                                                fontSize: '13px',
-                                                cursor: 'pointer',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '6px',
-                                                transition: 'all 0.2s'
-                                            }}
-                                            onMouseEnter={(e) => {
-                                                e.currentTarget.style.background = '#e0f2fe';
-                                                e.currentTarget.style.borderColor = '#7dd3fc';
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                e.currentTarget.style.background = '#f0f9ff';
-                                                e.currentTarget.style.borderColor = '#bae6fd';
-                                            }}
                                             title="Show Full Contract"
                                         >
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -2436,17 +2384,11 @@ function Flow() {
                                     <div style={{ position: 'relative' }}>
                                         <input
                                             type="text"
+                                            className="custom-input"
                                             placeholder="Filter YAML..."
                                             value={sidePanelFilter}
                                             onChange={(e) => setSidePanelFilter(e.target.value)}
-                                            style={{
-                                                width: '100%',
-                                                padding: '6px 10px',
-                                                paddingRight: '24px',
-                                                border: '1px solid #cbd5e1',
-                                                borderRadius: '4px',
-                                                fontSize: '13px'
-                                            }}
+                                            style={{ paddingRight: '24px' }}
                                         />
                                         {sidePanelFilter && (
                                             <button
@@ -2537,15 +2479,15 @@ function Flow() {
                                         )}
                                     </button>
                                     <div style={{
-                                        background: '#f8fafc',
+                                        background: 'var(--side-panel-bg, #f8fafc)',
                                         padding: '16px 16px 16px 0',
-                                        borderRadius: '8px',
-                                        border: '1px solid #e2e8f0',
+                                        borderRadius: '0px',
+                                        border: '1px solid var(--side-panel-container-border, #e5e7eb)',
                                         overflowX: 'auto',
                                         fontFamily: "'JetBrains Mono', monospace",
                                         fontSize: '13px',
                                         lineHeight: '1.5',
-                                        color: '#334155',
+                                        color: 'var(--side-panel-text, #334155)',
                                         margin: 0
                                     }}>
                                         {(() => {

@@ -49,23 +49,16 @@ export default function DataProductVisual({ data, registry = [] }) {
         }
     };
 
-    const renderCellWithCopy = (val, key) => (
+    const renderCellWithCopy = (val, key, displayNode = null) => (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-            <span style={{ wordBreak: 'break-all' }}>{val}</span>
+            <span style={{ wordBreak: 'break-all' }}>{displayNode || val}</span>
             <button
+                className="btn btn-ghost"
                 onClick={(e) => { e.stopPropagation(); handleCopyAgreement(val, key); }}
                 title="Copy value to clipboard"
                 style={{
-                    background: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
                     padding: '4px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
                     color: copiedAgreementKey === key ? '#10b981' : 'var(--m3-on-surface-variant)',
-                    borderRadius: '4px',
-                    transition: 'all 0.2s ease',
                     flexShrink: 0
                 }}
                 onMouseEnter={e => e.currentTarget.style.color = copiedAgreementKey === key ? '#10b981' : 'var(--m3-primary)'}
@@ -112,40 +105,53 @@ export default function DataProductVisual({ data, registry = [] }) {
             <div style={{ marginBottom: '32px' }}>
                 <h2 style={{
                     fontSize: '24px',
-                    fontWeight: '400',
+                    fontWeight: 'bold',
                     margin: '0 0 16px 0',
                     color: 'var(--m3-on-surface)',
-                    letterSpacing: '0px'
+                    letterSpacing: '0px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px'
                 }}>
-                    {safeRender(businessName || data.name)}
+                    <span>{safeRender(businessName || data.name)}</span>
+                    <button
+                        className="btn btn-ghost"
+                        onClick={(e) => { e.stopPropagation(); handleCopyAgreement(safeRender(businessName || data.name), 'dp-name'); }}
+                        title="Copy name to clipboard"
+                        style={{
+                            padding: '4px',
+                            color: copiedAgreementKey === 'dp-name' ? '#10b981' : 'var(--m3-on-surface-variant)',
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.color = copiedAgreementKey === 'dp-name' ? '#10b981' : 'var(--m3-primary)'}
+                        onMouseLeave={e => e.currentTarget.style.color = copiedAgreementKey === 'dp-name' ? '#10b981' : 'var(--m3-on-surface-variant)'}
+                    >
+                        {copiedAgreementKey === 'dp-name' ? (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        ) : (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        )}
+                    </button>
                 </h2>
-                <div style={{
+                <div className="custom-card" style={{
                     display: 'grid',
                     gridTemplateColumns: 'auto 1fr',
-                    gap: '12px 24px',
-                    fontSize: '14px',
-                    background: 'var(--m3-surface-variant)',
-                    padding: '20px',
-                    borderRadius: '16px',
-                    border: '1px solid var(--m3-outline-variant)'
+                    gap: '12px 24px'
                 }}>
                     <span style={{ color: 'var(--m3-on-surface-variant)', fontWeight: '600', display: 'flex', alignItems: 'center' }}>ID</span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <span style={{ fontFamily: 'monospace', color: 'var(--m3-on-surface)' }}>{safeRender(data.id)}</span>
                         <button
+                            className="btn btn-ghost"
                             onClick={handleCopy}
                             title="Copy ID to clipboard"
                             style={{
-                                background: 'transparent',
-                                border: 'none',
-                                cursor: 'pointer',
                                 padding: '4px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
                                 color: copied ? '#10b981' : 'var(--m3-on-surface-variant)',
-                                borderRadius: '4px',
-                                transition: 'all 0.2s ease',
                             }}
                             onMouseEnter={e => e.currentTarget.style.color = copied ? '#10b981' : 'var(--m3-primary)'}
                             onMouseLeave={e => e.currentTarget.style.color = copied ? '#10b981' : 'var(--m3-on-surface-variant)'}
@@ -164,20 +170,15 @@ export default function DataProductVisual({ data, registry = [] }) {
                     </div>
 
                     <span style={{ color: 'var(--m3-on-surface-variant)', fontWeight: '600' }}>Domain</span>
-                    <span>{safeRender(data.domain)}</span>
+                    <span>
+                        <span className="custom-chip" style={{ padding: '2px 8px', fontSize: '11px' }}>
+                            {safeRender(data.domain)}
+                        </span>
+                    </span>
 
                     <span style={{ color: 'var(--m3-on-surface-variant)', fontWeight: '600' }}>Status</span>
                     <span>
-                        <span style={{
-                            background: data.status === 'active' ? '#c2efd3' : 'var(--m3-primary-container)',
-                            color: data.status === 'active' ? '#064e3b' : 'var(--m3-on-primary-container)',
-                            padding: '4px 12px',
-                            borderRadius: '8px',
-                            fontSize: '12px',
-                            fontWeight: '600',
-                            textTransform: 'capitalize',
-                            letterSpacing: '0.5px'
-                        }}>
+                        <span className="custom-chip" style={{ padding: '2px 8px', fontSize: '11px' }}>
                             {safeRender(data.status)}
                         </span>
                     </span>
@@ -190,46 +191,26 @@ export default function DataProductVisual({ data, registry = [] }) {
             {/* Custom Properties */}
             {properties.length > 0 && (
                 <div style={{ marginBottom: '32px' }}>
-                    <h3 style={{
-                        fontSize: '14px',
-                        fontWeight: '700',
-                        color: 'var(--m3-primary)',
-                        marginBottom: '16px',
-                        textTransform: 'none',
-                        letterSpacing: '1px'
-                    }}>
+                    <h3 className="custom-card-title">
                         Extended Properties
                     </h3>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '16px' }}>
                         {properties.filter(p => !p.property.toLowerCase().includes('datausageagreement')).map((prop, idx) => (
-                            <div key={idx} style={{
-                                background: 'transparent',
-                                padding: '16px',
-                                borderRadius: '12px',
-                                border: '1px solid var(--m3-outline-variant)',
-                                transition: 'all 0.2s ease'
-                            }}>
-                                <div style={{ fontSize: '11px', color: 'var(--m3-on-surface-variant)', marginBottom: '6px', textTransform: 'none', fontWeight: 'bold' }}>
+                            <div key={idx} className="custom-card custom-card-small">
+                                <div className="custom-card-subtitle" style={{ marginBottom: '6px' }}>
                                     {formatLabel(prop.property)}
                                 </div>
-                                <div style={{ fontSize: '15px', fontWeight: '500', color: 'var(--m3-on-surface)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                                <div style={{ fontSize: '16px', fontWeight: 'normal', color: 'var(--m3-on-surface)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
                                     <span style={{ wordBreak: 'break-all' }}>
                                         {typeof prop.value === 'object' ? JSON.stringify(prop.value) : prop.value}
                                     </span>
                                     <button
+                                        className="btn btn-ghost"
                                         onClick={() => handleCopyProp(prop.value, idx)}
                                         title="Copy value to clipboard"
                                         style={{
-                                            background: 'transparent',
-                                            border: 'none',
-                                            cursor: 'pointer',
                                             padding: '4px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
                                             color: copiedPropIndex === idx ? '#10b981' : 'var(--m3-on-surface-variant)',
-                                            borderRadius: '4px',
-                                            transition: 'all 0.2s ease',
                                             flexShrink: 0
                                         }}
                                         onMouseEnter={e => e.currentTarget.style.color = copiedPropIndex === idx ? '#10b981' : 'var(--m3-primary)'}
@@ -256,29 +237,17 @@ export default function DataProductVisual({ data, registry = [] }) {
             {/* Data Usage Agreements Section */}
             {properties.some(p => p.property.toLowerCase().includes('datausageagreement')) && (
                 <div style={{ marginBottom: '32px' }}>
-                    <h3 style={{
-                        fontSize: '14px',
-                        fontWeight: '700',
-                        color: 'var(--m3-primary)',
-                        marginBottom: '16px',
-                        textTransform: 'none',
-                        letterSpacing: '1px'
-                    }}>
+                    <h3 className="custom-card-title">
                         Data Usage Agreements
                     </h3>
-                    <div style={{
-                        border: '1px solid var(--m3-outline-variant)',
-                        borderRadius: '16px',
-                        overflowX: 'auto',
-                        background: 'var(--m3-surface)'
-                    }}>
-                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px', textAlign: 'left' }}>
-                            <thead style={{ background: 'var(--m3-surface-variant)', borderBottom: '1px solid var(--m3-outline-variant)' }}>
+                    <div className="custom-table-container" style={{ overflowX: 'auto' }}>
+                        <table className="custom-table">
+                            <thead>
                                 <tr>
-                                    <th style={{ padding: '12px 20px', fontWeight: '600', color: 'var(--m3-on-surface-variant)' }}>Domain</th>
-                                    <th style={{ padding: '12px 20px', fontWeight: '600', color: 'var(--m3-on-surface-variant)' }}>Tier</th>
-                                    <th style={{ padding: '12px 20px', fontWeight: '600', color: 'var(--m3-on-surface-variant)' }}>Name</th>
-                                    <th style={{ padding: '12px 20px', fontWeight: '600', color: 'var(--m3-on-surface-variant)' }}>Consumer ID</th>
+                                    <th>Domain</th>
+                                    <th>Tier</th>
+                                    <th>Name</th>
+                                    <th>Consumer ID</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -314,14 +283,11 @@ export default function DataProductVisual({ data, registry = [] }) {
                                         }
 
                                         return (
-                                            <tr key={idx} style={{
-                                                borderBottom: idx < arr.length - 1 ? '1px solid var(--m3-outline-variant)' : 'none',
-                                                transition: 'background 0.2s ease'
-                                            }}>
-                                                <td style={{ padding: '14px 20px', color: 'var(--m3-on-surface-variant)' }}>{renderCellWithCopy(String(consumerDomain), `${idx}-domain`)}</td>
-                                                <td style={{ padding: '14px 20px', color: 'var(--m3-on-surface-variant)', textTransform: 'capitalize' }}>{renderCellWithCopy(String(consumerTier), `${idx}-tier`)}</td>
-                                                <td style={{ padding: '14px 20px', color: 'var(--m3-on-surface)', fontWeight: '500' }}>{renderCellWithCopy(String(consumerName), `${idx}-name`)}</td>
-                                                <td style={{ padding: '14px 20px', color: 'var(--m3-on-surface-variant)', fontFamily: 'monospace', fontSize: '12px' }}>{renderCellWithCopy(String(consumerId).split(':').pop(), `${idx}-id`)}</td>
+                                            <tr key={idx}>
+                                                <td>{renderCellWithCopy(String(consumerDomain), `${idx}-domain`)}</td>
+                                                <td style={{ textTransform: 'capitalize' }}>{renderCellWithCopy(String(consumerTier), `${idx}-tier`)}</td>
+                                                <td style={{ fontWeight: '500' }}>{renderCellWithCopy(String(consumerName), `${idx}-name`)}</td>
+                                                <td style={{ fontFamily: 'monospace', fontSize: '12px' }}>{renderCellWithCopy(String(consumerId).split(':').pop(), `${idx}-id`)}</td>
                                             </tr>
                                         );
                                     })}
@@ -334,30 +300,18 @@ export default function DataProductVisual({ data, registry = [] }) {
             {/* Output Ports */}
             {outputPorts.length > 0 && (
                 <div>
-                    <h3 style={{
-                        fontSize: '14px',
-                        fontWeight: '700',
-                        color: 'var(--m3-primary)',
-                        marginBottom: '16px',
-                        textTransform: 'none',
-                        letterSpacing: '1px'
-                    }}>
+                    <h3 className="custom-card-title">
                         Output Ports
                     </h3>
-                    <div style={{
-                        border: '1px solid var(--m3-outline-variant)',
-                        borderRadius: '16px',
-                        overflowX: 'auto',
-                        background: 'var(--m3-surface)'
-                    }}>
-                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px', textAlign: 'left' }}>
-                            <thead style={{ background: 'var(--m3-surface-variant)', borderBottom: '1px solid var(--m3-outline-variant)' }}>
+                    <div className="custom-table-container" style={{ overflowX: 'auto' }}>
+                        <table className="custom-table">
+                            <thead>
                                 <tr>
-                                    <th style={{ padding: '12px 20px', fontWeight: '600', color: 'var(--m3-on-surface-variant)' }}>Name</th>
-                                    <th style={{ padding: '12px 20px', fontWeight: '600', color: 'var(--m3-on-surface-variant)' }}>Version</th>
-                                    <th style={{ padding: '12px 20px', fontWeight: '600', color: 'var(--m3-on-surface-variant)' }}>Contract</th>
+                                    <th>Name</th>
+                                    <th>Version</th>
+                                    <th>Contract</th>
                                     {allPortCustomKeys.map(key => (
-                                        <th key={key} style={{ padding: '12px 20px', fontWeight: '600', color: 'var(--m3-on-surface-variant)' }}>
+                                        <th key={key}>
                                             {formatLabel(key)}
                                         </th>
                                     ))}
@@ -365,31 +319,23 @@ export default function DataProductVisual({ data, registry = [] }) {
                             </thead>
                             <tbody>
                                 {outputPorts.map((port, idx) => (
-                                    <tr key={idx} style={{
-                                        borderBottom: idx < outputPorts.length - 1 ? '1px solid var(--m3-outline-variant)' : 'none',
-                                        transition: 'background 0.2s ease'
-                                    }}>
-                                        <td style={{ padding: '14px 20px', color: 'var(--m3-on-surface)', fontWeight: '500' }}>{safeRender(port.name)}</td>
-                                        <td style={{ padding: '14px 20px', color: 'var(--m3-on-surface-variant)' }}>{safeRender(port.version)}</td>
-                                        <td style={{ padding: '14px 20px' }}>
-                                            <span style={{
-                                                fontFamily: 'monospace',
-                                                background: 'var(--m3-primary-container)',
-                                                color: 'var(--m3-on-primary-container)',
-                                                padding: '4px 10px',
-                                                borderRadius: '8px',
-                                                fontSize: '12px',
-                                                fontWeight: '500'
-                                            }}>
-                                                {port.contractId ? String(port.contractId).split(':').pop() : '-'}
-                                            </span>
+                                    <tr key={idx}>
+                                        <td style={{ fontWeight: '500' }}>
+                                            {renderCellWithCopy(String(port.name || ''), `port-${idx}-name`)}
+                                        </td>
+                                        <td>{safeRender(port.version)}</td>
+                                        <td style={{ fontFamily: 'monospace', fontSize: '12px' }}>
+                                            {port.contractId ? renderCellWithCopy(
+                                                String(port.contractId).split(':').pop(),
+                                                `port-${idx}-contract`
+                                            ) : '-'}
                                         </td>
                                         {allPortCustomKeys.map(key => {
                                             const values = (port.customProperties || [])
                                                 .filter(p => p.property === key)
                                                 .map(p => p.value);
                                             return (
-                                                <td key={key} style={{ padding: '14px 20px', color: 'var(--m3-on-surface-variant)' }}>
+                                                <td key={key}>
                                                     {values.length > 0 ? values.map(v => safeRender(v)).join(', ') : '-'}
                                                 </td>
                                             );

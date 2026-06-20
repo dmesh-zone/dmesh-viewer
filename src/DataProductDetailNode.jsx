@@ -46,25 +46,15 @@ export default memo(({ data, isConnectable }) => {
             }}>
                 <span>{data.banner}</span>
                 <div
-                    className="nodrag yaml-pill"
+                    className="nodrag custom-chip custom-chip-interactive"
                     style={{
-                        background: 'rgba(255, 255, 255, 0.5)',
-                        border: '1px solid rgba(255, 255, 255, 0.6)',
-                        borderRadius: '4px',
-                        padding: '4px',
-                        cursor: 'pointer',
-                        color: '#1e3a8a',
+                        padding: '2px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        transition: 'all 0.2s',
+                        width: '24px',
+                        height: '24px',
                         marginLeft: '8px'
-                    }}
-                    onMouseEnter={(e) => {
-                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.8)';
-                    }}
-                    onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.5)';
                     }}
                     onClick={(e) => {
                         e.stopPropagation();
@@ -145,13 +135,10 @@ export default memo(({ data, isConnectable }) => {
                                                 {port.name}
                                             </span>
                                             {port.version && (
-                                                <span style={{
+                                                <span className="custom-chip" style={{
                                                     fontSize: '10px',
-                                                    color: '#6b7280',
-                                                    border: '1px solid #e5e7eb',
-                                                    borderRadius: '12px',
-                                                    padding: '0 6px',
-                                                    background: 'white'
+                                                    padding: '2px 6px',
+                                                    fontWeight: '500'
                                                 }}>
                                                     {port.version}
                                                 </span>
@@ -160,13 +147,10 @@ export default memo(({ data, isConnectable }) => {
                                     </div>
                                     {port.contractId && (
                                         <div
-                                            className="nodrag data-contract-pill"
+                                            className="nodrag custom-chip custom-chip-interactive"
                                             style={{
                                                 fontSize: '10px',
-                                                color: '#059669',
-                                                background: '#ecfdf5',
-                                                padding: '1px 6px',
-                                                borderRadius: '12px',
+                                                padding: '2px 8px',
                                                 fontWeight: '500',
                                                 cursor: 'pointer',
                                                 whiteSpace: 'nowrap'

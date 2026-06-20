@@ -1,6 +1,16 @@
 # default config.yaml can be overridden by customConfig.yaml
 defaultDataMeshOperationalDataUrl: /DataMeshOperationalDataPetsExample.yaml
 
+single-domain-default-filter: False # Default is False
+zoom-to-fit-columns: True # Default is True
+
+theme: light
+
+# Customise domain names by mapping their names as they appear in the domain filter to a more user-friendly name
+# domainNameCustomisation:
+#   "food_production": "Food Production"
+#   "petstore": "Petstore"
+
 sampleDataMeshOperationalDataUrls:
   - http://localhost:8000/dmesh/discover
   - /DataMeshOperationalDataPetsExample.yaml
@@ -12,9 +22,6 @@ sampleDataMeshOperationalDataUrls:
   - /DataMeshOperationalDataPortAdapterExample.yaml
   - /DataMeshOperationalDataObservability.yaml
   - /DataMeshOperationalDataObservabilityLight.yaml
-
-theme:
-  fontFamily: "Inter, system-ui, Avenir, Helvetica, Arial, sans-serif"
 
 iconMap:
   dataproduct: /icons/dataproduct.svg
@@ -53,56 +60,24 @@ iconMap:
   agent: /icons/robot.svg
   application: /icons/application.svg
 
-domainPalette:
-  - "#fee2e2"
-  - "#f3e8ff"
-  - "#fef3c7"
-  - "#ffedd5"
-  - "#e0e7ff"
-  - "#dbeafe"
-  - "#dcfce7"
-
-domainLabelColors:
-  background: "#f3f4f6"
-  text: "#6b7280"
-  border: "#e5e7eb"
-
-connectorColors:
-  default: "#9ca3af" # Standard color of edges when nothing is hovered
-  hoveredNode: "#22c55e" # Color of edges connected to a node when hovering over that node
-  hoveredEdge: "#22c55e" # Color of a specific edge when hovering directly over it
-  faint: "#ffffff" # Color of unconnected edges when hovering a node (typically used to fade them out)
-
 tiers:
   dataSource:
     label: DATA SOURCE
-    color: "#e2e8f0"
-    bannerColor: "#cbd5e1"
     columnNumber: 1
   sourceAligned:
     label: DATA PRODUCT (SOURCE ALIGNED)
-    color: "#bfdbfe"
-    bannerColor: "#93c5fd"
     columnNumber: 2
   curated:
     label: DATA PRODUCT (CURATED)
-    color: "#bfdbfe"
-    bannerColor: "#93c5fd"
     columnNumber: 3
   consumerAligned:
     label: DATA PRODUCT (CONSUMER ALIGNED)
-    color: "#bfdbfe"
-    bannerColor: "#93c5fd"
     columnNumber: 4
   application:
     label: APPLICATION
-    color: "#e2e8f0"
-    bannerColor: "#cbd5e1"
     columnNumber: 5
   agent:
     label: AGENT
-    color: "#e2e8f0"
-    bannerColor: "#cbd5e1"
     columnNumber: 5
 
 observability:
@@ -110,7 +85,6 @@ observability:
     dataSources:
       name: "Data sources"
       visible: true
-      bgColor: "#831843"
       aggregation:
         type: count
         criteria:
@@ -118,7 +92,6 @@ observability:
     dataProducts:
       name: "Data Products"
       visible: true
-      bgColor: "#1e3a8a"
       aggregation:
         type: count
         criteria:
@@ -126,14 +99,12 @@ observability:
     outputPorts:
       name: "Output ports"
       visible: true
-      bgColor: "#4c1d95"
       aggregation:
         type: sum
         field: outputPortCount
     recordsIngested:
       name: "Records Ingested"
       visible: true
-      bgColor: "#064e3b"
       aggregation:
         type: sumMetric
         metric: "dpPipelineRecordsProcessed"
@@ -142,7 +113,6 @@ observability:
     recordsProcessed:
       name: "Records Processed"
       visible: true
-      bgColor: "#9a3412"
       aggregation:
         type: sumMetric
         metric: "dpPipelineRecordsProcessed"
@@ -151,7 +121,6 @@ observability:
     consumingApplication:
       name: "Consuming applications"
       visible: true
-      bgColor: "#0f766e"
       aggregation:
         type: count
         criteria:

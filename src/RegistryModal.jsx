@@ -106,42 +106,30 @@ export default function RegistryModal({ isOpen, onClose, currentUrl, registries 
                         Load Data Mesh Operational Data
                     </h2>
 
-                    <div style={{ marginBottom: '20px', position: 'relative' }} ref={dropdownRef}>
-                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: '500', color: '#374151' }}>
-                            Operational Data URL
-                        </label>
-                        <div style={{ position: 'relative' }}>
-                            <input
-                                type="text"
-                                value={url}
-                                onChange={(e) => {
-                                    setUrl(e.target.value);
-                                    setIsSearching(true);
-                                    setShowOptions(true);
-                                }}
-                                onFocus={() => {
-                                    setShowOptions(true);
-                                }}
-                                placeholder="Select or enter registry URL..."
-                                style={{
-                                    width: '100%',
-                                    padding: '10px 12px',
-                                    paddingRight: '32px',
-                                    border: '1px solid #d1d5db',
-                                    borderRadius: '6px',
-                                    fontSize: '14px',
-                                    fontFamily: 'monospace',
-                                    boxSizing: 'border-box'
-                                }}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        handleLoad();
-                                    }
-                                    if (e.key === 'Escape') {
-                                        setShowOptions(false);
-                                    }
-                                }}
-                            />
+                    <div className="md-input-container" ref={dropdownRef}>
+                        <input
+                            type="text"
+                            className="md-input-field"
+                            value={url}
+                            onChange={(e) => {
+                                setUrl(e.target.value);
+                                setIsSearching(true);
+                                setShowOptions(true);
+                            }}
+                            onFocus={() => {
+                                setShowOptions(true);
+                            }}
+                            placeholder=" " /* Required for floating label */
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    handleLoad();
+                                }
+                                if (e.key === 'Escape') {
+                                    setShowOptions(false);
+                                }
+                            }}
+                        />
+                        <label className="md-input-label">Operational Data URL</label>
                             <div
                                 onMouseDown={(e) => {
                                     e.preventDefault();
@@ -168,7 +156,7 @@ export default function RegistryModal({ isOpen, onClose, currentUrl, registries 
                                     <polyline points="6 9 12 15 18 9"></polyline>
                                 </svg>
                             </div>
-                        </div>
+                        
 
                         {showOptions && filteredOptions.length > 0 && (
                             <div style={{
@@ -214,47 +202,20 @@ export default function RegistryModal({ isOpen, onClose, currentUrl, registries 
 
                     <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
                         <button
+                            className="btn btn-secondary"
                             onClick={onClose}
-                            style={{
-                                padding: '8px 16px',
-                                border: '1px solid #d1d5db',
-                                borderRadius: '6px',
-                                background: 'white',
-                                color: '#374151',
-                                fontSize: '14px',
-                                fontWeight: '500',
-                                cursor: 'pointer'
-                            }}
                         >
                             Cancel
                         </button>
                         <button
+                            className="btn btn-secondary"
                             onClick={handleLoadFromClipboard}
-                            style={{
-                                padding: '8px 16px',
-                                border: '1px solid #d1d5db',
-                                borderRadius: '6px',
-                                background: '#f3f4f6',
-                                color: '#374151',
-                                fontSize: '14px',
-                                fontWeight: '500',
-                                cursor: 'pointer'
-                            }}
                         >
                             Load from clipboard
                         </button>
                         <button
+                            className="btn btn-primary"
                             onClick={handleLoad}
-                            style={{
-                                padding: '8px 16px',
-                                border: 'none',
-                                borderRadius: '6px',
-                                background: '#2563eb',
-                                color: 'white',
-                                fontSize: '14px',
-                                fontWeight: '500',
-                                cursor: 'pointer'
-                            }}
                         >
                             Load from URL
                         </button>

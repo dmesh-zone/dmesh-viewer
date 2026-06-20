@@ -61,28 +61,12 @@ const ExampleTable = ({ schema }) => {
     }
 
     return (
-        <div style={{ overflow: 'auto', height: '100%', width: '100%', background: 'white' }}>
-            <table style={{
-                width: '100%',
-                borderCollapse: 'separate',
-                borderSpacing: 0,
-                fontSize: '12px',
-                fontFamily: 'var(--font-family, inherit)'
-            }}>
-                <thead style={{ position: 'sticky', top: 0, zIndex: 20, background: '#f8fafc' }}>
+        <div className="custom-table-container" style={{ overflow: 'auto', height: '100%', width: '100%' }}>
+            <table className="custom-table">
+                <thead style={{ position: 'sticky', top: 0, zIndex: 20 }}>
                     <tr>
                         {columns.map(col => (
-                            <th key={col} style={{
-                                padding: '8px 12px',
-                                borderBottom: '1px solid #e2e8f0',
-                                borderRight: '1px solid #e2e8f0',
-                                textAlign: 'left',
-                                color: '#475569',
-                                fontWeight: '600',
-                                whiteSpace: 'nowrap',
-                                background: '#f8fafc',
-                                zIndex: 20
-                            }}>
+                            <th key={col}>
                                 {col}
                             </th>
                         ))}
@@ -92,13 +76,7 @@ const ExampleTable = ({ schema }) => {
                     {rows.map((row, rowIndex) => (
                         <tr key={rowIndex}>
                             {columns.map(col => (
-                                <td key={col} style={{
-                                    padding: '8px 12px',
-                                    borderBottom: '1px solid #f1f5f9',
-                                    borderRight: '1px solid #f1f5f9',
-                                    color: '#334155',
-                                    whiteSpace: 'nowrap'
-                                }}>
+                                <td key={col} style={{ whiteSpace: 'nowrap' }}>
                                     {typeof row[col] === 'object' ? JSON.stringify(row[col]) : row[col]}
                                 </td>
                             ))}

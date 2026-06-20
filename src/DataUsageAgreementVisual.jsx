@@ -38,35 +38,22 @@ export default function DataUsageAgreementVisual({ data }) {
             {/* Header Section */}
             <div style={{ marginBottom: '32px' }}>
                 <h2 style={{
-                    fontSize: '22px',
-                    fontWeight: '400',
+                    fontSize: '24px',
+                    fontWeight: 'bold',
                     margin: '0 0 16px 0',
                     color: 'var(--m3-on-surface)',
                     letterSpacing: '0px'
                 }}>
                     Data Usage Agreement
                 </h2>
-                <div style={{
+                <div className="custom-card" style={{
                     display: 'flex',
+                    flexDirection: 'row',
                     gap: '16px',
-                    fontSize: '14px',
                     alignItems: 'center',
-                    marginBottom: '16px',
-                    background: 'var(--m3-surface-variant)',
-                    padding: '12px 20px',
-                    borderRadius: '12px',
-                    border: '1px solid var(--m3-outline-variant)'
+                    marginBottom: '16px'
                 }}>
-                    <span style={{
-                        background: info.status === 'approved' ? '#c2efd3' : '#f9dada',
-                        color: info.status === 'approved' ? '#064e3b' : '#7f1d1d',
-                        padding: '4px 12px',
-                        borderRadius: '8px',
-                        fontWeight: '600',
-                        textTransform: 'capitalize',
-                        fontSize: '12px',
-                        letterSpacing: '0.5px'
-                    }}>
+                    <span className="custom-chip" style={{ padding: '2px 8px', fontSize: '11px' }}>
                         {info.status}
                     </span>
                     <span style={{ color: 'var(--m3-on-surface-variant)' }}>Start Date: <strong style={{ color: 'var(--m3-on-surface)' }}>{info.startDate}</strong></span>
@@ -87,35 +74,22 @@ export default function DataUsageAgreementVisual({ data }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
 
                 {/* Provider Card */}
-                <div style={{
-                    border: '1px solid var(--m3-outline-variant)',
-                    borderRadius: '16px',
-                    padding: '24px',
-                    background: 'var(--m3-surface)',
-                    position: 'relative'
-                }}>
-                    <h3 style={{
-                        fontSize: '12px',
-                        fontWeight: '700',
-                        color: 'var(--m3-primary)',
-                        marginBottom: '16px',
-                        textTransform: 'none',
-                        letterSpacing: '1px'
-                    }}>
+                <div className="custom-card" style={{ position: 'relative' }}>
+                    <h3 className="custom-card-title">
                         Provider
                     </h3>
                     <div style={{ display: 'grid', gap: '12px', fontSize: '14px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <span style={{ color: 'var(--m3-on-surface-variant)' }}>Team</span>
-                            <span style={{ fontWeight: '600', color: 'var(--m3-on-surface)' }}>{provider.teamId}</span>
+                            <span style={{ color: 'var(--m3-on-surface-variant)', fontSize: '14px' }}>Team</span>
+                            <span style={{ fontWeight: 'bold', color: 'var(--m3-on-surface)', fontSize: '14px' }}>{provider.teamId}</span>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <span style={{ color: 'var(--m3-on-surface-variant)' }}>Data Product</span>
-                            <span style={{ fontWeight: '600', color: 'var(--m3-on-surface)', fontFamily: 'monospace' }}>{provider.dataProductId}</span>
+                            <span style={{ color: 'var(--m3-on-surface-variant)', fontSize: '14px' }}>Data Product</span>
+                            <span style={{ fontWeight: 'bold', color: 'var(--m3-on-surface)', fontFamily: 'monospace', fontSize: '14px' }}>{provider.dataProductId}</span>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <span style={{ color: 'var(--m3-on-surface-variant)' }}>Output Port</span>
-                            <span style={{ fontWeight: '600', color: 'var(--m3-primary)', fontFamily: 'monospace' }}>{provider.outputPortId}</span>
+                            <span style={{ color: 'var(--m3-on-surface-variant)', fontSize: '14px' }}>Output Port</span>
+                            <span style={{ fontWeight: 'bold', color: 'var(--m3-primary)', fontFamily: 'monospace', fontSize: '14px' }}>{provider.outputPortId}</span>
                         </div>
                     </div>
                 </div>
@@ -138,72 +112,37 @@ export default function DataUsageAgreementVisual({ data }) {
                 </div>
 
                 {/* Consumer Card */}
-                <div style={{
-                    border: '1px solid var(--m3-outline-variant)',
-                    borderRadius: '16px',
-                    padding: '24px',
-                    background: 'var(--m3-surface)'
-                }}>
-                    <h3 style={{
-                        fontSize: '12px',
-                        fontWeight: '700',
-                        color: 'var(--m3-primary)',
-                        marginBottom: '16px',
-                        textTransform: 'none',
-                        letterSpacing: '1px'
-                    }}>
+                <div className="custom-card">
+                    <h3 className="custom-card-title">
                         Consumer
                     </h3>
                     <div style={{ display: 'grid', gap: '12px', fontSize: '14px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <span style={{ color: 'var(--m3-on-surface-variant)' }}>Team</span>
-                            <span style={{ fontWeight: '600', color: 'var(--m3-on-surface)' }}>{consumer.teamId || 'N/A'}</span>
+                            <span style={{ color: 'var(--m3-on-surface-variant)', fontSize: '14px' }}>Team</span>
+                            <span style={{ fontWeight: 'bold', color: 'var(--m3-on-surface)', fontSize: '14px' }}>{consumer.teamId || 'N/A'}</span>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <span style={{ color: 'var(--m3-on-surface-variant)' }}>Data Product</span>
-                            <span style={{ fontWeight: '600', color: 'var(--m3-on-surface)', fontFamily: 'monospace' }}>{consumer.dataProductId}</span>
+                            <span style={{ color: 'var(--m3-on-surface-variant)', fontSize: '14px' }}>Data Product</span>
+                            <span style={{ fontWeight: 'bold', color: 'var(--m3-on-surface)', fontFamily: 'monospace', fontSize: '14px' }}>{consumer.dataProductId}</span>
                         </div>
                     </div>
                 </div>
 
                 {/* Custom Properties */}
                 {hasCustomProperties && (
-                    <div style={{
-                        marginTop: '16px',
-                        border: '1px solid var(--m3-outline-variant)',
-                        borderRadius: '16px',
-                        padding: '24px',
-                        background: 'var(--m3-surface)'
-                    }}>
-                        <h3 style={{
-                            fontSize: '12px',
-                            fontWeight: '700',
-                            color: 'var(--m3-primary)',
-                            marginBottom: '16px',
-                            textTransform: 'none',
-                            letterSpacing: '1px'
-                        }}>
+                    <div className="custom-card" style={{ marginTop: '16px' }}>
+                        <h3 className="custom-card-title">
                             Custom Properties
                         </h3>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
                             {Object.entries(custom).map(([key, value]) => (
-                                <div key={key} style={{
-                                    border: '1px solid var(--m3-outline-variant)',
-                                    borderRadius: '12px',
-                                    padding: '12px 16px',
-                                    background: 'var(--m3-surface-variant)'
-                                }}>
-                                    <div style={{
-                                        fontSize: '11px',
-                                        fontWeight: '700',
-                                        color: 'var(--m3-on-surface-variant)',
-                                        marginBottom: '4px'
-                                    }}>
+                                <div key={key} className="custom-card custom-card-small">
+                                    <div className="custom-card-subtitle" style={{ marginBottom: '4px' }}>
                                         {formatKey(key)}
                                     </div>
                                     <div style={{
-                                        fontSize: '14px',
-                                        fontWeight: '500',
+                                        fontSize: '16px',
+                                        fontWeight: 'normal',
                                         color: 'var(--m3-on-surface)'
                                     }}>
                                         {String(value)}

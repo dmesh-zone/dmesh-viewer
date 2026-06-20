@@ -16,16 +16,12 @@
 
 const GlobalFilter = ({ filterText, onFilterChange }) => {
     return (
-        <div style={{
+        <div className="input-container-style" style={{
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            border: '1px solid #e2e8f0',
-            borderRadius: '4px',
             padding: '6px 10px',
-            minWidth: '300px',
-            background: 'white',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            minWidth: '300px'
         }}>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="8"></circle>
@@ -47,13 +43,11 @@ const GlobalFilter = ({ filterText, onFilterChange }) => {
             />
             {filterText && (
                 <button
+                    className="btn btn-ghost"
                     onClick={() => onFilterChange('')}
                     style={{
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        color: '#94a3b8',
                         padding: 0,
+                        border: 'none',
                         display: 'flex',
                         alignItems: 'center'
                     }}
