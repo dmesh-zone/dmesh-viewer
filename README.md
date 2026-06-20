@@ -29,10 +29,9 @@ Additionally, you can create a `./public/customConfig.yaml` file to override any
 
 ```yaml
 defaultDataMeshOperationalDataUrl: /DataMeshOperationalData.yaml
+theme: light
 iconMap:
   ...
-domainPalette:
-  - ...
 tiers:
   ...
 ```
@@ -70,42 +69,43 @@ iconMap:
 
 **Default**: Empty object (uses fallback icons)
 
-#### `domainPalette` (optional)
+#### `theme` (optional)
 
-Array of hex color codes for domain backgrounds. Colors are assigned to domains in order.
+Specifies which CSS theme file to load for styling. The value corresponds to a CSS file in the `public/themes/` directory.
 
 **Example:**
 ```yaml
-domainPalette:
-  - "#fee2e2"
-  - "#f3e8ff"
-  - "#fef3c7"
-  - "#ffedd5"
+theme: custom
 ```
 
-**Default**: `["#fee2e2", "#f3e8ff", "#fef3c7", "#ffedd5", "#e0e7ff", "#dbeafe", "#dcfce7"]`
+**Default**: `light`
 
 #### `tiers` (optional)
 
-Defines visual styling and positioning for Data Product tiers.
+Defines positioning and labels for Data Product tiers. Visual styling (like colors) is managed via CSS themes.
 
 **Example:**
 ```yaml
 tiers:
   sourceAligned:
     label: DATA PRODUCT (SOURCE ALIGNED)
-    color: "#bfdbfe"
-    bannerColor: "#93c5fd"
     columnNumber: 1
 ```
 
 **Properties:**
 - `label`: Display text for the tier banner
-- `color`: Background color (hex code)
-- `bannerColor`: Banner background color (hex code)
 - `columnNumber`: Column position (1, 2, 3, 4, 5...) for auto-layout. Spacing is automatically calculated at 450px per column. All nodes in a column have a consistent width of 280px.
 
 **Default**: Includes `dataSource`, `sourceAligned`, `curated`, `consumerAligned`, and `application` tiers
+
+### Themes and Styling
+
+All UI colors, including domain palettes, tier backgrounds, and KPI cards, are fully customizable via CSS theme files. Themes are located in `public/themes/`.
+
+To customize colors:
+1. Copy or edit `public/themes/custom-theme.css`.
+2. Update the `theme` field in your `config.yaml` to `custom`.
+3. Adjust the CSS variables for `--domain-palette-XX`, `--tier-*-color`, etc.
 
 ## Local Development
 
