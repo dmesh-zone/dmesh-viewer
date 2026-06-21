@@ -7,8 +7,6 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: #213547;
-  background-color: #ffffff;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -340,4 +338,35 @@ input[type="checkbox"]:checked::after {
 }
 .custom-input:focus {
   border-color: var(--input-border-focus, #2563eb);
+}
+
+/* Dark Mode Overrides */
+[data-theme="dark"] {
+  --side-panel-bg: #1e293b;
+  --side-panel-border: #334155;
+  --side-panel-text: #f8fafc;
+  --side-panel-close-btn: #94a3b8;
+  --side-panel-tab-hover-bg: #0f172a;
+  --side-panel-container-border: #334155;
+  
+  --domain-label-bg: #1e293b;
+  --domain-label-text: #cbd5e1;
+  --domain-label-border: #334155;
+  
+  --button-secondary-bg: #1e293b;
+  --button-secondary-text: #f8fafc;
+  --button-secondary-border: #475569;
+  --button-secondary-hover-bg: #334155;
+  
+  --input-bg: #1e293b;
+  --input-border-default: #475569;
+  
+  --chip-bg: #1e293b;
+  --chip-text: #f8fafc;
+  --chip-border: #475569;
+  --chip-hover-bg: #334155;
+  --chip-focus-bg: #000000;
+  
+  --checkbox-bg: #1e293b;
+  --checkbox-border: #475569;
 }

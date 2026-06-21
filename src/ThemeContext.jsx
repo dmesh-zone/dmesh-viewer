@@ -20,6 +20,11 @@ export const CustomThemeProvider = ({ children }) => {
     // Persist mode to localStorage when it changes
     useEffect(() => {
         localStorage.setItem('theme', mode);
+        if (mode === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+        }
     }, [mode]);
 
     // Apply config-based theme or base mode
