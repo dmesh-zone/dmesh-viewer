@@ -476,17 +476,23 @@ function Flow() {
     React.useEffect(() => {
         if (availableDomains.length > 0) {
             const params = new URLSearchParams(window.location.search);
-            const domainParam = params.get('domain');
+            let domainParam = params.get('domain');
+
+            if (!domainParam) {
+                // Fallback: Check if it's in the hash or pathname like /domain=Domain_03 or #domain=Domain_03
+                const match = window.location.href.match(/[\/#?&]domain=([^&]+)/);
+                if (match) {
+                    domainParam = decodeURIComponent(match[1]);
+                }
+            }
 
             if (domainParam) {
                 const urlDomains = domainParam.split(',').map(d => d.trim().toLowerCase());
                 const matchingDomains = availableDomains.filter(d =>
                     urlDomains.includes(d.toLowerCase())
                 );
-                if (matchingDomains.length > 0) {
-                    setSelectedDomains(matchingDomains);
-                    return;
-                }
+                setSelectedDomains(matchingDomains);
+                return;
             }
             if (config && config['single-domain-default-filter']) {
                 setSelectedDomains([availableDomains[0]]);
@@ -1692,9 +1698,60 @@ function Flow() {
             </React.Fragment>
         );
     };
+    const downloadData = (format) => {
+        let content = '';
+        let type = '';
+        let extension = '';
+        
+        if (format === 'yaml') {
+            content = YAML.stringify(dataMeshRegistry);
+            type = 'text/yaml';
+            extension = 'yaml';
+        } else if (format === 'json') {
+            content = JSON.stringify(dataMeshRegistry, null, 2);
+            type = 'application/json';
+            extension = 'json';
+        }
+        
+        const blob = new Blob([content], { type });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const dd = String(now.getDate()).padStart(2, '0');
+        const hh = String(now.getHours()).padStart(2, '0');
+        const min = String(now.getMinutes()).padStart(2, '0');
+        const ss = String(now.getSeconds()).padStart(2, '0');
+        a.download = `dmesh-operational-data-${yyyy}${mm}${dd}_${hh}${min}${ss}.${extension}`;
+        
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    };
 
     return (
         <div style={{ height: '100%', position: 'relative', overflow: 'hidden', background: 'var(--m3-surface, #ffffff)' }}>
+            {/* Secret Test Mode Toggle */}
+            <div 
+                onClick={() => {
+                    if (!window.location.hash.includes('#test')) {
+                        setIsTestMode(prev => !prev);
+                    }
+                }}
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '40px',
+                    height: '40px',
+                    zIndex: 9999,
+                    cursor: 'default'
+                }}
+            />
 
             {/* Configuration Error Banner */}
             {configError && (
@@ -1895,7 +1952,7 @@ function Flow() {
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end', flexShrink: 1, minWidth: 0, maxWidth: '100%' }}>
                         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                            <ThemeToggle />
+                            <ThemeToggle isTestMode={isTestMode} />
                             <button
                                 className="btn btn-secondary"
                                 onClick={() => setCompactMode(!compactMode)}
@@ -2215,7 +2272,7 @@ function Flow() {
             >
                 <Background />
                 <Controls position="bottom-left" />
-                <MiniMap position="bottom-right" />
+                {/* <MiniMap position="bottom-right" /> */}
                 <svg style={{ position: 'absolute', top: 0, left: 0 }}>
                     <defs>
                         <marker id="custom-arrow-default" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
@@ -2629,44 +2686,136 @@ function Flow() {
                 />
             )}
 
-            {/* Floating File Icon - Bottom Right */}
+            {/* Floating Buttons - Bottom Right */}
             {isTestMode && (
-                <button
-                    onClick={() => setShowRegistryModal(true)}
-                    style={{
-                        position: 'fixed',
-                        bottom: '24px',
-                        right: '24px',
-                        width: '34px',
-                        height: '34px',
-                        borderRadius: '17px',
-                        background: 'var(--button-secondary-bg, #f3f4f6)',
-                        border: 'none',
-                        cursor: 'pointer',
-                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        zIndex: 100,
-                        transition: 'all 0.2s'
-                    }}
-                    onMouseEnter={(e) => {
-                        e.currentTarget.style.background = 'var(--button-secondary-hover-bg, #e5e7eb)';
-                        e.currentTarget.style.transform = 'scale(1.05)';
-                    }}
-                    onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'var(--button-secondary-bg, #f3f4f6)';
-                        e.currentTarget.style.transform = 'scale(1)';
-                    }}
-                    title="Load Registry"
-                >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--button-secondary-text, white)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="12" y1="18" x2="12" y2="12"></line>
-                        <line x1="9" y1="15" x2="15" y2="15"></line>
-                    </svg>
-                </button>
+                <div style={{
+                    position: 'fixed',
+                    bottom: '24px',
+                    right: '24px',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    gap: '12px',
+                    zIndex: 100
+                }}>
+                    <button
+                        onClick={() => downloadData('yaml')}
+                        style={{
+                            width: '34px',
+                            height: '34px',
+                            borderRadius: '17px',
+                            background: 'var(--button-secondary-bg, #f3f4f6)',
+                            border: 'none',
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'all 0.2s'
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.background = 'var(--button-secondary-hover-bg, #e5e7eb)';
+                            e.currentTarget.style.transform = 'scale(1.05)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.background = 'var(--button-secondary-bg, #f3f4f6)';
+                            e.currentTarget.style.transform = 'scale(1)';
+                        }}
+                        title="Download as YAML"
+                    >
+                        <div style={{position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--button-secondary-text, white)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            <span style={{
+                                position: 'absolute',
+                                top: '-2px',
+                                right: '-6px',
+                                fontSize: '10px',
+                                fontWeight: 'bold',
+                                color: 'var(--button-secondary-text, white)',
+                                textShadow: '0 0 2px rgba(0,0,0,0.5)'
+                            }}>Y</span>
+                        </div>
+                    </button>
+                    
+                    <button
+                        onClick={() => downloadData('json')}
+                        style={{
+                            width: '34px',
+                            height: '34px',
+                            borderRadius: '17px',
+                            background: 'var(--button-secondary-bg, #f3f4f6)',
+                            border: 'none',
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'all 0.2s'
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.background = 'var(--button-secondary-hover-bg, #e5e7eb)';
+                            e.currentTarget.style.transform = 'scale(1.05)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.background = 'var(--button-secondary-bg, #f3f4f6)';
+                            e.currentTarget.style.transform = 'scale(1)';
+                        }}
+                        title="Download as JSON"
+                    >
+                        <div style={{position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--button-secondary-text, white)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            <span style={{
+                                position: 'absolute',
+                                top: '-2px',
+                                right: '-5px',
+                                fontSize: '10px',
+                                fontWeight: 'bold',
+                                color: 'var(--button-secondary-text, white)',
+                                textShadow: '0 0 2px rgba(0,0,0,0.5)'
+                            }}>J</span>
+                        </div>
+                    </button>
+
+                    <button
+                        onClick={() => setShowRegistryModal(true)}
+                        style={{
+                            width: '34px',
+                            height: '34px',
+                            borderRadius: '17px',
+                            background: 'var(--button-secondary-bg, #f3f4f6)',
+                            border: 'none',
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'all 0.2s'
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.background = 'var(--button-secondary-hover-bg, #e5e7eb)';
+                            e.currentTarget.style.transform = 'scale(1.05)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.background = 'var(--button-secondary-bg, #f3f4f6)';
+                            e.currentTarget.style.transform = 'scale(1)';
+                        }}
+                        title="Load Registry"
+                    >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--button-secondary-text, white)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="12" y1="18" x2="12" y2="12"></line>
+                            <line x1="9" y1="15" x2="15" y2="15"></line>
+                        </svg>
+                    </button>
+                </div>
             )}
 
             {/* Registry Modal */}

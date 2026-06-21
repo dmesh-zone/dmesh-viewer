@@ -1,10 +1,10 @@
 import React from 'react';
 import { useThemeContext } from './ThemeContext';
 
-const ThemeToggle = () => {
+const ThemeToggle = ({ isTestMode }) => {
     const { mode, toggleTheme, configTheme } = useThemeContext();
 
-    if (configTheme !== 'light' && configTheme !== 'dark') {
+    if (configTheme !== 'light' && configTheme !== 'dark' && !isTestMode) {
         return null;
     }
 
