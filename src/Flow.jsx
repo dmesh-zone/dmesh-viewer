@@ -85,7 +85,7 @@ export default Flow;
 
 function Flow() {
     // Theme Context
-    const { setThemeFromConfig } = useThemeContext();
+    const { mode, setThemeFromConfig } = useThemeContext();
 
     // Registry State - URL will be loaded from config.json
     const [registryUrl, setRegistryUrl] = React.useState('');
@@ -166,20 +166,14 @@ function Flow() {
                 setConfig(loadedConfig);
                 setConfigError(null);
 
-                // Dynamically load theme
+                // Pass theme config to context, but do NOT inject link here
+                // We will handle link injection in a dedicated useEffect responding to mode
                 if (loadedConfig.theme) {
                     setThemeFromConfig(loadedConfig.theme);
                 }
                 
-                const themeName = typeof loadedConfig.theme === 'string' ? loadedConfig.theme : 'light';
-                const themeLink = document.getElementById('theme-link');
-                if (themeLink) {
-                    const baseUrl = import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL;
-                    const themeUrl = `${baseUrl}/themes/${themeName}-theme.css`.replace('//', '/');
-                    themeLink.href = import.meta.env.DEV ? `${themeUrl}?t=${Date.now()}` : themeUrl;
-                    // Force the link to the end of head to override Vite injected styles
-                    document.head.appendChild(themeLink);
-                }
+                // Keep the initial config.theme name so the useEffect can use it
+                // We don't append to DOM here.
 
                 // Set initial registry URL from config
                 setRegistryUrl(loadedConfig.defaultDataMeshOperationalDataUrl);
@@ -189,6 +183,34 @@ function Flow() {
                 setConfigError(err.message);
             });
     }, []);
+
+    // Effect to handle CSS theme file injection based on mode
+    React.useEffect(() => {
+        if (!config) return;
+        
+        let activeThemeName = 'light';
+        const configThemeName = typeof config.theme === 'string' ? config.theme : 'light';
+        
+        if (configThemeName === 'light' || configThemeName === 'dark') {
+            activeThemeName = mode; // Obey user toggle
+        } else {
+            // If it's a custom theme (e.g. "custom"), we could append "-dark" if mode is dark,
+            // but for now we just switch to "dark" if dark mode is requested, or fallback to the custom string.
+            activeThemeName = mode === 'dark' ? 'dark' : configThemeName;
+        }
+
+        let themeLink = document.getElementById('theme-link');
+        if (!themeLink) {
+            themeLink = document.createElement('link');
+            themeLink.id = 'theme-link';
+            themeLink.rel = 'stylesheet';
+            document.head.appendChild(themeLink);
+        }
+        
+        const baseUrl = import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL;
+        const themeUrl = `${baseUrl}/themes/${activeThemeName}-theme.css`.replace('//', '/');
+        themeLink.href = import.meta.env.DEV ? `${themeUrl}?t=${Date.now()}` : themeUrl;
+    }, [mode, config]);
 
     // React Flow State
     const [nodes, setNodes, onNodesChange] = useNodesState([]);

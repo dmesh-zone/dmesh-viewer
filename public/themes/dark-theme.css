@@ -1,0 +1,127 @@
+:root {
+  /* Typography */
+  --font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+  /* Domain Palette - Darkened for dark mode */
+  --domain-palette-01: #1e293b;
+  --domain-palette-02: #243040;
+  --domain-palette-03: #4a452a;
+  --domain-palette-04: #224a3e;
+  --domain-palette-05: #4a3821;
+  --domain-palette-06: #3f4722;
+  --domain-palette-07: #3b3054;
+  --domain-palette-08: #1e3a63;
+  --domain-palette-09: #47264d;
+  --domain-palette-10: #542724;
+  --domain-palette-11: #212c5c;
+  --domain-palette-12: #1e4a22;
+  --domain-palette-13: #1a2f5c;
+
+  /* Domain Label Colors */
+  --domain-label-bg: #1e293b;
+  --domain-label-text: #cbd5e1;
+  --domain-label-border: #334155;
+
+  /* Connector Colors */
+  --connector-default: #475569;
+  --connector-hovered-node: #3b82f6;
+  --connector-hovered-edge: #3b82f6;
+  --connector-faint: #0f172a;
+
+  /* Tiers Colors */
+  --tier-dataSource-color: #334155;
+  --tier-dataSource-banner: #475569;
+  --tier-sourceAligned-color: #1e3a8a;
+  --tier-sourceAligned-banner: #1d4ed8;
+  --tier-curated-color: #1e3a8a;
+  --tier-curated-banner: #1d4ed8;
+  --tier-consumerAligned-color: #1e3a8a;
+  --tier-consumerAligned-banner: #1d4ed8;
+  --tier-application-color: #334155;
+  --tier-application-banner: #475569;
+  --tier-agent-color: #334155;
+  --tier-agent-banner: #475569;
+
+  /* KPI Colors */
+  --kpi-dataSources-bg: #be185d;
+  --kpi-dataProducts-bg: #2563eb;
+  --kpi-outputPorts-bg: #7c3aed;
+  --kpi-recordsIngested-bg: #059669;
+  --kpi-recordsProcessed-bg: #ea580c;
+  --kpi-consumingApplication-bg: #0d9488;
+
+  /* Controls: Checkboxes */
+  --checkbox-accent: #3b82f6;
+  --checkbox-size: 16px;
+  --checkbox-radius: 4px;
+  --checkbox-bg: #1e293b;
+  --checkbox-border: #475569;
+  --checkbox-checked-bg: #3b82f6;
+  --checkbox-checked-border: #3b82f6;
+
+  /* Controls: Buttons Base */
+  --button-radius: 6px;
+  --button-padding: 8px 16px;
+  --button-font-weight: 500;
+
+  /* Button Variants */
+  --button-primary-bg: #3b82f6;
+  --button-primary-text: #ffffff;
+  --button-primary-hover: #2563eb;
+
+  --button-secondary-bg: #1e293b;
+  --button-secondary-text: #f8fafc;
+  --button-secondary-border: #475569;
+  --button-secondary-hover-bg: #334155;
+  --button-secondary-hover-border: #64748b;
+
+  --button-danger-bg: #ef4444;
+  --button-danger-text: #ffffff;
+  --button-danger-hover: #dc2626;
+
+  --button-ghost-text: #94a3b8;
+  --button-ghost-hover-bg: rgba(255, 255, 255, 0.1);
+
+  /* Side Panel Layout */
+  --side-panel-bg: #1e293b;
+  --side-panel-border: #334155;
+  --side-panel-text: #f8fafc;
+  --side-panel-close-btn: #94a3b8;
+
+  --side-panel-tab-container-border: #334155;
+  --side-panel-tab-inactive-text: #94a3b8;
+  --side-panel-tab-active-text: #60a5fa;
+  --side-panel-tab-active-border: #60a5fa;
+  --side-panel-tab-hover-bg: #0f172a;
+
+  --side-panel-btn-bg: #1e3a8a;
+  --side-panel-btn-border: #1d4ed8;
+  --side-panel-btn-text: #bfdbfe;
+  --side-panel-btn-hover-bg: #1e40af;
+  --side-panel-btn-hover-border: #2563eb;
+
+  /* Chips */
+  --chip-bg: #1e293b;
+  --chip-text: #f8fafc;
+  --chip-border: #475569;
+
+  --chip-hover-bg: #334155;
+  --chip-hover-text: #ffffff;
+  --chip-hover-border: #64748b;
+
+  --chip-focus-bg: #000000;
+  --chip-focus-text: #ffffff;
+  --chip-focus-border: #111111;
+
+  --chip-active-bg: #064e3b;
+  --chip-active-text: #34d399;
+  --chip-active-border: #064e3b;
+
+  --chip-inactive-bg: #7f1d1d;
+  --chip-inactive-text: #fca5a5;
+  --chip-inactive-border: #7f1d1d;
+  
+  /* Inputs */
+  --input-bg: #1e293b;
+  --input-border-default: #475569;
+}
