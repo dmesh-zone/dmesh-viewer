@@ -1,25 +1,8 @@
-/*
- * Copyright 2026 Joao Vicente
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import React, { useState, useMemo } from 'react';
-import YAML from 'yaml';
 
-const YamlItem = ({ label, value, level = 0, isArrayItem = false, inlineParentProps = null }) => {
+const JsonItem = ({ label, value, level = 0, isLast = true }) => {
     const [expanded, setExpanded] = useState(true);
-    const gutter = 60; // Gutter for line numbers
+    const gutter = 40; // Gutter for line numbers
     const indent = gutter + (level * 20);
 
     const toggleExpand = (e) => {
@@ -35,38 +18,6 @@ const YamlItem = ({ label, value, level = 0, isArrayItem = false, inlineParentPr
     const nullColor = '#94a3b8'; // Slate-400
     const wrapperStyle = { paddingLeft: `${indent}px`, fontFamily: "'JetBrains Mono', monospace", fontSize: '13px', lineHeight: '1.6', position: 'relative' };
 
-    // Inline Parent Indicator Helper
-    const renderInlineParent = () => {
-        if (!inlineParentProps) return null;
-        const parentIndent = gutter + (inlineParentProps.level * 20);
-        return (
-            <>
-                {/* Parent Arrow */}
-                <span
-                    onClick={inlineParentProps.toggleExpand}
-                    style={{
-                        position: 'absolute',
-                        left: `${parentIndent - 16}px`, // Position arrow
-                        top: '2px', // Fine-tune vertical align
-                        fontSize: '10px',
-                        color: '#94a3b8',
-                        cursor: 'pointer',
-                        transform: inlineParentProps.expanded ? 'rotate(90deg)' : 'rotate(0deg)',
-                        transition: 'transform 0.2s',
-                        zIndex: 2
-                    }}
-                >▶</span>
-                {/* Parent Dash */}
-                <span style={{
-                    position: 'absolute',
-                    left: `${parentIndent}px`, // Position dash
-                    color: '#64748b',
-                    top: '0px'
-                }}>-</span>
-            </>
-        );
-    };
-
     // Helper for primitives
     const renderPrimitive = (val) => {
         if (val === null || val === undefined) return <span style={{ color: nullColor }}>null</span>;
@@ -76,14 +27,19 @@ const YamlItem = ({ label, value, level = 0, isArrayItem = false, inlineParentPr
         return <span>{String(val)}</span>;
     };
 
+    const renderKey = (lbl) => {
+        if (lbl === undefined || lbl === null) return null;
+        return <span style={{ color: keyColor, fontWeight: '600', marginRight: '6px' }}>"{lbl}":</span>;
+    };
+    
+    const comma = isLast ? '' : ',';
+
     // NULL / UNDEFINED
     if (value === null || value === undefined) {
         return (
-            <div style={wrapperStyle} className="yaml-line">
-                {renderInlineParent()}
-                {isArrayItem && <span style={{ color: '#64748b', marginRight: '8px' }}>-</span>}
-                {label && <span style={{ color: keyColor, fontWeight: '600', marginRight: '8px' }}>{label}:</span>}
-                <span style={{ color: nullColor }}>null</span>
+            <div style={wrapperStyle}>
+                {renderKey(label)}
+                <span style={{ color: nullColor }}>null</span>{comma}
             </div>
         );
     }
@@ -92,11 +48,9 @@ const YamlItem = ({ label, value, level = 0, isArrayItem = false, inlineParentPr
     if (Array.isArray(value)) {
         if (value.length === 0) {
             return (
-                <div style={wrapperStyle} className="yaml-line">
-                    {renderInlineParent()}
-                    {isArrayItem && <span style={{ color: '#64748b', marginRight: '8px' }}>-</span>}
-                    {label && <span style={{ color: keyColor, fontWeight: '600', marginRight: '8px' }}>{label}:</span>}
-                    <span style={{ color: '#64748b' }}>[]</span>
+                <div style={wrapperStyle}>
+                    {renderKey(label)}
+                    <span style={{ color: '#64748b' }}>[]</span>{comma}
                 </div>
             );
         }
@@ -105,7 +59,6 @@ const YamlItem = ({ label, value, level = 0, isArrayItem = false, inlineParentPr
             <div>
                 <div
                     onClick={toggleExpand}
-                    className="yaml-line"
                     style={{
                         ...wrapperStyle,
                         cursor: 'pointer',
@@ -113,29 +66,32 @@ const YamlItem = ({ label, value, level = 0, isArrayItem = false, inlineParentPr
                         alignItems: 'center'
                     }}
                 >
-                    {renderInlineParent()}
                     {/* Icon */}
                     <span style={{
+                        position: 'absolute',
+                        left: `${indent - 16}px`,
                         fontSize: '10px',
                         color: '#94a3b8',
                         transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)',
                         transition: 'transform 0.2s',
-                        marginRight: '6px',
-                        marginLeft: isArrayItem ? '-14px' : '-16px' // pull icon left
                     }}>▶</span>
 
-                    {isArrayItem && <span style={{ color: '#64748b', marginRight: '8px' }}>-</span>}
-                    {label && <span style={{ color: keyColor, fontWeight: '600', marginRight: '8px' }}>{label}:</span>}
-                    {!expanded && <span style={{ color: '#94a3b8', fontSize: '12px' }}>Array({value.length})</span>}
+                    {renderKey(label)}
+                    <span style={{ color: '#64748b' }}>{expanded ? '[' : `Array(${value.length})]${comma}`}</span>
                 </div>
-                {expanded && value.map((item, index) => (
-                    <YamlItem
-                        key={index}
-                        value={item}
-                        level={level + 1}
-                        isArrayItem={true}
-                    />
-                ))}
+                {expanded && (
+                    <>
+                        {value.map((item, index) => (
+                            <JsonItem
+                                key={index}
+                                value={item}
+                                level={level + 1}
+                                isLast={index === value.length - 1}
+                            />
+                        ))}
+                        <div style={{ ...wrapperStyle, color: '#64748b' }}>]{comma}</div>
+                    </>
+                )}
             </div>
         );
     }
@@ -151,32 +107,9 @@ const YamlItem = ({ label, value, level = 0, isArrayItem = false, inlineParentPr
         });
         if (entries.length === 0) {
             return (
-                <div style={wrapperStyle} className="yaml-line">
-                    {renderInlineParent()}
-                    {isArrayItem && <span style={{ color: '#64748b', marginRight: '8px' }}>-</span>}
-                    {label && <span style={{ color: keyColor, fontWeight: '600', marginRight: '8px' }}>{label}:</span>}
-                    <span style={{ color: '#64748b' }}>{ }</span>
-                </div>
-            );
-        }
-
-        // --- SPECIAL INLINE LOGIC FOR ARRAY ITEMS ---
-        if (isArrayItem && expanded) {
-            return (
-                <div>
-                    {entries.map(([k, v], index) => (
-                        <YamlItem
-                            key={k}
-                            label={k}
-                            value={v}
-                            level={level + 1}
-                            inlineParentProps={index === 0 ? {
-                                toggleExpand,
-                                expanded,
-                                level // Pass PARENT level for dash positioning
-                            } : null}
-                        />
-                    ))}
+                <div style={wrapperStyle}>
+                    {renderKey(label)}
+                    <span style={{ color: '#64748b' }}>{'{ }'}</span>{comma}
                 </div>
             );
         }
@@ -185,7 +118,6 @@ const YamlItem = ({ label, value, level = 0, isArrayItem = false, inlineParentPr
             <div>
                 <div
                     onClick={toggleExpand}
-                    className="yaml-line"
                     style={{
                         ...wrapperStyle,
                         cursor: 'pointer',
@@ -193,52 +125,53 @@ const YamlItem = ({ label, value, level = 0, isArrayItem = false, inlineParentPr
                         alignItems: 'center'
                     }}
                 >
-                    {renderInlineParent()}
                     {/* Icon */}
                     <span style={{
+                        position: 'absolute',
+                        left: `${indent - 16}px`,
                         fontSize: '10px',
                         color: '#94a3b8',
                         transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)',
                         transition: 'transform 0.2s',
-                        marginRight: '6px',
-                        marginLeft: isArrayItem ? '-14px' : '-16px' // pull icon left
                     }}>▶</span>
 
-                    {isArrayItem && <span style={{ color: '#64748b', marginRight: '8px' }}>-</span>}
-                    {label && <span style={{ color: keyColor, fontWeight: '600', marginRight: '8px' }}>{label}:</span>}
-                    {!expanded && <span style={{ color: '#94a3b8', fontSize: '12px' }}>{'{...}'}</span>}
+                    {renderKey(label)}
+                    <span style={{ color: '#64748b' }}>{expanded ? '{' : `{...}${comma}`}</span>
                 </div>
-                {expanded && entries.map(([k, v]) => (
-                    <YamlItem
-                        key={k}
-                        label={k}
-                        value={v}
-                        level={level + 1}
-                    />
-                ))}
+                {expanded && (
+                    <>
+                        {entries.map(([k, v], index) => (
+                            <JsonItem
+                                key={k}
+                                label={k}
+                                value={v}
+                                level={level + 1}
+                                isLast={index === entries.length - 1}
+                            />
+                        ))}
+                        <div style={{ ...wrapperStyle, color: '#64748b' }}>{`}${comma}`}</div>
+                    </>
+                )}
             </div>
         );
     }
 
     // PRIMITIVES
     return (
-        <div style={wrapperStyle} className="yaml-line">
-            {renderInlineParent()}
-            {isArrayItem && <span style={{ color: '#64748b', marginRight: '8px' }}>-</span>}
-            {label && <span style={{ color: keyColor, fontWeight: '600', marginRight: '8px' }}>{label}:</span>}
-            {renderPrimitive(value)}
+        <div style={wrapperStyle}>
+            {renderKey(label)}
+            {renderPrimitive(value)}{comma}
         </div>
     );
 };
 
-const InteractiveYaml = ({ data, filterText }) => {
-
-    // Convert to YAML Lines if filter is present
+const InteractiveJson = ({ data, filterText }) => {
+    // Convert to JSON Lines if filter is present
     const filteredContent = useMemo(() => {
         if (!filterText) return null;
 
-        const yamlString = YAML.stringify(data);
-        const lines = yamlString.split('\n');
+        const jsonString = JSON.stringify(data, null, 2);
+        const lines = jsonString.split('\n');
         const matches = [];
 
         // Find matches
@@ -293,7 +226,7 @@ const InteractiveYaml = ({ data, filterText }) => {
             }
         });
         // Add bottom ellipsis if not at end
-        if (mergedRanges.length > 0 && mergedRanges[mergedRanges.length - 1][1] < lines.length - 1) {
+        if (mergedRanges.length > 0 && mergedRanges[mergedRanges.length - 1] < lines.length - 1) {
             result.push({ type: 'ellipsis', line: '...' });
         }
 
@@ -312,7 +245,7 @@ const InteractiveYaml = ({ data, filterText }) => {
         }
 
         return (
-            <div className="yaml-container" style={{ padding: '16px', background: 'var(--side-panel-bg, #f8fafc)', borderRadius: '0px', border: '1px solid var(--side-panel-container-border, #e5e7eb)', fontFamily: "'JetBrains Mono', monospace", fontSize: '13px', lineHeight: '1.5' }}>
+            <div className="json-container" style={{ padding: '16px', background: 'var(--side-panel-bg, #f8fafc)', borderRadius: '0px', border: '1px solid var(--side-panel-container-border, #e5e7eb)', fontFamily: "'JetBrains Mono', monospace", fontSize: '13px', lineHeight: '1.5' }}>
                 {filteredContent.map((item, idx) => (
                     <div key={idx} style={{ display: 'flex', background: item.highlight ? '#fef08a' : 'transparent' }}>
                         {item.type === 'line' ? (
@@ -330,7 +263,8 @@ const InteractiveYaml = ({ data, filterText }) => {
     }
 
     return (
-        <div className="yaml-container" style={{ padding: '16px 16px 16px 0', background: 'var(--side-panel-bg, #f8fafc)', borderRadius: '0px', border: '1px solid var(--side-panel-container-border, #e5e7eb)' }}>
+        <div className="json-container" style={{ padding: '16px 16px 16px 0', background: 'var(--side-panel-bg, #f8fafc)', borderRadius: '0px', border: '1px solid var(--side-panel-container-border, #e5e7eb)' }}>
+            <div style={{ paddingLeft: '40px', fontFamily: "'JetBrains Mono', monospace", fontSize: '13px', lineHeight: '1.6', color: '#64748b' }}>{'{'}</div>
             {typeof data === 'object' && data !== null && !Array.isArray(data) ? (
                 Object.entries(data).sort((a, b) => {
                     if (a[0] === 'property' && b[0] !== 'property') return -1;
@@ -338,14 +272,15 @@ const InteractiveYaml = ({ data, filterText }) => {
                     if (a[0] === 'value' && b[0] !== 'value') return 1;
                     if (a[0] !== 'value' && b[0] === 'value') return -1;
                     return 0;
-                }).map(([key, value]) => (
-                    <YamlItem key={key} label={key} value={value} level={0} />
+                }).map(([key, value], idx, arr) => (
+                    <JsonItem key={key} label={key} value={value} level={1} isLast={idx === arr.length - 1} />
                 ))
             ) : (
-                <YamlItem value={data} level={0} />
+                <JsonItem value={data} level={1} />
             )}
+            <div style={{ paddingLeft: '40px', fontFamily: "'JetBrains Mono', monospace", fontSize: '13px', lineHeight: '1.6', color: '#64748b' }}>{'}'}</div>
         </div>
     );
 };
 
-export default InteractiveYaml;
+export default InteractiveJson;

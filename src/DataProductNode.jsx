@@ -123,7 +123,7 @@ export default memo(({ data, isConnectable }) => {
                     background: observeMode ? 'rgba(255,255,255,0.05)' : 'var(--node-icon-bg, transparent)',
                     borderRadius: '4px'
                 }}>
-                    <img src={data.icon} alt="icon" style={{ width: '20px', height: '20px' }} />
+                    <img src={data.icon} alt="icon" style={{ width: '20px', height: '20px', filter: 'var(--node-icon-filter, none)' }} />
                 </div>
 
                 <div style={{
@@ -298,7 +298,7 @@ export default memo(({ data, isConnectable }) => {
                     <img
                         src={data.icon}
                         alt="icon"
-                        style={{ width: '28px', height: '28px' }}
+                        style={{ width: '28px', height: '28px', filter: 'var(--node-icon-filter, none)' }}
                     />
                 </div>
 

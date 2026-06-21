@@ -104,7 +104,7 @@ export default memo(({ data, isConnectable }) => {
                         <img
                             src={data.icon}
                             alt="icon"
-                            style={{ width: '40px', height: '40px' }}
+                            style={{ width: '40px', height: '40px', filter: 'var(--node-icon-filter, none)' }}
                         />
                     </div>
 
@@ -151,7 +151,7 @@ export default memo(({ data, isConnectable }) => {
                                                 borderRadius: '4px',
                                                 flexShrink: 0
                                             }}>
-                                                <img src={port.icon} alt="tech" style={{ width: '20px', height: '20px' }} />
+                                                <img src={port.icon} alt="tech" style={{ width: '20px', height: '20px', filter: 'var(--node-icon-filter, none)' }} />
                                             </div>
                                         )}
                                         <div style={{ display: 'flex', alignItems: 'center' }}>

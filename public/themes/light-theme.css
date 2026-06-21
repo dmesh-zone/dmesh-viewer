@@ -118,4 +118,7 @@
   --chip-inactive-bg: #f9dada;
   --chip-inactive-text: #7f1d1d;
   --chip-inactive-border: #f9dada;
+
+  /* Node Elements */
+  --node-icon-filter: grayscale(100%) contrast(1.2);
 }

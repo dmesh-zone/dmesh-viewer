@@ -21,6 +21,7 @@ import DataProductNode from './DataProductNode';
 import DataProductDetailNode from './DataProductDetailNode';
 import DataContractNode from './DataContractNode';
 import InteractiveYaml from './InteractiveYaml';
+import InteractiveJson from './InteractiveJson';
 import ExampleTable from './ExampleTable';
 import QualityTable from './QualityTable';
 import RelationshipEdge from './RelationshipEdge';
@@ -2051,10 +2052,10 @@ function Flow() {
                                             top: '100%',
                                             right: 0,
                                             marginTop: '8px',
-                                            background: 'white',
+                                            background: 'var(--m3-surface, white)',
                                             borderRadius: '8px',
                                             boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-                                            border: '1px solid #e2e8f0',
+                                            border: '1px solid var(--m3-outline-variant, #e2e8f0)',
                                             padding: '12px',
                                             minWidth: '180px',
                                             zIndex: 1000
@@ -2071,7 +2072,7 @@ function Flow() {
                                                     checked={hideHealthy}
                                                     readOnly
                                                 />
-                                                <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Hide Healthy Nodes</span>
+                                                <span style={{ fontSize: '12px', fontWeight: '500', color: 'var(--m3-on-surface, #1e293b)' }}>Hide Healthy Nodes</span>
                                             </div>
                                             <div
                                                 style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', whiteSpace: 'nowrap', marginTop: '8px' }}
@@ -2085,7 +2086,7 @@ function Flow() {
                                                     checked={hideKpis}
                                                     readOnly
                                                 />
-                                                <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Hide KPIs</span>
+                                                <span style={{ fontSize: '12px', fontWeight: '500', color: 'var(--m3-on-surface, #1e293b)' }}>Hide KPIs</span>
                                             </div>
                                             {isTestMode && (
                                                 <div
@@ -2100,12 +2101,12 @@ function Flow() {
                                                         checked={adjustMetricsTime}
                                                         readOnly
                                                     />
-                                                    <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Adjust metrics time</span>
+                                                    <span style={{ fontSize: '12px', fontWeight: '500', color: 'var(--m3-on-surface, #1e293b)' }}>Adjust metrics time</span>
                                                 </div>
                                             )}
                                             {isTestMode && (
-                                                <div style={{ borderTop: '1px solid #e2e8f0', marginTop: '12px', paddingTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                                    <div style={{ fontSize: '10px', fontWeight: '700', color: '#64748b', textTransform: 'uppercase' }}>Simulation</div>
+                                                <div style={{ borderTop: '1px solid var(--m3-outline-variant, #e2e8f0)', marginTop: '12px', paddingTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                                    <div style={{ fontSize: '10px', fontWeight: '700', color: 'var(--m3-on-surface-variant, #64748b)', textTransform: 'uppercase' }}>Simulation</div>
                                                     {Object.keys(config?.observability?.dimensions || {}).length > 0 ? Object.keys(config.observability.dimensions).map(dim => {
                                                         const isSimulated = simulatedDims.has(dim);
                                                         return (
@@ -2121,14 +2122,14 @@ function Flow() {
                                                                 }}
                                                             >
                                                                 <input type="checkbox" checked={isSimulated} readOnly />
-                                                                <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Simulate {dim}</span>
+                                                                <span style={{ fontSize: '12px', fontWeight: '500', color: 'var(--m3-on-surface, #1e293b)' }}>Simulate {dim}</span>
                                                             </div>
                                                         );
-                                                    }) : <div style={{ fontSize: '12px', color: '#64748b' }}>No dimensions configured</div>}
+                                                    }) : <div style={{ fontSize: '12px', color: 'var(--m3-on-surface-variant, #64748b)' }}>No dimensions configured</div>}
                                                 </div>
                                             )}
                                             {isTestMode && (
-                                                <div style={{ borderTop: '1px solid #e2e8f0', marginTop: '12px', paddingTop: '12px' }}>
+                                                <div style={{ borderTop: '1px solid var(--m3-outline-variant, #e2e8f0)', marginTop: '12px', paddingTop: '12px' }}>
                                                     <div
                                                         style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', whiteSpace: 'nowrap' }}
                                                         onClick={(e) => {
@@ -2141,7 +2142,7 @@ function Flow() {
                                                             checked={showEventsTab}
                                                             readOnly
                                                         />
-                                                        <span style={{ fontSize: '12px', fontWeight: '500', color: '#1e293b' }}>Show Events tab</span>
+                                                        <span style={{ fontSize: '12px', fontWeight: '500', color: 'var(--m3-on-surface, #1e293b)' }}>Show Events tab</span>
                                                     </div>
                                                 </div>
                                             )}
@@ -2569,53 +2570,10 @@ function Flow() {
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                                         )}
                                     </button>
-                                    <div style={{
-                                        background: 'var(--side-panel-bg, #f8fafc)',
-                                        padding: '16px 16px 16px 0',
-                                        borderRadius: '0px',
-                                        border: '1px solid var(--side-panel-container-border, #e5e7eb)',
-                                        overflowX: 'auto',
-                                        fontFamily: "'JetBrains Mono', monospace",
-                                        fontSize: '13px',
-                                        lineHeight: '1.5',
-                                        color: 'var(--side-panel-text, #334155)',
-                                        margin: 0
-                                    }}>
-                                        {(() => {
-                                            const rawData = sidePanelContent.originalData || sidePanelContent;
-                                            const jsonStr = JSON.stringify(rawData, null, 2) || '';
-                                            return jsonStr.split('\n').map((line, idx) => {
-                                                const highlightedLine = line
-                                                    .replace(/&/g, '&amp;')
-                                                    .replace(/</g, '&lt;')
-                                                    .replace(/>/g, '&gt;')
-                                                    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-                                                        let color = '#d97706'; // number
-                                                        if (/^"/.test(match)) {
-                                                            if (/:$/.test(match)) {
-                                                                color = '#0891b2'; // key
-                                                            } else {
-                                                                color = '#16a34a'; // string
-                                                            }
-                                                        } else if (/true|false/.test(match)) {
-                                                            color = '#9333ea'; // boolean
-                                                        } else if (/null/.test(match)) {
-                                                            color = '#94a3b8'; // null
-                                                        }
-                                                        return `<span style="color: ${color}">${match}</span>`;
-                                                    });
-
-                                                return (
-                                                    <div key={idx} style={{ display: 'flex', whiteSpace: 'pre' }}>
-                                                        <span style={{ width: '40px', color: '#94a3b8', textAlign: 'right', marginRight: '16px', userSelect: 'none', flexShrink: 0 }}>
-                                                            {idx + 1}
-                                                        </span>
-                                                        <span dangerouslySetInnerHTML={{ __html: highlightedLine || ' ' }} />
-                                                    </div>
-                                                );
-                                            });
-                                        })()}
-                                    </div>
+                                    <InteractiveJson
+                                        data={sidePanelContent.originalData || sidePanelContent}
+                                        filterText={sidePanelFilter}
+                                    />
                                 </div>
                             ) : (
                                 // Default YAML view

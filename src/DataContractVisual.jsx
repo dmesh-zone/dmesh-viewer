@@ -175,7 +175,7 @@ export default function DataContractVisual({ data, anchor, filterByAnchor = fals
                                         <img
                                             src={normalizePath(config.iconMap[server.type])}
                                             alt={server.type}
-                                            style={{ width: '24px', height: '24px', objectFit: 'contain' }}
+                                            style={{ width: '24px', height: '24px', objectFit: 'contain', filter: 'var(--node-icon-filter, none)' }}
                                         />
                                     ) : (
                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -348,7 +348,7 @@ export default function DataContractVisual({ data, anchor, filterByAnchor = fals
                                     const tableTech = table.customProperties?.find(p => p.property === 'technology')?.value;
                                     const techIcon = tableTech && config?.iconMap?.[tableTech] ? normalizePath(config.iconMap[tableTech]) : null;
                                     return techIcon ? (
-                                        <img src={techIcon} alt={tableTech} style={{ width: '16px', height: '16px', objectFit: 'contain' }} />
+                                        <img src={techIcon} alt={tableTech} style={{ width: '16px', height: '16px', objectFit: 'contain', filter: 'var(--node-icon-filter, none)' }} />
                                     ) : null;
                                 })()}
                                 <span>{table.physicalName || table.name}</span>

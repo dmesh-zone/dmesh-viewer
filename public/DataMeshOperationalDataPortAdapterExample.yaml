@@ -53,7 +53,8 @@
   schema:
     - name: product_quality
       physicalType: table
-      description: Production data with quality metrics, batch performance, inventory
+      description:
+        Production data with quality metrics, batch performance, inventory
         levels, cost analysis, supplier ratings, and production schedules data
         for product_quality
       customProperties:
@@ -87,7 +88,8 @@
             - 97.5
     - name: batch_performance
       physicalType: table
-      description: Production data with quality metrics, batch performance, inventory
+      description:
+        Production data with quality metrics, batch performance, inventory
         levels, cost analysis, supplier ratings, and production schedules data
         for batch_performance
       customProperties:
@@ -122,7 +124,8 @@
     - name: batch_performance_iceberg
       physicalName: batch_performance
       physicalType: table
-      description: Production data with quality metrics, batch performance, inventory
+      description:
+        Production data with quality metrics, batch performance, inventory
         levels, cost analysis, supplier ratings, and production schedules data
         for batch_performance
       customProperties:
@@ -148,7 +151,8 @@
     - name: product_quality_odata
       physicalName: product_quality
       physicalType: api
-      description: Production data with quality metrics, batch performance, inventory
+      description:
+        Production data with quality metrics, batch performance, inventory
         levels, cost analysis, supplier ratings, and production schedules data
         for product_quality
       customProperties:
@@ -222,7 +226,8 @@
   schema:
     - name: product_quality
       physicalType: table
-      description: Production data with quality metrics, batch performance, inventory
+      description:
+        Production data with quality metrics, batch performance, inventory
         levels, cost analysis, supplier ratings, and production schedules data
         for product_quality
       customProperties:
@@ -256,7 +261,8 @@
             - 97.5
     - name: batch_performance
       physicalType: table
-      description: Production data with quality metrics, batch performance, inventory
+      description:
+        Production data with quality metrics, batch performance, inventory
         levels, cost analysis, supplier ratings, and production schedules data
         for batch_performance
       customProperties:
@@ -290,7 +296,8 @@
             - 95
     - name: batch_performance_iceberg
       physicalType: table
-      description: Production data with quality metrics, batch performance, inventory
+      description:
+        Production data with quality metrics, batch performance, inventory
         levels, cost analysis, supplier ratings, and production schedules data
         for batch_performance
       customProperties:
@@ -327,7 +334,8 @@
   schema:
     - name: product_quality
       physicalType: api
-      description: Production data with quality metrics, batch performance, inventory
+      description:
+        Production data with quality metrics, batch performance, inventory
         levels, cost analysis, supplier ratings, and production schedules data
         for product_quality
       customProperties:

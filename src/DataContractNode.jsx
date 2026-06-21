@@ -81,7 +81,7 @@ export default memo(({ data, isConnectable }) => {
                             <img
                                 src={data.icon}
                                 alt="icon"
-                                style={{ width: '18px', height: '18px', marginRight: '8px', objectFit: 'contain' }}
+                                style={{ width: '20px', height: '20px', marginRight: '8px', objectFit: 'contain', filter: 'var(--node-icon-filter, none)' }}
                             />
                         ) : (
                             <TableIcon />

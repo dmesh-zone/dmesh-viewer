@@ -56,7 +56,7 @@
   top: 14px;
   left: 12px;
   padding: 0 4px;
-  background-color: var(--input-bg, white);
+  background-color: var(--m3-surface, white);
   color: var(--m3-outline, #6b7280);
   font-size: 14px;
   font-weight: 400;

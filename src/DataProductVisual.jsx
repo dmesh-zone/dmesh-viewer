@@ -85,7 +85,27 @@ export default function DataProductVisual({ data, registry = [] }) {
     };
 
     const properties = data?.customProperties || [];
-    const outputPorts = Array.isArray(data?.outputPorts) ? data.outputPorts : [];
+    const outputPortsRaw = Array.isArray(data?.outputPorts) ? data.outputPorts : [];
+    
+    // Transform new portAdapterX: True back to portAdapter: x format for display purposes
+    const outputPorts = outputPortsRaw.map(port => {
+        if (!port.customProperties) return port;
+        const newProps = [];
+        port.customProperties.forEach(p => {
+            if (p.property && p.property.startsWith('portAdapter') && p.property !== 'portAdapter') {
+                const adapterValue = p.property.replace('portAdapter', '').toLowerCase();
+                if (String(p.value).toLowerCase() === 'true') {
+                    newProps.push({ property: 'portAdapter', value: adapterValue });
+                } else {
+                    newProps.push(p);
+                }
+            } else {
+                newProps.push(p);
+            }
+        });
+        return { ...port, customProperties: newProps };
+    });
+    
     const businessName = properties.find(p => p.property === 'dataProductBusinessName')?.value;
 
     const formatLabel = (str) => {
