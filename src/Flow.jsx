@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { ReactFlow, Controls, Background, useNodesState, useEdgesState } from '@xyflow/react';
+import { ReactFlow, Controls, Background, useNodesState, useEdgesState, addEdge, MarkerType, applyNodeChanges, MiniMap } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import DataProductNode from './DataProductNode';
 import DataProductDetailNode from './DataProductDetailNode';
@@ -555,12 +555,9 @@ function Flow() {
             .sort();
 
         const domainColorMap = {};
-        if (uniqueDomains.length <= 1) {
-            // If only 1 domain (or 0), keep white
-            uniqueDomains.forEach(d => domainColorMap[d] = 'white');
-        } else {
+        if (uniqueDomains.length > 0) {
             uniqueDomains.forEach((domain, index) => {
-                domainColorMap[domain] = `var(--domain-palette-${String((index % 15) + 1).padStart(2, '0')})`;
+                domainColorMap[domain] = `var(--domain-palette-${String((index % 12) + 1).padStart(2, '0')})`;
             });
         }
 
@@ -597,7 +594,7 @@ function Flow() {
                 const bannerColor = tierConfig.bannerColor || `var(--tier-${safeTier}-banner, #93c5fd)`;
 
                 // Background Color Logic (Domain based)
-                const backgroundColor = domainColorMap[node.domain] || 'white';
+                const backgroundColor = domainColorMap[node.domain] || color;
 
                 // Auto-layout Logic - Calculate X position from columnNumber
                 // Use 450px spacing between columns to prevent overlap
@@ -2196,6 +2193,7 @@ function Flow() {
                 right: 0
             }}>
                 <ReactFlow
+                colorMode={mode}
                 nodeTypes={nodeTypes}
                 edgeTypes={edgeTypes}
                 nodes={visibleNodes}
@@ -2216,7 +2214,8 @@ function Flow() {
                 elementsSelectable={false}
             >
                 <Background />
-                <Controls />
+                <Controls position="bottom-left" />
+                <MiniMap position="bottom-right" />
                 <svg style={{ position: 'absolute', top: 0, left: 0 }}>
                     <defs>
                         <marker id="custom-arrow-default" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
@@ -2641,7 +2640,7 @@ function Flow() {
                         width: '34px',
                         height: '34px',
                         borderRadius: '17px',
-                        background: '#f3f4f6',
+                        background: 'var(--button-secondary-bg, #f3f4f6)',
                         border: 'none',
                         cursor: 'pointer',
                         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
@@ -2652,16 +2651,16 @@ function Flow() {
                         transition: 'all 0.2s'
                     }}
                     onMouseEnter={(e) => {
-                        e.currentTarget.style.background = '#e5e7eb';
+                        e.currentTarget.style.background = 'var(--button-secondary-hover-bg, #e5e7eb)';
                         e.currentTarget.style.transform = 'scale(1.05)';
                     }}
                     onMouseLeave={(e) => {
-                        e.currentTarget.style.background = '#f3f4f6';
+                        e.currentTarget.style.background = 'var(--button-secondary-bg, #f3f4f6)';
                         e.currentTarget.style.transform = 'scale(1)';
                     }}
                     title="Load Registry"
                 >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--button-secondary-text, white)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                         <polyline points="14 2 14 8 20 8"></polyline>
                         <line x1="12" y1="18" x2="12" y2="12"></line>

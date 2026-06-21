@@ -56,7 +56,7 @@ export default memo(({ data, isConnectable }) => {
 
     return (
         <div style={{
-            background: 'white',
+            background: 'var(--m3-surface, white)',
             borderRadius: '8px',
             boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
             width: `${dynamicWidth}px`,
@@ -67,12 +67,12 @@ export default memo(({ data, isConnectable }) => {
             {/* Header */}
             <div style={{
                 padding: '12px 16px',
-                background: '#f8fafc',
-                borderBottom: '1px solid #e2e8f0',
+                background: 'var(--m3-surface-variant, #f8fafc)',
+                borderBottom: '1px solid var(--m3-outline-variant, #e2e8f0)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                color: '#1e293b',
+                color: 'var(--m3-on-surface, #1e293b)',
                 position: 'relative' // For absolute positioning if needed
             }}>
                 <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
@@ -91,7 +91,7 @@ export default memo(({ data, isConnectable }) => {
                     {description && (
                         <span style={{
                             fontSize: '10px',
-                            color: '#64748b',
+                            color: 'var(--m3-outline, #64748b)',
                             lineHeight: '1.4',
                             whiteSpace: 'normal',
                             wordBreak: 'break-word',
@@ -115,7 +115,7 @@ export default memo(({ data, isConnectable }) => {
                                     justifyContent: 'space-between',
                                     alignItems: 'center',
                                     padding: '8px 16px',
-                                    borderBottom: '1px solid #f1f5f9',
+                                    borderBottom: '1px solid var(--m3-surface-variant, #f1f5f9)',
                                     fontSize: '12px',
                                     position: 'relative'
                                 }}>
@@ -147,7 +147,7 @@ export default memo(({ data, isConnectable }) => {
                                         }}
                                     />
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <span style={{ color: '#334155', fontWeight: '500' }}>{col.physicalName || col.name}</span>
+                                        <span style={{ color: 'var(--m3-on-surface, #334155)', fontWeight: '500' }}>{col.physicalName || col.name}</span>
                                         {/* Show primary key icon with position superscript */}
                                         {col.primaryKey && (
                                             <span style={{ display: 'inline-flex', alignItems: 'flex-start', marginLeft: '6px' }}>
@@ -165,13 +165,13 @@ export default memo(({ data, isConnectable }) => {
                                             </span>
                                         )}
                                     </div>
-                                    <span style={{ color: '#94a3b8', fontFamily: 'monospace' }}>{col.logicalType}</span>
+                                    <span style={{ color: 'var(--m3-outline, #94a3b8)', fontFamily: 'monospace' }}>{col.logicalType}</span>
                                 </div>
                             ))}
                         </div>
                     ))
                 ) : (
-                    <div style={{ padding: '12px 16px', color: '#94a3b8', fontSize: '12px', fontStyle: 'italic' }}>
+                    <div style={{ padding: '12px 16px', color: 'var(--m3-outline, #94a3b8)', fontSize: '12px', fontStyle: 'italic' }}>
                         No schema defined
                     </div>
                 )}
@@ -180,8 +180,8 @@ export default memo(({ data, isConnectable }) => {
             {/* Footer */}
             <div style={{
                 padding: '12px',
-                background: '#f8fafc',
-                borderTop: '1px solid #e2e8f0',
+                background: 'var(--m3-surface-variant, #f8fafc)',
+                borderTop: '1px solid var(--m3-outline-variant, #e2e8f0)',
                 display: 'flex',
                 justifyContent: 'center',
                 gap: '8px',

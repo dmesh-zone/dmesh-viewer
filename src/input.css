@@ -13,7 +13,7 @@
   padding: 14px 16px;
   font-size: 14px;
   font-family: inherit;
-  color: #111111;
+  color: var(--m3-on-surface, #111111);
   background-color: var(--input-bg, transparent);
   border: 1px solid var(--input-border-default, #9ca3af);
   border-radius: var(--input-radius, 4px);
@@ -23,25 +23,25 @@
 }
 
 .md-input-field:hover:not(:disabled) {
-  border-color: var(--input-border-hover, #111111);
+  border-color: var(--input-border-hover, var(--m3-on-surface, #111111));
 }
 
 .md-input-field:focus {
-  border-color: var(--input-border-focus, #111111);
+  border-color: var(--input-border-focus, var(--m3-on-surface, #111111));
 }
 
 .input-container-style {
   border: 1px solid var(--input-border-default, #9ca3af);
   border-radius: var(--input-radius, 4px);
-  background-color: white;
+  background-color: var(--input-bg, white);
   transition: border-color 0.2s, box-shadow 0.2s;
   box-shadow: none;
 }
 .input-container-style:hover {
-  border-color: var(--input-border-hover, #111111);
+  border-color: var(--input-border-hover, var(--m3-on-surface, #111111));
 }
 .input-container-style:focus-within {
-  border-color: var(--input-border-focus, #111111);
+  border-color: var(--input-border-focus, var(--m3-on-surface, #111111));
 }
 
 .md-input-field:disabled {
@@ -56,8 +56,8 @@
   top: 14px;
   left: 12px;
   padding: 0 4px;
-  background-color: white;
-  color: #6b7280;
+  background-color: var(--input-bg, white);
+  color: var(--m3-outline, #6b7280);
   font-size: 14px;
   font-weight: 400;
   pointer-events: none;
@@ -70,11 +70,11 @@
 .md-input-field:not(:placeholder-shown) ~ .md-input-label {
   top: -8px;
   font-size: 12px;
-  color: #111111;
+  color: var(--m3-on-surface, #111111);
 }
 
 .md-input-field:not(:focus):not(:placeholder-shown) ~ .md-input-label {
-  color: #6b7280; /* Return to grey if not focused but has value */
+  color: var(--m3-outline, #6b7280); /* Return to grey if not focused but has value */
 }
 
 .md-input-field:disabled ~ .md-input-label {

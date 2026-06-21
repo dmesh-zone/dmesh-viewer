@@ -4,18 +4,17 @@
 
   /* Domain Palette */
   --domain-palette-01: #FFFFFF;
-  --domain-palette-02: #F1F5F5;
-  --domain-palette-03: #FCF5CA;
-  --domain-palette-04: #D5F5E9;
-  --domain-palette-05: #F8E7D0;
-  --domain-palette-06: #EBF6CD;
-  --domain-palette-07: #E5DBFA;
-  --domain-palette-08: #D0E3FF;
-  --domain-palette-09: #F4DBF9;
-  --domain-palette-10: #FBDAD8;
-  --domain-palette-11: #D3DBFA;
-  --domain-palette-12: #C6F5C9;
-  --domain-palette-13: #CAD9FA;
+  --domain-palette-02: #FCF5CA;
+  --domain-palette-03: #D5F5E9;
+  --domain-palette-04: #F8E7D0;
+  --domain-palette-05: #EBF6CD;
+  --domain-palette-06: #E5DBFA;
+  --domain-palette-07: #D0E3FF;
+  --domain-palette-08: #F4DBF9;
+  --domain-palette-09: #FBDAD8;
+  --domain-palette-10: #D3DBFA;
+  --domain-palette-11: #C6F5C9;
+  --domain-palette-12: #CAD9FA;
 
   /* Domain Label Colors */
   --domain-label-bg: #f3f4f6;

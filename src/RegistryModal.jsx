@@ -94,7 +94,7 @@ export default function RegistryModal({ isOpen, onClose, currentUrl, registries 
                 <div
                     onClick={(e) => e.stopPropagation()}
                     style={{
-                        background: 'white',
+                        background: 'var(--m3-surface, white)',
                         borderRadius: '8px',
                         padding: '24px',
                         width: '90%',
@@ -102,7 +102,7 @@ export default function RegistryModal({ isOpen, onClose, currentUrl, registries 
                         boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
                     }}
                 >
-                    <h2 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: '600', color: '#1f2937' }}>
+                    <h2 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: '600', color: 'var(--m3-on-surface, #1f2937)' }}>
                         Load Data Mesh Operational Data
                     </h2>
 
@@ -146,7 +146,7 @@ export default function RegistryModal({ isOpen, onClose, currentUrl, registries 
                                     top: '50%',
                                     transform: 'translateY(-50%)',
                                     cursor: 'pointer',
-                                    color: '#6b7280',
+                                    color: 'var(--m3-outline, #6b7280)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     padding: '4px'
@@ -164,8 +164,8 @@ export default function RegistryModal({ isOpen, onClose, currentUrl, registries 
                                 top: '100%',
                                 left: 0,
                                 right: 0,
-                                background: 'white',
-                                border: '1px solid #d1d5db',
+                                background: 'var(--m3-surface, white)',
+                                border: '1px solid var(--m3-outline, #d1d5db)',
                                 borderRadius: '6px',
                                 marginTop: '4px',
                                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
@@ -186,14 +186,14 @@ export default function RegistryModal({ isOpen, onClose, currentUrl, registries 
                                             padding: '8px 12px',
                                             fontSize: '13px',
                                             cursor: 'pointer',
-                                            borderBottom: index < (filteredOptions.length - 1) ? '1px solid #f3f4f6' : 'none',
-                                            background: url === reg.original ? '#f3f4f6' : 'white'
+                                            borderBottom: index < (filteredOptions.length - 1) ? '1px solid var(--m3-surface-variant, #f3f4f6)' : 'none',
+                                            background: url === reg.original ? 'var(--m3-surface-variant, #f3f4f6)' : 'var(--m3-surface, white)'
                                         }}
-                                        onMouseEnter={(e) => e.currentTarget.style.background = '#f3f4f6'}
-                                        onMouseLeave={(e) => e.currentTarget.style.background = url === reg.original ? '#f3f4f6' : 'white'}
+                                        onMouseEnter={(e) => e.currentTarget.style.background = 'var(--m3-surface-variant, #f3f4f6)'}
+                                        onMouseLeave={(e) => e.currentTarget.style.background = url === reg.original ? 'var(--m3-surface-variant, #f3f4f6)' : 'var(--m3-surface, white)'}
                                     >
-                                        <div style={{ fontWeight: '500' }}>{reg.original}</div>
-                                        <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '2px' }}>{reg.normalized}</div>
+                                        <div style={{ fontWeight: '500', color: 'var(--m3-on-surface, #111111)' }}>{reg.original}</div>
+                                        <div style={{ fontSize: '11px', color: 'var(--m3-outline, #6b7280)', marginTop: '2px' }}>{reg.normalized}</div>
                                     </div>
                                 ))}
                             </div>

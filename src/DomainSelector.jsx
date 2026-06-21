@@ -65,7 +65,7 @@ const DomainSelector = ({ domains, selectedDomains, onChange, formatDomain = (d)
                     userSelect: 'none'
                 }}
             >
-                <span style={{ fontSize: '13px', color: '#334155', flex: 1 }}>{labelText}</span>
+                <span style={{ fontSize: '13px', color: 'var(--m3-on-surface, #334155)', flex: 1 }}>{labelText}</span>
                 <svg
                     width="12"
                     height="12"
@@ -89,7 +89,7 @@ const DomainSelector = ({ domains, selectedDomains, onChange, formatDomain = (d)
                     left: 0,
                     marginTop: '4px',
                     zIndex: 20,
-                    backgroundColor: 'white',
+                    backgroundColor: 'var(--m3-surface, white)',
                     padding: '10px',
                     borderRadius: '8px',
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
@@ -100,10 +100,10 @@ const DomainSelector = ({ domains, selectedDomains, onChange, formatDomain = (d)
                     maxHeight: '60vh',
                     overflowY: 'auto'
                 }}>
-                    <label style={{ fontSize: '12px', fontWeight: '600', color: '#64748b', marginBottom: '4px' }}>Select Domains</label>
+                    <label style={{ fontSize: '12px', fontWeight: '600', color: 'var(--m3-outline, #64748b)', marginBottom: '4px' }}>Select Domains</label>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                         {domains.map(domain => (
-                            <label key={domain} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', cursor: 'pointer', whiteSpace: 'nowrap', padding: '2px 0', color: '#334155' }}>
+                            <label key={domain} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', cursor: 'pointer', whiteSpace: 'nowrap', padding: '2px 0', color: 'var(--m3-on-surface, #334155)' }}>
                                 <input
                                     type="checkbox"
                                     checked={selectedDomains.includes(domain)}
@@ -114,7 +114,7 @@ const DomainSelector = ({ domains, selectedDomains, onChange, formatDomain = (d)
                             </label>
                         ))}
                     </div>
-                    <div style={{ display: 'flex', gap: '5px', marginTop: '8px', paddingTop: '8px', borderTop: '1px solid #f1f5f9' }}>
+                    <div style={{ display: 'flex', gap: '5px', marginTop: '8px', paddingTop: '8px', borderTop: '1px solid var(--m3-surface-variant, #f1f5f9)' }}>
                         <button
                             className="btn btn-secondary"
                             onClick={() => onChange(domains)}

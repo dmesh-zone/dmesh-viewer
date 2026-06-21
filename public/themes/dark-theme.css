@@ -16,21 +16,22 @@
   --m3-on-surface-variant: #cbd5e1;
   --m3-outline: #475569;
   --m3-outline-variant: #334155;
+  /* Node elements */
+  --node-icon-bg: var(--m3-outline-variant);
 
   /* Domain Palette - Darkened for dark mode */
   --domain-palette-01: #1e293b;
-  --domain-palette-02: #243040;
-  --domain-palette-03: #4a452a;
-  --domain-palette-04: #224a3e;
-  --domain-palette-05: #4a3821;
-  --domain-palette-06: #3f4722;
-  --domain-palette-07: #3b3054;
-  --domain-palette-08: #1e3a63;
-  --domain-palette-09: #47264d;
-  --domain-palette-10: #542724;
-  --domain-palette-11: #212c5c;
-  --domain-palette-12: #1e4a22;
-  --domain-palette-13: #1a2f5c;
+  --domain-palette-02: #4a452a;
+  --domain-palette-03: #224a3e;
+  --domain-palette-04: #4a3821;
+  --domain-palette-05: #3f4722;
+  --domain-palette-06: #3b3054;
+  --domain-palette-07: #1e3a63;
+  --domain-palette-08: #47264d;
+  --domain-palette-09: #542724;
+  --domain-palette-10: #212c5c;
+  --domain-palette-11: #1e4a22;
+  --domain-palette-12: #1a2f5c;
 
   /* Domain Label Colors */
   --domain-label-bg: #1e293b;
@@ -45,25 +46,25 @@
 
   /* Tiers Colors */
   --tier-dataSource-color: #334155;
-  --tier-dataSource-banner: #475569;
+  --tier-dataSource-banner: transparent;
   --tier-sourceAligned-color: #1e3a8a;
-  --tier-sourceAligned-banner: #1d4ed8;
+  --tier-sourceAligned-banner: transparent;
   --tier-curated-color: #1e3a8a;
-  --tier-curated-banner: #1d4ed8;
+  --tier-curated-banner: transparent;
   --tier-consumerAligned-color: #1e3a8a;
-  --tier-consumerAligned-banner: #1d4ed8;
+  --tier-consumerAligned-banner: transparent;
   --tier-application-color: #334155;
-  --tier-application-banner: #475569;
+  --tier-application-banner: transparent;
   --tier-agent-color: #334155;
-  --tier-agent-banner: #475569;
+  --tier-agent-banner: transparent;
 
   /* KPI Colors */
-  --kpi-dataSources-bg: #be185d;
-  --kpi-dataProducts-bg: #2563eb;
-  --kpi-outputPorts-bg: #7c3aed;
-  --kpi-recordsIngested-bg: #059669;
-  --kpi-recordsProcessed-bg: #ea580c;
-  --kpi-consumingApplication-bg: #0d9488;
+  --kpi-dataSources-bg: #500f24;
+  --kpi-dataProducts-bg: #172554;
+  --kpi-outputPorts-bg: #2e1065;
+  --kpi-recordsIngested-bg: #022c22;
+  --kpi-recordsProcessed-bg: #431407;
+  --kpi-consumingApplication-bg: #042f2e;
 
   /* Controls: Checkboxes */
   --checkbox-accent: #3b82f6;

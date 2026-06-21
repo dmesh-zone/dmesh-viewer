@@ -20,9 +20,9 @@ import { Handle, Position } from '@xyflow/react';
 export default memo(({ data, isConnectable }) => {
     return (
         <div style={{
-            border: '1px solid #e5e7eb',
+            border: '1px solid var(--m3-outline-variant, #e5e7eb)',
             borderRadius: '8px',
-            background: 'white',
+            background: 'var(--m3-surface, white)',
             boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
             width: 'auto',
             minWidth: '280px',
@@ -32,13 +32,13 @@ export default memo(({ data, isConnectable }) => {
             <div style={{
                 background: data.bannerColor || '#BFDBFE',
                 padding: '8px 12px',
-                borderBottom: '1px solid #e5e7eb',
+                borderBottom: '1px solid var(--m3-outline-variant, #e5e7eb)',
                 borderTopLeftRadius: '7px',
                 borderTopRightRadius: '7px',
                 fontSize: '10px',
                 fontWeight: '500',
                 letterSpacing: '0.5px',
-                color: '#1e3a8a',
+                color: 'var(--m3-on-surface, #1e3a8a)',
                 textTransform: 'none',
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -90,18 +90,30 @@ export default memo(({ data, isConnectable }) => {
                         style={{ top: '24px', background: '#9ca3af' }}
                     />
 
-                    <img
-                        src={data.icon}
-                        alt="icon"
-                        style={{ width: '40px', height: '40px', marginRight: '16px' }}
-                    />
+                    <div style={{
+                        width: '48px',
+                        height: '48px',
+                        marginRight: '16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: 'var(--node-icon-bg, transparent)',
+                        borderRadius: '8px',
+                        flexShrink: 0
+                    }}>
+                        <img
+                            src={data.icon}
+                            alt="icon"
+                            style={{ width: '40px', height: '40px' }}
+                        />
+                    </div>
 
                     <div>
-                        <div style={{ fontSize: '18px', fontWeight: '700', color: '#1f2937', lineHeight: '1.2' }}>
+                        <div style={{ fontSize: '18px', fontWeight: '700', color: 'var(--m3-on-surface, #1f2937)', lineHeight: '1.2' }}>
                             {data.label}
                         </div>
                         {data.subtitle && (
-                            <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                            <div style={{ fontSize: '12px', color: 'var(--m3-outline, #6b7280)', marginTop: '4px' }}>
                                 {data.subtitle}
                             </div>
                         )}
@@ -116,7 +128,7 @@ export default memo(({ data, isConnectable }) => {
                 </div>
 
                 {data.outputPorts && data.outputPorts.length > 0 && (
-                    <div style={{ marginTop: '12px', borderTop: '1px solid #f3f4f6', paddingTop: '8px' }}>
+                    <div style={{ marginTop: '12px', borderTop: '1px solid var(--m3-outline-variant, #f3f4f6)', paddingTop: '8px' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                             {data.outputPorts.map((port, index) => (
                                 <div key={index} style={{
@@ -124,14 +136,26 @@ export default memo(({ data, isConnectable }) => {
                                     justifyContent: 'space-between',
                                     alignItems: 'center',
                                     padding: '4px 0',
-                                    borderBottom: '1px solid #f9fafb'
+                                    borderBottom: '1px solid var(--m3-surface-variant, #f9fafb)'
                                 }}>
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
                                         {port.icon && (
-                                            <img src={port.icon} alt="tech" style={{ width: '20px', height: '20px', marginRight: '8px' }} />
+                                            <div style={{
+                                                width: '24px',
+                                                height: '24px',
+                                                marginRight: '8px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                background: 'var(--node-icon-bg, transparent)',
+                                                borderRadius: '4px',
+                                                flexShrink: 0
+                                            }}>
+                                                <img src={port.icon} alt="tech" style={{ width: '20px', height: '20px' }} />
+                                            </div>
                                         )}
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
-                                            <span style={{ fontSize: '13px', fontWeight: '500', color: '#374151', fontFamily: 'var(--font-family, inherit)', marginRight: '8px' }}>
+                                            <span style={{ fontSize: '13px', fontWeight: '500', color: 'var(--m3-on-surface, #374151)', fontFamily: 'var(--font-family, inherit)', marginRight: '8px' }}>
                                                 {port.name}
                                             </span>
                                             {port.version && (

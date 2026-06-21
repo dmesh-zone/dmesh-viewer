@@ -38,10 +38,10 @@ export default memo(({ data, isConnectable }) => {
         }
     };
 
-    const nodeBorderColor = observeMode ? getHealthColor(healthStatus) : (isSelected ? '#3b82f6' : '#e5e7eb');
-    const nodeBg = observeMode ? getHealthBg(healthStatus) : (data.backgroundColor || 'white');
-    const nodeTextColor = observeMode ? '#f8fafc' : '#1f2937';
-    const nodeSubtitleColor = observeMode ? '#94a3b8' : '#6b7280';
+    const nodeBorderColor = observeMode ? getHealthColor(healthStatus) : (isSelected ? '#3b82f6' : 'var(--m3-outline-variant, #e5e7eb)');
+    const nodeBg = observeMode ? getHealthBg(healthStatus) : (data.backgroundColor || 'var(--m3-surface, white)');
+    const nodeTextColor = observeMode ? '#f8fafc' : 'var(--m3-on-surface, #1f2937)';
+    const nodeSubtitleColor = observeMode ? '#94a3b8' : 'var(--m3-outline, #6b7280)';
 
     if (compactMode) {
         return (
@@ -120,7 +120,7 @@ export default memo(({ data, isConnectable }) => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    background: observeMode ? 'rgba(255,255,255,0.05)' : 'transparent',
+                    background: observeMode ? 'rgba(255,255,255,0.05)' : 'var(--node-icon-bg, transparent)',
                     borderRadius: '4px'
                 }}>
                     <img src={data.icon} alt="icon" style={{ width: '20px', height: '20px' }} />
@@ -206,7 +206,7 @@ export default memo(({ data, isConnectable }) => {
                     fontSize: '10px',
                     fontWeight: '700',
                     letterSpacing: '1px',
-                    color: observeMode ? getHealthColor(healthStatus) : '#1e3a8a'
+                    color: observeMode ? getHealthColor(healthStatus) : 'var(--m3-on-surface, #1e3a8a)'
                 }}>
                     {observeMode ? healthStatus?.toUpperCase() : data.banner}
                 </span>
@@ -292,7 +292,7 @@ export default memo(({ data, isConnectable }) => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    background: observeMode ? 'rgba(255,255,255,0.05)' : 'transparent',
+                    background: observeMode ? 'rgba(255,255,255,0.05)' : 'var(--node-icon-bg, transparent)',
                     borderRadius: '8px'
                 }}>
                     <img

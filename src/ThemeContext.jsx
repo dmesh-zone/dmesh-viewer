@@ -86,7 +86,7 @@ export const CustomThemeProvider = ({ children }) => {
     };
 
     return (
-        <ThemeContext.Provider value={{ mode, toggleTheme, setThemeFromConfig }}>
+        <ThemeContext.Provider value={{ mode, toggleTheme, setThemeFromConfig, configTheme }}>
             <ThemeProvider theme={theme}>
                 <CssBaseline />
                 {children}

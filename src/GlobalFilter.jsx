@@ -37,7 +37,7 @@ const GlobalFilter = ({ filterText, onFilterChange }) => {
                     outline: 'none',
                     fontSize: '13px',
                     width: '100%',
-                    color: '#334155',
+                    color: 'var(--m3-on-surface, #334155)',
                     background: 'transparent'
                 }}
             />
