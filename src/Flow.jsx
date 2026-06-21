@@ -38,7 +38,7 @@ import ObservabilityDrilldown from './ObservabilityDrilldown';
 import ErrorBoundary from './ErrorBoundary';
 import { useThemeContext } from './ThemeContext';
 import ThemeToggle from './ThemeToggle';
-import { TextField } from '@mui/material';
+
 
 const HeaderNode = ({ data }) => (
     <div style={{ color: '#6b7280', fontSize: '14px', fontWeight: '600', width: 250, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'flex-start', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
@@ -1819,14 +1819,6 @@ function Flow() {
                                     filterText={globalFilterText}
                                     onFilterChange={setGlobalFilterText}
                                 />
-                                {/* Demo UI requested by user to verify dark mode */}
-                                <TextField 
-                                    size="small" 
-                                    placeholder="MUI Demo" 
-                                    variant="outlined" 
-                                    style={{ width: 120, backgroundColor: 'var(--mui-palette-background-paper)' }} 
-                                />
-                                <ThemeToggle />
                             </div>
                         )}
 
@@ -1905,7 +1897,8 @@ function Flow() {
                 <div style={{ display: 'flex', gap: '16px', pointerEvents: 'auto', alignItems: 'flex-start', flexShrink: 1, minWidth: 0 }}>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end', flexShrink: 1, minWidth: 0, maxWidth: '100%' }}>
-                        <div style={{ display: 'flex', gap: '16px' }}>
+                        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                            <ThemeToggle />
                             <button
                                 className="btn btn-secondary"
                                 onClick={() => setCompactMode(!compactMode)}
