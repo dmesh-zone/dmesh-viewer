@@ -35,6 +35,12 @@ export const CustomThemeProvider = ({ children }) => {
                 primary: {
                     main: '#6750A4', // M3 seed color
                 },
+                ...(mode === 'dark' && {
+                    background: {
+                        default: '#000000',
+                        paper: '#1e293b',
+                    },
+                }),
             },
             typography: {
                 fontFamily: 'Inter, system-ui, Avenir, Helvetica, Arial, sans-serif',

@@ -1,6 +1,18 @@
-:root {
+:root[data-theme="dark"] {
   /* Typography */
   --font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+  /* React Flow Overrides */
+  --xy-background-color: #000000;
+  --xy-node-color: #f8fafc;
+
+  /* M3 Tokens */
+  --m3-surface: #000000;
+  --m3-surface-variant: #1e293b;
+  --m3-on-surface: #f8fafc;
+  --m3-on-surface-variant: #cbd5e1;
+  --m3-outline: #475569;
+  --m3-outline-variant: #334155;
 
   /* Domain Palette - Darkened for dark mode */
   --domain-palette-01: #1e293b;
