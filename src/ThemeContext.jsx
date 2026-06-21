@@ -1,0 +1,85 @@
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
+
+const ThemeContext = createContext();
+
+export const useThemeContext = () => useContext(ThemeContext);
+
+export const CustomThemeProvider = ({ children }) => {
+    // Determine initial mode from localStorage or system preference
+    const [mode, setMode] = useState(() => {
+        const storedTheme = localStorage.getItem('theme');
+        if (storedTheme === 'light' || storedTheme === 'dark') {
+            return storedTheme;
+        }
+        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    });
+
+    const [configTheme, setConfigTheme] = useState(null);
+
+    // Persist mode to localStorage when it changes
+    useEffect(() => {
+        localStorage.setItem('theme', mode);
+    }, [mode]);
+
+    // Apply config-based theme or base mode
+    const theme = useMemo(() => {
+        let themeOptions = {
+            palette: {
+                mode,
+                primary: {
+                    main: '#6750A4', // M3 seed color
+                },
+            },
+            typography: {
+                fontFamily: 'Inter, system-ui, Avenir, Helvetica, Arial, sans-serif',
+            },
+        };
+
+        if (configTheme) {
+            if (typeof configTheme === 'string') {
+                // If string, we might just use the active mode unless configTheme itself overrides
+                // but Flow.jsx handles appending the CSS link for string-based themes.
+                // We'll just stick to our mode for MUI components.
+            } else if (typeof configTheme === 'object') {
+                // Merge config object into themeOptions. 
+                // We map known keys like primary, secondary.
+                if (configTheme.mode) {
+                    themeOptions.palette.mode = configTheme.mode;
+                }
+                if (configTheme.primary) {
+                    themeOptions.palette.primary = { main: configTheme.primary };
+                }
+                if (configTheme.secondary) {
+                    themeOptions.palette.secondary = { main: configTheme.secondary };
+                }
+                // Inject CSS variables to root
+                const rootStyle = document.documentElement.style;
+                Object.keys(configTheme).forEach(key => {
+                    if (key.startsWith('--')) {
+                        rootStyle.setProperty(key, configTheme[key]);
+                    }
+                });
+            }
+        }
+
+        return createTheme(themeOptions);
+    }, [mode, configTheme]);
+
+    const toggleTheme = () => {
+        setMode((prev) => (prev === 'light' ? 'dark' : 'light'));
+    };
+
+    const setThemeFromConfig = (loadedTheme) => {
+        setConfigTheme(loadedTheme);
+    };
+
+    return (
+        <ThemeContext.Provider value={{ mode, toggleTheme, setThemeFromConfig }}>
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                {children}
+            </ThemeProvider>
+        </ThemeContext.Provider>
+    );
+};

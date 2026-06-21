@@ -36,6 +36,9 @@ import DataUsageAgreementVisual from './DataUsageAgreementVisual';
 import RegistryModal from './RegistryModal';
 import ObservabilityDrilldown from './ObservabilityDrilldown';
 import ErrorBoundary from './ErrorBoundary';
+import { useThemeContext } from './ThemeContext';
+import ThemeToggle from './ThemeToggle';
+import { TextField } from '@mui/material';
 
 const HeaderNode = ({ data }) => (
     <div style={{ color: '#6b7280', fontSize: '14px', fontWeight: '600', width: 250, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'flex-start', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
@@ -81,6 +84,9 @@ const normalizePath = (path) => {
 export default Flow;
 
 function Flow() {
+    // Theme Context
+    const { setThemeFromConfig } = useThemeContext();
+
     // Registry State - URL will be loaded from config.json
     const [registryUrl, setRegistryUrl] = React.useState('');
 
@@ -161,7 +167,11 @@ function Flow() {
                 setConfigError(null);
 
                 // Dynamically load theme
-                const themeName = loadedConfig.theme || 'light';
+                if (loadedConfig.theme) {
+                    setThemeFromConfig(loadedConfig.theme);
+                }
+                
+                const themeName = typeof loadedConfig.theme === 'string' ? loadedConfig.theme : 'light';
                 const themeLink = document.getElementById('theme-link');
                 if (themeLink) {
                     const baseUrl = import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL;
@@ -1782,10 +1792,20 @@ function Flow() {
 
                         {/* Global Filter */}
                         {!selection.id && (
-                            <GlobalFilter
-                                filterText={globalFilterText}
-                                onFilterChange={setGlobalFilterText}
-                            />
+                            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                                <GlobalFilter
+                                    filterText={globalFilterText}
+                                    onFilterChange={setGlobalFilterText}
+                                />
+                                {/* Demo UI requested by user to verify dark mode */}
+                                <TextField 
+                                    size="small" 
+                                    placeholder="MUI Demo" 
+                                    variant="outlined" 
+                                    style={{ width: 120, backgroundColor: 'var(--mui-palette-background-paper)' }} 
+                                />
+                                <ThemeToggle />
+                            </div>
                         )}
 
                         {/* Validate Button */}
