@@ -3,11 +3,14 @@
   --font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 
   /* React Flow Overrides */
-  --xy-background-color: #000000;
+  --xy-background-color: #141414;
+  --xy-background-pattern-dots-color: #777;
+  --xy-background-pattern-lines-color: #777;
+  --xy-background-pattern-cross-color: #777;
   --xy-node-color: #f8fafc;
 
   /* M3 Tokens */
-  --m3-surface: #000000;
+  --m3-surface: #141414;
   --m3-surface-variant: #1e293b;
   --m3-on-surface: #f8fafc;
   --m3-on-surface-variant: #cbd5e1;
