@@ -253,6 +253,17 @@ function Flow() {
     const [showConfig, setShowConfig] = React.useState(false);
     const [showEventsTab, setShowEventsTab] = React.useState(false);
 
+    const configMenuRef = React.useRef(null);
+    React.useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (configMenuRef.current && !configMenuRef.current.contains(event.target)) {
+                setShowConfig(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside, true);
+        return () => document.removeEventListener('mousedown', handleClickOutside, true);
+    }, []);
+
     const availableDimensions = React.useMemo(() => {
         if (!config?.observability?.dimensions) return [];
         const dims = Object.keys(config.observability.dimensions);
@@ -2033,7 +2044,7 @@ function Flow() {
                                 </div>
 
                                 {/* US-05: Configuration Cog */}
-                                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginLeft: '4px', paddingLeft: '4px', borderLeft: '1px solid var(--m3-outline-variant, #e2e8f0)', flexShrink: 0 }}>
+                                <div ref={configMenuRef} style={{ position: 'relative', display: 'flex', alignItems: 'center', marginLeft: '4px', paddingLeft: '4px', borderLeft: '1px solid var(--m3-outline-variant, #e2e8f0)', flexShrink: 0 }}>
                                     <button
                                         onClick={() => setShowConfig(!showConfig)}
                                         className={`custom-chip-icon custom-chip-interactive ${showConfig ? 'custom-chip-selected' : ''}`}
