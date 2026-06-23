@@ -108,7 +108,7 @@ To customize colors:
 3. Adjust the CSS variables for `--domain-palette-XX`, `--tier-*-color`, etc.
 
 To use custom fonts:
-1. Place your font files (e.g., `.otf`, `.ttf`, `.woff2`) in the `public/` directory or a subdirectory.
+1. Place your font files (e.g., `.otf`, `.ttf`, `.woff2`) in the `public/fonts` directory or a subdirectory.
 2. Define the `@font-face` rules at the top of your custom CSS theme file (e.g., `public/themes/custom-theme.css`). Ensure relative paths correctly resolve to the font file (e.g., `../MyFont.otf` if the font is in the `public/` directory).
 3. Update the typography CSS variables in `:root` to use your new font family.
 
@@ -116,14 +116,14 @@ To use custom fonts:
 ```css
 @font-face {
   font-family: "OutfitRegular";
-  src: url("../Outfit-Regular.otf") format("opentype");
+  src: url("../fonts/Outfit-Regular.otf") format("opentype");
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: "OutfitBold";
-  src: url("../Outfit-Bold.otf") format("opentype");
+  src: url("../fonts/Outfit-Bold.otf") format("opentype");
   font-weight: bold;
   font-style: normal;
 }
