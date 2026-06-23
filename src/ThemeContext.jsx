@@ -43,7 +43,13 @@ export const CustomThemeProvider = ({ children }) => {
                 }),
             },
             typography: {
-                fontFamily: 'Inter, system-ui, Avenir, Helvetica, Arial, sans-serif',
+                fontFamily: 'var(--font-family, "Roboto", "Helvetica", "Arial", sans-serif)',
+                h1: { fontFamily: 'var(--font-family-heading, var(--font-family, inherit))' },
+                h2: { fontFamily: 'var(--font-family-heading, var(--font-family, inherit))' },
+                h3: { fontFamily: 'var(--font-family-heading, var(--font-family, inherit))' },
+                h4: { fontFamily: 'var(--font-family-heading, var(--font-family, inherit))' },
+                h5: { fontFamily: 'var(--font-family-heading, var(--font-family, inherit))' },
+                h6: { fontFamily: 'var(--font-family-heading, var(--font-family, inherit))' },
             },
         };
 

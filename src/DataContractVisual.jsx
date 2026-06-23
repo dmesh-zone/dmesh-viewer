@@ -78,6 +78,7 @@ export default function DataContractVisual({ data, anchor, filterByAnchor = fals
             <div style={{ marginBottom: '32px' }}>
                 {data.name && (
                     <h2 style={{
+                        fontFamily: 'var(--font-family-heading, inherit)',
                         fontSize: '24px',
                         fontWeight: '400',
                         margin: '0 0 16px 0',

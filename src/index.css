@@ -1,7 +1,8 @@
 @import './input.css';
 
 :root {
-  --font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  --font-family-heading: "Roboto", "Helvetica", "Arial", sans-serif;
   font-family: var(--font-family);
   line-height: 1.5;
   font-weight: 400;
@@ -251,6 +252,7 @@ input[type="checkbox"]:checked::after {
 }
 
 .custom-card-title {
+  font-family: var(--font-family-heading, inherit);
   font-size: 18px;
   font-weight: bold;
   color: var(--side-panel-text, #111111);

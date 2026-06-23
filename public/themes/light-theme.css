@@ -1,6 +1,6 @@
 :root {
   /* Typography */
-  --font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 
   /* Domain Palette */
   --domain-palette-01: #FFFFFF;
@@ -120,5 +120,5 @@
   --chip-inactive-border: #f9dada;
 
   /* Node Elements */
-  --node-icon-filter: grayscale(100%) contrast(1.2);
+  --node-icon-filter: none;
 }

@@ -1,6 +1,6 @@
 :root[data-theme="dark"] {
   /* Typography */
-  --font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 
   /* React Flow Overrides */
   --xy-background-color: #141414;

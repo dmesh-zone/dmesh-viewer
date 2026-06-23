@@ -195,8 +195,8 @@ function Flow() {
         if (configThemeName === 'light' || configThemeName === 'dark') {
             activeThemeName = mode; // Obey user toggle
         } else {
-            // If it's a custom theme (e.g. "custom"), we could append "-dark" if mode is dark,
-            // but for now we just switch to "dark" if dark mode is requested, or fallback to the custom string.
+            // For custom themes, switch to "dark" if dark mode is requested, or fallback to the custom string.
+            // Ideally we'd load 'custom-dark' but we'll use 'dark' as the base.
             activeThemeName = mode === 'dark' ? 'dark' : configThemeName;
         }
 
@@ -205,10 +205,11 @@ function Flow() {
             themeLink = document.createElement('link');
             themeLink.id = 'theme-link';
             themeLink.rel = 'stylesheet';
-            document.head.appendChild(themeLink);
         }
+        // Always append it to the end of the head so it takes precedence over Vite's injected <style> tags
+        document.head.appendChild(themeLink);
         
-        const baseUrl = import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL;
+        const baseUrl = import.meta.env.BASE_URL || '/';
         const themeUrl = `${baseUrl}/themes/${activeThemeName}-theme.css`.replace('//', '/');
         themeLink.href = import.meta.env.DEV ? `${themeUrl}?t=${Date.now()}` : themeUrl;
     }, [mode, config]);
@@ -2353,7 +2354,7 @@ function Flow() {
                         }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                    <h3 style={{ margin: 0, color: '#1e293b' }}>
+                                    <h3 style={{ margin: 0, color: 'var(--m3-on-surface)', fontFamily: 'var(--font-family-heading, inherit)' }}>
                                         {sidePanelType === 'examples' ? 'Examples' :
                                             sidePanelType === 'dq' ? 'Data Quality' :
                                                 sidePanelType === 'observability' ? 'Observability' :

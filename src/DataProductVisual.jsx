@@ -124,6 +124,7 @@ export default function DataProductVisual({ data, registry = [] }) {
             {/* Header Section */}
             <div style={{ marginBottom: '32px' }}>
                 <h2 style={{
+                    fontFamily: 'var(--font-family-heading, inherit)',
                     fontSize: '24px',
                     fontWeight: 'bold',
                     margin: '0 0 16px 0',
@@ -212,7 +213,7 @@ export default function DataProductVisual({ data, registry = [] }) {
             {properties.length > 0 && (
                 <div style={{ marginBottom: '32px' }}>
                     <h3 className="custom-card-title">
-                        Extended Properties
+                        Custom Properties
                     </h3>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '16px' }}>
                         {properties.filter(p => !p.property.toLowerCase().includes('datausageagreement')).map((prop, idx) => (
