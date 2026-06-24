@@ -1283,9 +1283,41 @@ function Flow() {
         // 1. Identify "Primary Matches" based on filters
         const primaryMatches = nodes.filter(node => {
             const matchesDomain = selectedDomains.length === 0 || selectedDomains.includes(node.data?.originalData?.domain); // Use originalData to avoid ReactFlow stripping custom top-level props
-            const matchesSearch = globalFilterText === '' ||
-                node.data.label.toLowerCase().includes(globalFilterText.toLowerCase()) ||
-                String(node.id).toLowerCase().includes(globalFilterText.toLowerCase());
+            let matchesSearch = globalFilterText === '';
+            if (!matchesSearch) {
+                const searchText = globalFilterText.toLowerCase();
+                const matchesLabel = node.data.label.toLowerCase().includes(searchText) || String(node.id).toLowerCase().includes(searchText);
+                
+                let matchesCustomProps = false;
+                const customProps = node.data?.originalData?.customProperties || [];
+                matchesCustomProps = customProps.some(prop => String(prop.value).toLowerCase().includes(searchText));
+                
+                let matchesContractProps = false;
+                const outputPorts = node.data?.originalData?.outputPorts || [];
+                
+                let matchesRoles = false;
+                const nodeRoles = node.data?.originalData?.roles || [];
+                matchesRoles = nodeRoles.some(r => String(r.role).toLowerCase().includes(searchText) || String(r.access).toLowerCase().includes(searchText));
+
+                for (const port of outputPorts) {
+                    if (port.contractId) {
+                        const contract = dataMeshRegistry.find(item => String(item.id) === String(port.contractId) && item.kind === 'DataContract');
+                        if (contract) {
+                            if (contract.customProperties && contract.customProperties.some(prop => String(prop.value).toLowerCase().includes(searchText))) {
+                                matchesContractProps = true;
+                                break;
+                            }
+                            if (contract.roles && contract.roles.some(r => String(r.role).toLowerCase().includes(searchText) || String(r.access).toLowerCase().includes(searchText))) {
+                                matchesContractProps = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                matchesSearch = matchesLabel || matchesCustomProps || matchesRoles || matchesContractProps;
+            }
+
             return matchesDomain && matchesSearch;
         });
 
