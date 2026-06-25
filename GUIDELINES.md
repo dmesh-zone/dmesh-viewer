@@ -1,7 +1,7 @@
 # Data Mesh Viewer Development Standards
 
 ## 1. Project Overview
-A React-based visualization tool for Data Mesh registries, utilizing React Flow (`@xyflow/react`) for graph rendering and AJV for schema validation against ODCS (Open Data Contract Standard) and ODPS (Open Data Product Specification).
+A React-based visualization tool for Data Mesh registries, utilizing React Flow (`@xyflow/react`) for graph rendering, Material UI (MUI) for standardized UI components, and AJV for schema validation against ODCS (Open Data Contract Standard) and ODPS (Open Data Product Specification).
 
 ## 2. Coding Conventions
 
@@ -33,7 +33,7 @@ All source files (`.js`, `.jsx`, `.css`) must begin with the Apache 2.0 license 
 - **Styles**: Prefer a mix of M3 CSS variables for theme and inline styles for dynamic node properties.
 
 ### Styling Strategy
-- **Global Tokens**: Use Material 3 (M3) CSS variables defined in `src/index.css` (e.g., `--m3-primary`, `--m3-surface`).
+- **Global Tokens & Theming**: The application relies on MUI dynamic theming and CSS variables. Theming is configurable via `public/config.yaml` and CSS theme files (e.g., `public/themes/custom-theme.css`).
 - **Inline Styles**: Use for node-specific layout (width, height, dynamic background colors).
 - **Interactive Elements**: Use CSS classes for hover effects and shared UI components (e.g., `.yaml-pill`, `.output-ports-pill`).
 
@@ -71,5 +71,12 @@ When adding new validation rules:
 ## 5. UI/UX Principles
 - **Pill Badges**: Use rounded badges for counts, statuses, and navigation shortcuts.
 - **Banners**: Nodes must include a colored banner displaying the object type or domain name.
-- **Typography**: Use the `Inter` font family as defined in the root layout.
+- **Typography**: Typography is customizable via CSS themes. Custom fonts can be loaded from the `public/fonts` directory and defined in the active theme CSS. `Inter` serves as the default fallback.
 - **Elevation**: Follow M3 elevation levels (`--m3-elevation-1` through `3`) for cards and modals.
+
+## 6. Security and CI/CD
+
+- **Static Analysis**: The codebase is continuously scanned for vulnerabilities using GitHub CodeQL.
+- **Dependency Management**: Dependencies are regularly updated via Dependabot.
+- **Vulnerability Scanning**: Snyk GitHub Actions are integrated to check for vulnerabilities in `package.json` dependencies (requires `SNYK_TOKEN` repository secret).
+- **Pull Requests**: All new code and PRs must successfully pass these security workflows before merging into `main`.
