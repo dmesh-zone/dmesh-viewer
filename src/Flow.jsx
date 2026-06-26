@@ -254,6 +254,23 @@ function Flow() {
     const [showConfig, setShowConfig] = React.useState(false);
     const [showEventsTab, setShowEventsTab] = React.useState(false);
 
+    const [showDomainLabels, setShowDomainLabels] = React.useState(() => localStorage.getItem('showDomainLabels') === 'true');
+    React.useEffect(() => {
+        localStorage.setItem('showDomainLabels', showDomainLabels);
+    }, [showDomainLabels]);
+    
+    const [showGlobalConfig, setShowGlobalConfig] = React.useState(false);
+    const globalConfigMenuRef = React.useRef(null);
+    React.useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (globalConfigMenuRef.current && !globalConfigMenuRef.current.contains(event.target)) {
+                setShowGlobalConfig(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside, true);
+        return () => document.removeEventListener('mousedown', handleClickOutside, true);
+    }, []);
+
     const configMenuRef = React.useRef(null);
     React.useEffect(() => {
         const handleClickOutside = (event) => {
@@ -658,7 +675,7 @@ function Flow() {
                         banner: banner,
                         bannerColor: bannerColor,
                         backgroundColor: backgroundColor,
-                        subtitle: config?.domainNameCustomisation?.[node.domain] || node.domain,
+                        subtitle: showDomainLabels ? (config?.domainNameCustomisation?.[node.domain] || node.domain) : null,
                         icon: normalizePath(config.iconMap[technology] || (node.kind === 'DataContract' ? config.iconMap['table'] : config.iconMap['dataproduct'])),
                         hasOutputPorts: node.outputPorts && node.outputPorts.length > 0,
                         outputPortCount: node.outputPorts ? node.outputPorts.length : 0,
@@ -810,7 +827,7 @@ function Flow() {
         setNodes([...initialNodes, ...headerNodes]);
         setEdges(initialEdges);
 
-    }, [dataMeshRegistry, setNodes, setEdges, observeMode, compactMode, activeDimension, metricsMap, drillNodeId, config, hideHealthy]);
+    }, [dataMeshRegistry, setNodes, setEdges, observeMode, compactMode, activeDimension, metricsMap, drillNodeId, config, hideHealthy, showDomainLabels]);
 
     // Handle hover states separately to avoid recreating nodes
     React.useEffect(() => {
@@ -2038,6 +2055,49 @@ function Flow() {
                                 </svg>
                                 {!isMobile && (observeMode ? 'OBSERVING' : 'OBSERVE')}
                             </button>
+                            <div ref={globalConfigMenuRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                                <button
+                                    onClick={() => setShowGlobalConfig(!showGlobalConfig)}
+                                    className={`btn btn-secondary ${showGlobalConfig ? 'custom-chip-selected' : ''}`}
+                                    title="Options"
+                                    style={{ padding: '8px' }}
+                                >
+                                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </button>
+                                {showGlobalConfig && (
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '100%',
+                                        right: 0,
+                                        marginTop: '8px',
+                                        background: 'var(--m3-surface, white)',
+                                        borderRadius: '8px',
+                                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                                        border: '1px solid var(--m3-outline-variant, #e2e8f0)',
+                                        padding: '12px',
+                                        minWidth: '180px',
+                                        zIndex: 1000
+                                    }}>
+                                        <div
+                                            style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setShowDomainLabels(!showDomainLabels);
+                                            }}
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                checked={showDomainLabels}
+                                                readOnly
+                                            />
+                                            <span style={{ fontSize: '12px', fontWeight: '500', color: 'var(--m3-on-surface, #1e293b)' }}>Show domain labels</span>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         {observeMode && (
