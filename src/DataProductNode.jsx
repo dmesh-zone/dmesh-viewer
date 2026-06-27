@@ -18,7 +18,21 @@ import React, { memo } from 'react';
 import { Handle, Position } from '@xyflow/react';
 
 export default memo(({ data, isConnectable }) => {
+    const [isHovered, setIsHovered] = React.useState(false);
+    const [isFlipped, setIsFlipped] = React.useState(false);
+    const tooltipRef = React.useRef(null);
     const { observeMode, compactMode, healthStatus, pips, isSelected, activeDimension } = data;
+
+    React.useEffect(() => {
+        if (isHovered && tooltipRef.current && tooltipRef.current.parentElement) {
+            const nodeRect = tooltipRef.current.parentElement.getBoundingClientRect();
+            if (window.innerWidth - nodeRect.right < 310) {
+                setIsFlipped(true);
+            } else {
+                setIsFlipped(false);
+            }
+        }
+    }, [isHovered]);
 
     const getHealthColor = (status) => {
         switch (status) {
@@ -41,7 +55,7 @@ export default memo(({ data, isConnectable }) => {
     const nodeBorderColor = observeMode ? getHealthColor(healthStatus) : (isSelected ? '#3b82f6' : 'var(--m3-outline-variant, #e5e7eb)');
     const nodeBg = observeMode ? getHealthBg(healthStatus) : (data.backgroundColor || 'var(--m3-surface, white)');
     const nodeTextColor = observeMode ? '#f8fafc' : 'var(--m3-on-surface, #1f2937)';
-    const nodeSubtitleColor = observeMode ? '#94a3b8' : 'var(--m3-outline, #6b7280)';
+    const nodeSubtitleColor = observeMode ? '#94a3b8' : 'var(--m3-on-surface-variant, #6b7280)';
 
     if (compactMode) {
         return (
@@ -104,8 +118,11 @@ export default memo(({ data, isConnectable }) => {
                     alignItems: 'center',
                     gap: '8px',
                     cursor: 'pointer',
-                    width: '320px'
+                    width: '320px',
+                    position: 'relative'
                 }}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
             >
                 <Handle
                     type="target"
@@ -135,7 +152,6 @@ export default memo(({ data, isConnectable }) => {
                     overflow: 'hidden'
                 }}>
                     <div 
-                        title={data.label}
                         style={{
                             fontSize: '13px',
                             fontWeight: '600',
@@ -170,6 +186,53 @@ export default memo(({ data, isConnectable }) => {
                     isConnectable={isConnectable}
                     style={{ background: nodeBorderColor, border: '2px solid white', width: '8px', height: '8px' }}
                 />
+
+                {isHovered && (
+                    <div 
+                        ref={tooltipRef}
+                        style={{
+                        position: 'absolute',
+                        top: '50%',
+                        ...(isFlipped ? {
+                            right: '100%',
+                            marginRight: '12px',
+                        } : {
+                            left: '100%',
+                            marginLeft: '12px',
+                        }),
+                        transform: 'translateY(-50%)',
+                        background: '#121212',
+                        color: '#ffffff',
+                        padding: '12px 16px',
+                        borderRadius: '4px',
+                        fontSize: '13px',
+                        fontWeight: '400',
+                        zIndex: 1000,
+                        boxShadow: 'var(--m3-elevation-3, 0 4px 6px rgba(0, 0, 0, 0.3))',
+                        whiteSpace: 'pre-wrap',
+                        width: 'max-content',
+                        maxWidth: '280px',
+                        pointerEvents: 'none',
+                        lineHeight: '1.4'
+                    }}>
+                        <div style={{
+                            position: 'absolute',
+                            ...(isFlipped ? {
+                                right: '-6px',
+                            } : {
+                                left: '-6px',
+                            }),
+                            top: '50%',
+                            transform: 'translateY(-50%) rotate(45deg)',
+                            width: '12px',
+                            height: '12px',
+                            background: '#121212',
+                            zIndex: -1
+                        }} />
+                        <div style={{ fontWeight: '500', marginBottom: data.description ? '4px' : '0' }}>{data.label}</div>
+                        {data.description && <div style={{ color: 'rgba(255, 255, 255, 0.85)' }}>{data.description}</div>}
+                    </div>
+                )}
             </div>
         );
     }
@@ -185,7 +248,8 @@ export default memo(({ data, isConnectable }) => {
                     ? `0 0 20px ${nodeBorderColor}33, var(--m3-elevation-2)` 
                     : (isSelected ? '0 0 0 3px rgba(59, 130, 246, 0.4), var(--m3-elevation-2)' : 'var(--m3-elevation-1)'),
                 width: '320px',
-                height: '120px',
+                minHeight: '100px',
+                height: 'auto',
                 fontFamily: 'var(--font-family, inherit)',
                 position: 'relative',
                 display: 'flex',
@@ -304,34 +368,21 @@ export default memo(({ data, isConnectable }) => {
 
                 <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{
-                        fontSize: '15px',
-                        fontWeight: '700',
-                        color: nodeTextColor,
-                        lineHeight: '1.2',
-                        wordBreak: 'break-word',
-                        marginBottom: '4px'
-                    }}>
-                        {data.label}
-                    </div>
-
-                    <div style={{
                         display: 'flex',
-                        alignItems: 'center',
+                        alignItems: 'flex-start',
                         justifyContent: 'space-between',
-                        marginTop: '4px',
-                        gap: '8px'
+                        gap: '8px',
+                        marginBottom: data.description ? '2px' : '4px'
                     }}>
-                        {data.subtitle && (
-                            <div style={{
-                                fontSize: '11px',
-                                color: nodeSubtitleColor,
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis'
-                            }}>
-                                {data.subtitle}
-                            </div>
-                        )}
+                        <div style={{
+                            fontSize: '15px',
+                            fontWeight: '700',
+                            color: nodeTextColor,
+                            lineHeight: '1.2',
+                            wordBreak: 'break-word',
+                        }}>
+                            {data.label}
+                        </div>
                         {!observeMode && data.hasOutputPorts && (
                             <div
                                 className="nodrag custom-chip custom-chip-interactive"
@@ -340,7 +391,8 @@ export default memo(({ data, isConnectable }) => {
                                     fontSize: '10px',
                                     fontWeight: '500',
                                     cursor: 'pointer',
-                                    whiteSpace: 'nowrap'
+                                    whiteSpace: 'nowrap',
+                                    flexShrink: 0
                                 }}
                                 onClick={(e) => {
                                     e.stopPropagation();
@@ -354,8 +406,42 @@ export default memo(({ data, isConnectable }) => {
                             </div>
                         )}
                     </div>
-                </div>
+                    {data.description && (
+                        <div style={{
+                            fontSize: '11px',
+                            color: nodeSubtitleColor,
+                            lineHeight: '1.2',
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                            marginBottom: '4px'
+                        }}>
+                            {data.description}
+                        </div>
+                    )}
 
+                    {data.subtitle && (
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            marginTop: '4px',
+                            gap: '8px'
+                        }}>
+                            <div style={{
+                                fontSize: '11px',
+                                color: nodeSubtitleColor,
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis'
+                            }}>
+                                {data.subtitle}
+                            </div>
+                        </div>
+                    )}
+                </div>
+                
                 <Handle
                     type="source"
                     position={Position.Right}

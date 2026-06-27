@@ -24,9 +24,7 @@ export default memo(({ data, isConnectable }) => {
             borderRadius: '8px',
             background: 'var(--m3-surface, white)',
             boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-            width: 'auto',
-            minWidth: '280px',
-            maxWidth: '500px',
+            width: '320px',
             fontFamily: 'var(--font-family, inherit)'
         }}>
             <div style={{
@@ -109,9 +107,14 @@ export default memo(({ data, isConnectable }) => {
                     </div>
 
                     <div>
-                        <div style={{ fontSize: '18px', fontWeight: '700', color: 'var(--m3-on-surface, #1f2937)', lineHeight: '1.2' }}>
+                        <div style={{ fontSize: '18px', fontWeight: '700', color: 'var(--m3-on-surface, #1f2937)', lineHeight: '1.2', wordBreak: 'break-word' }}>
                             {data.label}
                         </div>
+                        {data.description && (
+                            <div style={{ fontSize: '13px', color: 'var(--m3-on-surface-variant, #4b5563)', marginTop: '6px', lineHeight: '1.4', wordBreak: 'break-word' }}>
+                                {data.description}
+                            </div>
+                        )}
                         {data.subtitle && (
                             <div style={{ fontSize: '12px', color: 'var(--m3-outline, #6b7280)', marginTop: '4px' }}>
                                 {data.subtitle}

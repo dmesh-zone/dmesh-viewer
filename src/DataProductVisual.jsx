@@ -158,6 +158,11 @@ export default function DataProductVisual({ data, registry = [] }) {
                         )}
                     </button>
                 </h2>
+                {data.description && (
+                    <div style={{ marginBottom: '24px', color: 'var(--m3-on-surface-variant)', fontSize: '15px', lineHeight: '1.5' }}>
+                        {typeof data.description === 'string' ? data.description : (data.description.purpose || '')}
+                    </div>
+                )}
                 <div className="custom-card" style={{
                     display: 'grid',
                     gridTemplateColumns: 'auto 1fr',

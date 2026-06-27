@@ -675,7 +675,8 @@ function Flow() {
                         banner: banner,
                         bannerColor: bannerColor,
                         backgroundColor: backgroundColor,
-                        subtitle: showDomainLabels ? (config?.domainNameCustomisation?.[node.domain] || node.domain) : null,
+                        subtitle: (showDomainLabels || !compactMode) ? (config?.domainNameCustomisation?.[node.domain] || node.domain) : null,
+                        description: node.description?.purpose || (typeof node.description === 'string' ? node.description : ''),
                         icon: normalizePath(config.iconMap[technology] || (node.kind === 'DataContract' ? config.iconMap['table'] : config.iconMap['dataproduct'])),
                         hasOutputPorts: node.outputPorts && node.outputPorts.length > 0,
                         outputPortCount: node.outputPorts ? node.outputPorts.length : 0,
@@ -831,6 +832,10 @@ function Flow() {
 
     // Handle hover states separately to avoid recreating nodes
     React.useEffect(() => {
+        setNodes(nodes => nodes.map(node => ({
+            ...node,
+            zIndex: node.id === hoveredNodeId ? 1000 : 0
+        })));
         setEdges(edges => {
             // Find full upstream and downstream chains for hover highlighting
             const connectedEdgeIds = new Set();
@@ -909,7 +914,7 @@ function Flow() {
             };
         });
     });
-}, [hoveredNodeId, hoveredEdgeId, observeMode, activeDimension, setEdges, deriveStatus]);
+}, [hoveredNodeId, hoveredEdgeId, observeMode, activeDimension, setEdges, setNodes, deriveStatus]);
 
 
     // Validation Logic
