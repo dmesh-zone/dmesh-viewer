@@ -258,6 +258,14 @@ function Flow() {
     React.useEffect(() => {
         localStorage.setItem('showDomainLabels', showDomainLabels);
     }, [showDomainLabels]);
+
+    const [showDescriptionsExpanded, setShowDescriptionsExpanded] = React.useState(() => {
+        const val = localStorage.getItem('showDescriptionsExpanded');
+        return val === null ? true : val === 'true';
+    });
+    React.useEffect(() => {
+        localStorage.setItem('showDescriptionsExpanded', showDescriptionsExpanded);
+    }, [showDescriptionsExpanded]);
     
     const [showGlobalConfig, setShowGlobalConfig] = React.useState(false);
     const globalConfigMenuRef = React.useRef(null);
@@ -676,7 +684,7 @@ function Flow() {
                         bannerColor: bannerColor,
                         backgroundColor: backgroundColor,
                         subtitle: (showDomainLabels || !compactMode) ? (config?.domainNameCustomisation?.[node.domain] || node.domain) : null,
-                        description: node.description?.purpose || (typeof node.description === 'string' ? node.description : ''),
+                        description: (compactMode || showDescriptionsExpanded) ? (node.description?.purpose || (typeof node.description === 'string' ? node.description : '')) : null,
                         icon: normalizePath(config.iconMap[technology] || (node.kind === 'DataContract' ? config.iconMap['table'] : config.iconMap['dataproduct'])),
                         hasOutputPorts: node.outputPorts && node.outputPorts.length > 0,
                         outputPortCount: node.outputPorts ? node.outputPorts.length : 0,
@@ -828,7 +836,7 @@ function Flow() {
         setNodes([...initialNodes, ...headerNodes]);
         setEdges(initialEdges);
 
-    }, [dataMeshRegistry, setNodes, setEdges, observeMode, compactMode, activeDimension, metricsMap, drillNodeId, config, hideHealthy, showDomainLabels]);
+    }, [dataMeshRegistry, setNodes, setEdges, observeMode, compactMode, activeDimension, metricsMap, drillNodeId, config, hideHealthy, showDomainLabels, showDescriptionsExpanded]);
 
     // Handle hover states separately to avoid recreating nodes
     React.useEffect(() => {
@@ -2098,7 +2106,21 @@ function Flow() {
                                                 checked={showDomainLabels}
                                                 readOnly
                                             />
-                                            <span style={{ fontSize: '12px', fontWeight: '500', color: 'var(--m3-on-surface, #1e293b)' }}>Show domain labels</span>
+                                            <span style={{ fontSize: '12px', fontWeight: '500', color: 'var(--m3-on-surface, #1e293b)' }}>Show domain labels in compact view</span>
+                                        </div>
+                                        <div
+                                            style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', whiteSpace: 'nowrap', marginTop: '8px' }}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setShowDescriptionsExpanded(!showDescriptionsExpanded);
+                                            }}
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                checked={showDescriptionsExpanded}
+                                                readOnly
+                                            />
+                                            <span style={{ fontSize: '12px', fontWeight: '500', color: 'var(--m3-on-surface, #1e293b)' }}>Show descriptions in expanded view</span>
                                         </div>
                                     </div>
                                 )}
