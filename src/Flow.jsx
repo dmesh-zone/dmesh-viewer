@@ -1278,6 +1278,8 @@ function Flow() {
             target: edge.consumer.dataProductId
         }));
 
+        const verticalStep = compactMode ? 60 : 150;
+
         // Upstream Nodes (Producers)
         const upstreamEdges = dataMeshEdges.filter(e => String(e.target) === String(selection.id));
         upstreamEdges.forEach((edge, index) => {
@@ -1285,7 +1287,7 @@ function Flow() {
             if (sourceNode) {
                 relatedNodes.push({
                     ...sourceNode,
-                    position: { x: -450, y: index * 150 } // Stack upstream on left - Using 450 to match COLUMN_SPACING
+                    position: { x: -450, y: index * verticalStep } // Stack upstream on left - Using 450 to match COLUMN_SPACING
                 });
             }
         });
@@ -1297,13 +1299,13 @@ function Flow() {
             if (targetNode) {
                 relatedNodes.push({
                     ...targetNode,
-                    position: { x: 450, y: index * 150 } // Stack downstream on right
+                    position: { x: 450, y: index * verticalStep } // Stack downstream on right
                 });
             }
         });
 
         return relatedNodes;
-    }, [selection, nodes, dataMeshNodes, dataMeshRegistry]);
+    }, [selection, nodes, dataMeshNodes, dataMeshRegistry, compactMode]);
 
     // Mesh filtering visibility logic
     const meshFilterNodes = React.useMemo(() => {
