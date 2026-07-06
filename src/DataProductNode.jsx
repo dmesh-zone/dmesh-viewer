@@ -16,15 +16,17 @@
 
 import React, { memo } from 'react';
 import { Handle, Position } from '@xyflow/react';
+import InfoIcon from '@mui/icons-material/InfoOutlined';
 
 export default memo(({ data, isConnectable }) => {
     const [isHovered, setIsHovered] = React.useState(false);
+    const [isInfoHovered, setIsInfoHovered] = React.useState(false);
     const [isFlipped, setIsFlipped] = React.useState(false);
     const tooltipRef = React.useRef(null);
     const { observeMode, compactMode, healthStatus, pips, isSelected, activeDimension } = data;
 
     React.useEffect(() => {
-        if (isHovered && tooltipRef.current && tooltipRef.current.parentElement) {
+        if (isInfoHovered && tooltipRef.current && tooltipRef.current.parentElement) {
             const nodeRect = tooltipRef.current.parentElement.getBoundingClientRect();
             if (window.innerWidth - nodeRect.right < 310) {
                 setIsFlipped(true);
@@ -32,7 +34,7 @@ export default memo(({ data, isConnectable }) => {
                 setIsFlipped(false);
             }
         }
-    }, [isHovered]);
+    }, [isInfoHovered]);
 
     const getHealthColor = (status) => {
         switch (status) {
@@ -122,7 +124,10 @@ export default memo(({ data, isConnectable }) => {
                     position: 'relative'
                 }}
                 onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
+                onMouseLeave={() => {
+                    setIsHovered(false);
+                    setIsInfoHovered(false);
+                }}
             >
                 <Handle
                     type="target"
@@ -180,6 +185,22 @@ export default memo(({ data, isConnectable }) => {
                     )}
                 </div>
 
+                {isHovered && (
+                    <InfoIcon 
+                        style={{
+                            fontSize: '18px',
+                            color: observeMode ? '#94a3b8' : 'var(--m3-on-surface-variant, #6b7280)',
+                            cursor: 'pointer',
+                            opacity: isInfoHovered ? 1 : 0.6,
+                            transition: 'opacity 0.2s',
+                            zIndex: 10,
+                            flexShrink: 0
+                        }}
+                        onMouseEnter={() => setIsInfoHovered(true)}
+                        onMouseLeave={() => setIsInfoHovered(false)}
+                    />
+                )}
+
                 <Handle
                     type="source"
                     position={Position.Right}
@@ -187,7 +208,7 @@ export default memo(({ data, isConnectable }) => {
                     style={{ background: nodeBorderColor, border: '2px solid white', width: '8px', height: '8px' }}
                 />
 
-                {isHovered && (
+                {isInfoHovered && (
                     <div 
                         ref={tooltipRef}
                         style={{
