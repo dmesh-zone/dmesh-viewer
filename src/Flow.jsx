@@ -233,6 +233,7 @@ function Flow() {
     const [sidePanelFilter, setSidePanelFilter] = React.useState(''); // New filter state
     const [sidePanelTab, setSidePanelTab] = React.useState('visual'); // 'visual' | 'yaml' | 'json'
     const [sidePanelAnchor, setSidePanelAnchor] = React.useState(null); // Table anchor
+    const [sidePanelNodeId, setSidePanelNodeId] = React.useState(null); // Node ID for side panel
     const [copiedFormat, setCopiedFormat] = React.useState(null); // For copy button
 
     // Mobile Responsiveness
@@ -1487,6 +1488,7 @@ function Flow() {
     React.useEffect(() => {
         const handleOpenSidePanel = (e) => {
             setSidePanelContent(e.detail.content);
+            setSidePanelNodeId(e.detail.id || null);
             const type = e.detail.type || 'yaml';
             setSidePanelType(type);
             setSidePanelFilter(''); // Reset filter when opening new content
@@ -2478,7 +2480,15 @@ function Flow() {
                                     <h3 style={{ margin: 0, color: 'var(--m3-on-surface)', fontFamily: 'var(--font-family-heading, inherit)' }}>
                                         {sidePanelType === 'examples' ? 'Examples' :
                                             sidePanelType === 'dq' ? 'Data Quality' :
-                                                sidePanelType === 'observability' ? 'Observability' :
+                                                sidePanelType === 'observability' ? (() => {
+                                                    const dp = dataMeshRegistry.find(item => item.id === sidePanelNodeId);
+                                                    if (dp) {
+                                                        const businessName = dp.customProperties?.find(p => p.property === 'dataProductBusinessName')?.value;
+                                                        const label = businessName || dp.name;
+                                                        return `${label} observability`;
+                                                    }
+                                                    return 'Observability';
+                                                })() :
                                                     sidePanelType === 'agreement-yaml' ? 'Data Usage Agreement' :
                                                         sidePanelType === 'data-product-yaml' ? 'Data Product' :
                                                             sidePanelType === 'data-contract-yaml' ? 'Data Contract' : 'YAML'}
@@ -2550,7 +2560,7 @@ function Flow() {
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', width: '100%', padding: '0 8px' }}>
                                     <div className="side-panel-tab-container">
                                         {sidePanelType === 'observability' ? (
-                                            ['metrics', 'events', 'yaml']
+                                            ['metrics', 'events', 'yaml', 'json']
                                                 .filter(tab => tab !== 'events' || showEventsTab)
                                                 .map(tab => (
                                                     <button
@@ -2558,7 +2568,7 @@ function Flow() {
                                                         onClick={() => setSidePanelTab(tab)}
                                                         className={`side-panel-tab ${sidePanelTab === tab ? 'active' : ''}`}
                                                     >
-                                                        {tab === 'yaml' ? 'YAML' : tab.charAt(0).toUpperCase() + tab.slice(1)}
+                                                        {tab === 'yaml' ? 'YAML' : (tab === 'json' ? 'JSON' : tab.charAt(0).toUpperCase() + tab.slice(1))}
                                                     </button>
                                                 ))
                                         ) : (
@@ -2642,7 +2652,7 @@ function Flow() {
                                 <ExampleTable schema={sidePanelContent} />
                             ) : sidePanelType === 'dq' ? (
                                 <QualityTable schema={sidePanelContent} />
-                            ) : sidePanelType === 'observability' ? (
+                            ) : sidePanelType === 'observability' && (sidePanelTab === 'metrics' || sidePanelTab === 'events') ? (
                                 <ObservabilityDrilldown
                                     metrics={sidePanelContent}
                                     filterText={sidePanelFilter}
