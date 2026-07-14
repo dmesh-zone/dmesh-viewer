@@ -1812,6 +1812,18 @@ function Flow() {
         URL.revokeObjectURL(url);
     };
 
+    const copyDataToClipboard = (format) => {
+        let content = '';
+        if (format === 'yaml') {
+            content = YAML.stringify(dataMeshRegistry);
+        } else if (format === 'json') {
+            content = JSON.stringify(dataMeshRegistry, null, 2);
+        }
+        navigator.clipboard.writeText(content);
+        setCopiedFormat(`test-${format}`);
+        setTimeout(() => setCopiedFormat(null), 2000);
+    };
+
     return (
         <div style={{ height: '100%', position: 'relative', overflow: 'hidden', background: 'var(--m3-surface, #ffffff)' }}>
             {/* Secret Test Mode Toggle */}
@@ -2798,6 +2810,62 @@ function Flow() {
                     gap: '12px',
                     zIndex: 100
                 }}>
+                    {/* Copy YAML */}
+                    <button
+                        onClick={() => copyDataToClipboard('yaml')}
+                        style={{
+                            width: '34px',
+                            height: '34px',
+                            borderRadius: '17px',
+                            background: copiedFormat === 'test-yaml' ? '#10b981' : 'var(--button-secondary-bg, #f3f4f6)',
+                            border: 'none',
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'all 0.2s'
+                        }}
+                        onMouseEnter={(e) => {
+                            if (copiedFormat !== 'test-yaml') {
+                                e.currentTarget.style.background = 'var(--button-secondary-hover-bg, #e5e7eb)';
+                            }
+                            e.currentTarget.style.transform = 'scale(1.05)';
+                        }}
+                        onMouseLeave={(e) => {
+                            if (copiedFormat !== 'test-yaml') {
+                                e.currentTarget.style.background = 'var(--button-secondary-bg, #f3f4f6)';
+                            }
+                            e.currentTarget.style.transform = 'scale(1)';
+                        }}
+                        title="Copy as YAML"
+                    >
+                        <div style={{position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                            {copiedFormat === 'test-yaml' ? (
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            ) : (
+                                <>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--button-secondary-text, white)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    <span style={{
+                                        position: 'absolute',
+                                        top: '-2px',
+                                        right: '-6px',
+                                        fontSize: '10px',
+                                        fontWeight: 'bold',
+                                        color: 'var(--button-secondary-text, white)',
+                                        textShadow: '0 0 2px rgba(0,0,0,0.5)'
+                                    }}>Y</span>
+                                </>
+                            )}
+                        </div>
+                    </button>
+
+                    {/* Download YAML */}
                     <button
                         onClick={() => downloadData('yaml')}
                         style={{
@@ -2841,6 +2909,62 @@ function Flow() {
                         </div>
                     </button>
                     
+                    {/* Copy JSON */}
+                    <button
+                        onClick={() => copyDataToClipboard('json')}
+                        style={{
+                            width: '34px',
+                            height: '34px',
+                            borderRadius: '17px',
+                            background: copiedFormat === 'test-json' ? '#10b981' : 'var(--button-secondary-bg, #f3f4f6)',
+                            border: 'none',
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'all 0.2s'
+                        }}
+                        onMouseEnter={(e) => {
+                            if (copiedFormat !== 'test-json') {
+                                e.currentTarget.style.background = 'var(--button-secondary-hover-bg, #e5e7eb)';
+                            }
+                            e.currentTarget.style.transform = 'scale(1.05)';
+                        }}
+                        onMouseLeave={(e) => {
+                            if (copiedFormat !== 'test-json') {
+                                e.currentTarget.style.background = 'var(--button-secondary-bg, #f3f4f6)';
+                            }
+                            e.currentTarget.style.transform = 'scale(1)';
+                        }}
+                        title="Copy as JSON"
+                    >
+                        <div style={{position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                            {copiedFormat === 'test-json' ? (
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            ) : (
+                                <>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--button-secondary-text, white)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    <span style={{
+                                        position: 'absolute',
+                                        top: '-2px',
+                                        right: '-5px',
+                                        fontSize: '10px',
+                                        fontWeight: 'bold',
+                                        color: 'var(--button-secondary-text, white)',
+                                        textShadow: '0 0 2px rgba(0,0,0,0.5)'
+                                    }}>J</span>
+                                </>
+                            )}
+                        </div>
+                    </button>
+
+                    {/* Download JSON */}
                     <button
                         onClick={() => downloadData('json')}
                         style={{
@@ -2884,6 +3008,7 @@ function Flow() {
                         </div>
                     </button>
 
+                    {/* Load Registry */}
                     <button
                         onClick={() => setShowRegistryModal(true)}
                         style={{
