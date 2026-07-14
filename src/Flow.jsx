@@ -235,6 +235,7 @@ function Flow() {
     const [sidePanelAnchor, setSidePanelAnchor] = React.useState(null); // Table anchor
     const [sidePanelNodeId, setSidePanelNodeId] = React.useState(null); // Node ID for side panel
     const [copiedFormat, setCopiedFormat] = React.useState(null); // For copy button
+    const [isHoveredBottomRight, setIsHoveredBottomRight] = React.useState(false); // Hover state for floating buttons
 
     // Mobile Responsiveness
     const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768 || window.innerHeight <= 500);
@@ -2801,15 +2802,30 @@ function Flow() {
 
             {/* Floating Buttons - Bottom Right */}
             {isTestMode && (
-                <div style={{
-                    position: 'fixed',
-                    bottom: '24px',
-                    right: '24px',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    gap: '12px',
-                    zIndex: 100
-                }}>
+                <div 
+                    onMouseEnter={() => setIsHoveredBottomRight(true)}
+                    onMouseLeave={() => setIsHoveredBottomRight(false)}
+                    style={{
+                        position: 'fixed',
+                        bottom: 0,
+                        right: 0,
+                        padding: '24px',
+                        zIndex: 100,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        pointerEvents: 'auto',
+                    }}
+                >
+                    <div style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        gap: '12px',
+                        opacity: isHoveredBottomRight ? 1 : 0,
+                        transform: isHoveredBottomRight ? 'translateY(0)' : 'translateY(10px)',
+                        transition: 'opacity 0.3s ease, transform 0.3s ease',
+                        pointerEvents: isHoveredBottomRight ? 'auto' : 'none'
+                    }}>
                     {/* Copy YAML */}
                     <button
                         onClick={() => copyDataToClipboard('yaml')}
@@ -3042,7 +3058,8 @@ function Flow() {
                         </svg>
                     </button>
                 </div>
-            )}
+            </div>
+        )}
 
             {/* Registry Modal */}
             <RegistryModal
