@@ -235,7 +235,7 @@ function Flow() {
     const [sidePanelAnchor, setSidePanelAnchor] = React.useState(null); // Table anchor
     const [sidePanelNodeId, setSidePanelNodeId] = React.useState(null); // Node ID for side panel
     const [copiedFormat, setCopiedFormat] = React.useState(null); // For copy button
-    const [isHoveredBottomRight, setIsHoveredBottomRight] = React.useState(false); // Hover state for floating buttons
+    const [isHoveredBottomLeft, setIsHoveredBottomLeft] = React.useState(false); // Hover state for floating buttons
 
     // Mobile Responsiveness
     const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768 || window.innerHeight <= 500);
@@ -2420,7 +2420,7 @@ function Flow() {
                 elementsSelectable={false}
             >
                 <Background />
-                <Controls position="bottom-left" />
+                <Controls position="bottom-right" />
                 {/* <MiniMap position="bottom-right" /> */}
                 <svg style={{ position: 'absolute', top: 0, left: 0 }}>
                     <defs>
@@ -2800,15 +2800,15 @@ function Flow() {
                 />
             )}
 
-            {/* Floating Buttons - Bottom Right */}
+            {/* Floating Buttons - Bottom Left */}
             {isTestMode && (
                 <div 
-                    onMouseEnter={() => setIsHoveredBottomRight(true)}
-                    onMouseLeave={() => setIsHoveredBottomRight(false)}
+                    onMouseEnter={() => setIsHoveredBottomLeft(true)}
+                    onMouseLeave={() => setIsHoveredBottomLeft(false)}
                     style={{
                         position: 'fixed',
                         bottom: 0,
-                        right: 0,
+                        left: 0,
                         padding: '24px',
                         zIndex: 100,
                         display: 'flex',
@@ -2821,10 +2821,10 @@ function Flow() {
                         display: 'flex',
                         flexDirection: 'row',
                         gap: '12px',
-                        opacity: isHoveredBottomRight ? 1 : 0,
-                        transform: isHoveredBottomRight ? 'translateY(0)' : 'translateY(10px)',
+                        opacity: isHoveredBottomLeft ? 1 : 0,
+                        transform: isHoveredBottomLeft ? 'translateY(0)' : 'translateY(10px)',
                         transition: 'opacity 0.3s ease, transform 0.3s ease',
-                        pointerEvents: isHoveredBottomRight ? 'auto' : 'none'
+                        pointerEvents: isHoveredBottomLeft ? 'auto' : 'none'
                     }}>
                     {/* Copy YAML */}
                     <button
