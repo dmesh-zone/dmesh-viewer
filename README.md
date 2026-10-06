@@ -1,7 +1,8 @@
 # dmesh-viewer
 
+**⚠️ This project is no longer actively maintained as it has been superseded by https://github.com/dmesh-zone/dmesh-studio ⚠️**
+
 [![CodeQL](https://github.com/dmesh-zone/dmesh-viewer/actions/workflows/codeql.yml/badge.svg)](https://github.com/dmesh-zone/dmesh-viewer/actions/workflows/codeql.yml)
-[![Snyk Security Scan](https://github.com/dmesh-zone/dmesh-viewer/actions/workflows/snyk.yml/badge.svg)](https://github.com/dmesh-zone/dmesh-viewer/actions/workflows/snyk.yml)
 
 A React-based visualization tool for exploring Data Mesh registries, Data Products, Data Contracts, and Data Usage Agreements.
 
